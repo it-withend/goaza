@@ -92,20 +92,77 @@ main{max-width:var(--max);margin:0 auto;padding:10px 20px 60px}
 .prog-t{font-weight:700;margin:4px 0;color:var(--brand)} .prog-d,.prog-n{color:var(--muted);font-size:.9rem}
 .guide h3{margin:22px 0 8px;color:var(--brand);font-family:"Source Serif 4",Georgia,serif}
 .footer{max-width:var(--max);margin:0 auto 40px;padding:0 20px;color:var(--muted);font-size:.9rem} .footer a{font-weight:700}
+
+/* —— mobile compact header + to-top —— */
+.to-top{position:fixed;right:14px;bottom:18px;z-index:90;width:48px;height:48px;border:none;border-radius:50%;background:var(--brand);color:#fff;font-size:1.35rem;line-height:1;font-weight:700;box-shadow:0 10px 28px rgba(15,76,92,.32);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s;display:grid;place-items:center}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+.to-top:active{transform:scale(.96)}
+@media(max-width:720px){
+  .topbar-inner{padding:8px 12px;gap:8px}
+  .brand-row{gap:8px}
+  .brand{gap:8px}
+  .brand-logo{width:28px;height:28px;border-radius:7px}
+  .brand h1{font-size:1.12rem}
+  .brand .year{font-size:.68rem;padding:2px 7px}
+  .tg{font-size:.78rem;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tg .tg-long{display:none}
+  .row1{grid-template-columns:1fr 1fr;gap:8px}
+  .row1 .search-wrap{grid-column:1 / -1}
+  .row1 .select-wrap{grid-column:1 / -1}
+  .search-wrap .ico{left:12px;font-size:.95rem}
+  .search-wrap input,.select-wrap select{padding:9px 12px;border-radius:10px;font-size:.9rem;box-shadow:none}
+  .search-wrap input{padding-left:36px}
+  .btn,.check{padding:8px 10px;border-radius:10px;font-size:.82rem;box-shadow:none}
+  .check{justify-content:flex-start}
+  .filters{padding:12px;border-radius:12px;max-height:min(58vh,420px);overflow:auto;-webkit-overflow-scrolling:touch}
+  .filters-grid{gap:12px}
+  .hint{display:none}
+  .hero{padding:12px 14px 4px}
+  .hero h2{font-size:1.2rem;margin-bottom:2px}
+  .hero p{display:none}
+  .tabs{padding:0 12px;margin-top:6px;gap:6px}
+  .tabs a,.tabs button{padding:7px 11px;font-size:.82rem;border-radius:999px}
+  .countries{margin:8px auto 0;padding:0 12px 6px;gap:6px}
+  .countries button{padding:6px 10px;font-size:.78rem}
+  .wrap{padding:10px 12px 56px}
+  .uni-card{padding:14px;border-radius:14px}
+  .uni-head{grid-template-columns:1fr;gap:10px}
+  .uni-quick{grid-template-columns:1fr 1fr}
+  .uni-name{font-size:1.05rem}
+  .fact{grid-template-columns:1fr;gap:2px;padding:7px 0;font-size:.88rem}
+  .stats{font-size:.85rem;gap:8px}
+  .to-top{right:12px;bottom:14px;width:44px;height:44px}
+}
+@media(max-width:420px){
+  .brand .year{display:none}
+  .tg{display:none}
+  .check span.full{display:none}
+}
+
+
+@media(max-width:720px){
+  .panel-block{margin-top:8px;padding:0 0 48px}
+  .panel-block.show{padding-left:0;padding-right:0}
+  .topbar{box-shadow:0 4px 16px rgba(15,35,50,.06)}
+  .stats{padding:0 12px;margin:6px 0}
+  .country-section{margin:14px 0 18px}
+  .country-section h2{font-size:1.15rem;margin-bottom:10px}
+}
+
 </style>
 </head>
 <body>
 <div class="topbar"><div class="topbar-inner">
   <div class="brand-row">
     <div class="brand"><img class="brand-logo" src="/logo.png" width="40" height="40" alt="Studyaza"><h1>Studyaza</h1><span class="year">2026</span></div>
-    <a class="tg" href="https://t.me/studyaza" target="_blank" rel="noopener">Telegram: t.me/studyaza</a>
+    <a class="tg" href="https://t.me/studyaza" target="_blank" rel="noopener" title="Telegram"><span class="tg-long">Telegram: </span>t.me/studyaza</a>
   </div>
   <div class="row1">
     <div class="search-wrap"><span class="ico" aria-hidden="true">⌕</span>
       <input id="q" type="search" placeholder="Поиск: университет, город, грант, специальность…" autocomplete="off">
     </div>
     <div class="select-wrap"><select id="country"><option value="">Все страны</option><option value="Korea">Korea (50)</option><option value="Australia">Австралия (20)</option><option value="Austria">Австрия (19)</option><option value="Belgium">Бельгия (5)</option><option value="UK">Великобритания (20)</option><option value="Hungary">Венгрия (36)</option><option value="Germany">Германия (24)</option><option value="Hong Kong">Гонконг (22)</option><option value="Denmark">Дания (8)</option><option value="Spain">Испания (20)</option><option value="Italy">Италия (16)</option><option value="Canada">Канада (36)</option><option value="Qatar">Катар (10)</option><option value="China">Китай (4)</option><option value="Latvia">Латвия (10)</option><option value="Netherlands">Нидерланды (8)</option><option value="UAE">ОАЭ (13)</option><option value="Poland">Польша (23)</option><option value="Portugal">Португалия (2)</option><option value="USA">США (620)</option><option value="Turkish Republic of Northern Cyprus">Северный Кипр (1)</option><option value="Singapore">Сингапур (9)</option><option value="Turkey">Турция (133)</option><option value="Finland">Финляндия (19)</option><option value="France">Франция (1)</option><option value="Czech Republic">Чехия (20)</option><option value="Switzerland">Швейцария (14)</option><option value="Sweden">Швеция (11)</option><option value="South Korea">Южная Корея (20)</option><option value="Japan">Япония (19)</option></select></div>
-    <label class="check"><input type="checkbox" id="grantOnly"> Полный грант (470)</label>
+    <label class="check"><input type="checkbox" id="grantOnly"> <span class="full">Полный </span>грант (470)</label>
     <button type="button" class="btn btn-accent" id="toggleFilters">Фильтры ▾</button>
   </div>
   <div class="filters" id="filters">
@@ -25769,7 +25826,17 @@ main{max-width:var(--max);margin:0 auto;padding:10px 20px 60px}
     document.getElementById('tab-'+btn.dataset.tab).classList.add('show');
     chips.style.display=btn.dataset.tab==='unis'?'flex':'none';
   });
+
+  const toTop=document.getElementById('toTop');
+  if(toTop){
+    const onScroll=()=>{toTop.classList.toggle('show', window.scrollY>420)};
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  }
+
   apply();
 })();
 </script>
+<button type="button" class="to-top" id="toTop" aria-label="Наверх">↑</button>↑</button>
 </body></html>
