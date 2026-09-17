@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     });
     res.cookies.set(SESSION_COOKIE, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
       sameSite: "lax",
       path: "/",
       maxAge: SESSION_TTL,
