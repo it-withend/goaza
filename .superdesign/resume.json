@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "new-ui",
+      "projectId": "dd7d40af-7a56-49ad-a9ac-c17855fa2a32",
+      "activeDraftId": "30e8d0f6-1b42-4c0d-ab99-fee2e541d258",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "public-logo.png"
+      ],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "public-logo.png",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/dd7d40af-7a56-49ad-a9ac-c17855fa2a32/brand-assets/public-logo.png/logo.png",
+          "sourcePath": "public/logo.png"
+        }
+      },
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "app/page.tsx",
+        "components/CatalogClient.tsx:150",
+        "components/UniversityCard.tsx",
+        "app/globals.css"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "3f05b7319b6b6b2cf189bb922343fc7d82210c264f3d1ecd258623da058f8f89",
+        "app/page.tsx": "c4dedd54f8834cf06ee9ac4169679b64a633e917b7b34bf5c71102c9c23f6d47",
+        "components/CatalogClient.tsx": "20a6944b0b49b219dae962880ab754edfea3ea68cbeb6eb9dacb8740dc674da6",
+        "components/UniversityCard.tsx": "63613ac1a98995e65e844b4d59fd15e5e53761c0a987855df32bba2f97151410",
+        "app/globals.css": "a8acd5bfe6fc47e5224c83e35d21e1b84fc1e646f256a81e86a491804face55c"
+      },
+      "components": [],
+      "drafts": {
+        "30e8d0f6-1b42-4c0d-ab99-fee2e541d258": {
+          "title": "Studyaza — Global Academic Atlas Landing Page",
+          "visualDirection": "Global Academic Atlas landing with editorial cartography and restrained liquid glass",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-18T19:39:01.395Z"
+    },
+    "/dashboard": {
+      "targetKind": "new-ui",
+      "projectId": "dd7d40af-7a56-49ad-a9ac-c17855fa2a32",
+      "activeDraftId": "4aca4fb2-840e-48f0-b0f4-2b30e61f50ed",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "public-logo.png"
+      ],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "public-logo.png",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/dd7d40af-7a56-49ad-a9ac-c17855fa2a32/brand-assets/public-logo.png/logo.png",
+          "sourcePath": "public/logo.png"
+        }
+      },
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "components/CatalogClient.tsx",
+        "components/UniversityCard.tsx",
+        "lib/types.ts",
+        "app/globals.css"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "3f05b7319b6b2cf189bb922343fc7d82210c264f3d1ecd258623da058f8f89",
+        "components/CatalogClient.tsx": "20a6944b0b49b219dae962880ab754edfea3ea68cbeb6eb9dacb8740dc674da6",
+        "components/UniversityCard.tsx": "63613ac1a98995e65e844b4d59fd15e5e53761c0a987855df32bba2f97151410",
+        "lib/types.ts": "81d9c974e429994ca9b0356ccc39f5c1f2518ee7261dd61508334ee8ca708bdf",
+        "app/globals.css": "a8acd5bfe6fc47e5224c83e35d21e1b84fc1e646f256a81e86a491804face55c"
+      },
+      "components": [],
+      "drafts": {
+        "4aca4fb2-840e-48f0-b0f4-2b30e61f50ed": {
+          "title": "Studyaza Global Academic Atlas Dashboard",
+          "visualDirection": "Data-dense atlas dashboard with dossier cards, university logos, filters, and detail panel",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-18T19:39:01.395Z"
+    }
+  }
+}
