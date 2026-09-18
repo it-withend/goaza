@@ -48,3 +48,6 @@ scripts/payload*.json
 # Superdesign temporary authored drafts
 .superdesign/tmp/
 
+# Isolated feature worktrees
+.worktrees/
+
