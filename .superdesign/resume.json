@@ -22,7 +22,7 @@
         "app/globals.css"
       ],
       "fingerprints": {
-        ".superdesign/design-system.md": "68576b6ad7e2b2b305895ce44fad9ae0ae4c08f31432cf1fb970e87c688f6308",
+        ".superdesign/design-system.md": "1aac090ed8ae24585979bf1914291045a184e9a2fa849afaac2fcb6dc97d4436",
         "app/page.tsx": "c4dedd54f8834cf06ee9ac4169679b64a633e917b7b34bf5c71102c9c23f6d47",
         "components/CatalogClient.tsx": "20a6944b0b49b219dae962880ab754edfea3ea68cbeb6eb9dacb8740dc674da6",
         "components/UniversityCard.tsx": "63613ac1a98995e65e844b4d59fd15e5e53761c0a987855df32bba2f97151410",
@@ -31,12 +31,12 @@
       "components": [],
       "drafts": {
         "30e8d0f6-1b42-4c0d-ab99-fee2e541d258": {
-          "title": "Studyaza — Student Academic Atlas Landing",
-          "visualDirection": "Energetic student-first atlas with active map, interactive discovery, swipeable university cards, and intentional mobile layout",
-          "currentVersion": 4
+          "title": "Studyaza — Single-screen Student Atlas Landing",
+          "visualDirection": "Single hero screen with active university map, factual database rail, Telegram auth overlay, and intentional mobile layout",
+          "currentVersion": 5
         }
       },
-      "updatedAt": "2026-09-18T19:53:32.990Z"
+      "updatedAt": "2026-09-18T19:59:00.000Z"
     },
     "/dashboard": {
       "targetKind": "new-ui",
@@ -59,7 +59,7 @@
         "app/globals.css"
       ],
       "fingerprints": {
-        ".superdesign/design-system.md": "68576b6ad7e2b2b305895ce44fad9ae0ae4c08f31432cf1fb970e87c688f6308",
+        ".superdesign/design-system.md": "1aac090ed8ae24585979bf1914291045a184e9a2fa849afaac2fcb6dc97d4436",
         "components/CatalogClient.tsx": "20a6944b0b49b219dae962880ab754edfea3ea68cbeb6eb9dacb8740dc674da6",
         "components/UniversityCard.tsx": "63613ac1a98995e65e844b4d59fd15e5e53761c0a987855df32bba2f97151410",
         "lib/types.ts": "81d9c974e429994ca9b0356ccc39f5c1f2518ee7261dd61508334ee8ca708bdf",

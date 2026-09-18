@@ -70,8 +70,7 @@ Tone:
 
 Header:
 - Actual Studyaza logo plus wordmark.
-- Links: Возможности, База, Как работает.
-- Secondary Telegram link.
+- Keep navigation minimal; do not link to nonexistent marketing sections.
 - Primary CTA: `Открыть атлас`.
 
 Hero:
@@ -79,28 +78,16 @@ Hero:
 - Headline: `1 213 университетов. 31 страна. Один атлас возможностей.`
 - Supporting copy about tuition, aid, admission, and deadlines.
 - Primary CTA opens Telegram authentication.
-- Secondary CTA scrolls to dashboard preview.
+- Telegram authentication appears in a focused overlay over the same screen.
 - A large active globe/map composition shows real university markers, route lines, floating university labels, and a small factual grant signal.
 
 Proof/data rail:
 - Live values only: 1,213 universities; 31 countries; 419 full grants.
 
-Discovery:
-- A prominent `Что ищешь?` interaction offers `Полный грант`, `Доступное обучение`, and `Высокий шанс поступления`.
-- Changing a choice updates a compact sample result and count immediately.
-
-Product preview:
-- Framed, high-fidelity preview of the actual dashboard with search, filters, cards, and visible university logos.
-- Make it feel usable, not like a decorative screenshot.
-- On mobile this becomes swipeable result cards rather than a scaled-down desktop dashboard.
-
-How it works:
-- `01 Подключите Telegram`
-- `02 Настройте критерии`
-- `03 Исследуйте возможности`
-
-Final CTA:
-- `Ваш доступ к атласу готов`.
+Scope:
+- The public landing ends after the hero and factual data rail.
+- Do not add product-preview, feature-grid, testimonial, journey, pricing, or extended footer sections.
+- After successful Telegram verification, redirect directly to `/dashboard`.
 
 ## Dashboard `/dashboard`
 
@@ -136,7 +123,6 @@ Logo data requirement:
 - Filters become a full-width bottom sheet.
 - University dossier cards collapse to one primary metric row plus expandable details.
 - Logo, university name, grant state, and deadline remain visible above the fold.
-- Landing discovery choices and university previews use horizontal scroll snap.
 - Landing gets a mobile-only sticky `Открыть атлас` action with 44px minimum touch targets.
 
 ## Accessibility and performance

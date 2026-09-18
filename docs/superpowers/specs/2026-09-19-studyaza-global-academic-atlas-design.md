@@ -13,13 +13,9 @@ The approved visual concept is **Global Academic Atlas**: a digital atlas and re
 
 ### Public landing `/`
 
-- Global navigation with Studyaza identity and `Открыть атлас` CTA.
-- Hero with value proposition and animated university map.
-- Live database metrics.
-- Embedded dashboard preview.
-- Feature explanation focused on decisions students make.
-- Three-step Telegram-to-search journey.
-- Final authentication CTA.
+- One self-contained hero screen with Studyaza identity, value proposition, animated university map, and live database metrics.
+- Primary `Открыть атлас` CTA.
+- Telegram authentication opens as an overlay without adding marketing sections below the hero.
 
 ### Authenticated dashboard `/dashboard`
 
@@ -37,14 +33,7 @@ Unauthenticated requests to `/dashboard` redirect to `/`. Successful Telegram ve
 
 The landing is student-first and conversational rather than corporate or sales-led. Studyaza is a free utility, so it must not imply paid admission services, guaranteed outcomes, or unsupported accuracy claims.
 
-The hero should communicate utility before decoration. The map contains selected real university points, route lines, floating university labels, and a small grant signal. The primary CTA launches Telegram Login. The secondary CTA scrolls to an interactive discovery section.
-
-The `Что ищешь?` section offers three useful starting points:
-- full grant;
-- affordable tuition;
-- higher admission chance.
-
-Changing a choice updates a compact example result and result count. The dashboard preview uses swipeable university cards and visible filter feedback instead of a static screenshot.
+The entire landing consists of the approved hero screen. The map contains selected real university points, route lines, floating university labels, and a small grant signal. The primary CTA opens Telegram authentication as a modal/overlay. No product-preview, feature, testimonial, journey, or marketing-footer sections follow the hero.
 
 Metrics are computed from database metadata rather than hardcoded where practical:
 - university count;
@@ -94,19 +83,21 @@ The existing dataset does not currently expose a website/domain field, so enrich
 
 Telegram authentication remains server-verified with the existing `getChatMember` flow and httpOnly session cookie. The canonical host remains `goaza.xyz` to prevent origin mismatches in Telegram Login.
 
-Successful login changes the product state rather than simply unlocking controls on the landing page: the user is redirected into `/dashboard`.
+Successful login changes the product state rather than unlocking controls on the landing page: the user is redirected into `/dashboard`. The dashboard header/account area displays the Telegram username or first name from the verified session. Logging out clears the session and returns the user to `/`.
 
 ## Acceptance criteria
 
 - Public visitors see a complete landing page, not disabled catalog controls.
-- Landing communicates live database scale and clearly explains Telegram access.
+- Landing is limited to the approved hero and database metrics screen.
+- Clicking `Открыть атлас` opens Telegram subscription/login verification over the landing.
 - Landing feels energetic and student-oriented without forced slang or childish gamification.
 - No unsupported `100% accuracy` or similar trust claims are displayed.
 - Verified users arrive at `/dashboard`.
+- Dashboard displays the verified Telegram account and provides logout.
 - Dashboard preserves all current search/filter capabilities.
 - Cards display a university logo or stable monogram fallback.
 - Landing and dashboard share one recognizable Global Academic Atlas system.
-- Mobile uses a purpose-built one-column hero, swipeable discovery/results, 44px touch targets, and a sticky access CTA.
+- Mobile uses a purpose-built one-column hero, 44px touch targets, and a sticky access CTA.
 - UI meets keyboard, contrast, reduced-motion, and layout-shift requirements.
 
 ## Deferred
