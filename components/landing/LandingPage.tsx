@@ -9,6 +9,10 @@ function formatStat(value: number): string {
   return new Intl.NumberFormat("ru-RU").format(value).replace(/[\u00A0\u202F]/g, " ");
 }
 
+function formatUniversityCount(total: number): string {
+  return total >= 1000 ? "1000+" : formatStat(total);
+}
+
 export function LandingPage({
   stats,
   botUsername,
@@ -24,16 +28,26 @@ export function LandingPage({
       <header className={styles.header}>
         <div className={styles.brand}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" width={36} height={36} alt="" className={styles.logo} />
+          <img src="/logo.png" width={40} height={40} alt="" className={styles.logo} />
           <strong className={styles.wordmark}>Studyaza</strong>
         </div>
-        <button
-          type="button"
-          className={`${styles.cta} ${styles.ctaGhost}`}
-          onClick={() => setGateOpen(true)}
-        >
-          Подключиться
-        </button>
+        <div className={styles.headerActions}>
+          <a
+            className={styles.channelHeader}
+            href="https://t.me/studyaza"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @studyaza
+          </a>
+          <button
+            type="button"
+            className={`${styles.cta} ${styles.ctaGhost}`}
+            onClick={() => setGateOpen(true)}
+          >
+            Подключиться
+          </button>
+        </div>
       </header>
 
       <section className={styles.hero}>
@@ -81,7 +95,7 @@ export function LandingPage({
       <section className={styles.stats} aria-label="Размер базы">
         <div className={styles.stat}>
           <small>Университетов</small>
-          <strong>{formatStat(stats.total)}</strong>
+          <strong>{formatUniversityCount(stats.total)}</strong>
         </div>
         <div className={styles.stat}>
           <small>Стран</small>

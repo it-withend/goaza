@@ -8,8 +8,13 @@ export function middleware(req: NextRequest) {
   const host = req.headers.get("host")?.split(":")[0]?.toLowerCase();
   if (!host || host === CANONICAL_HOST) return NextResponse.next();
 
-  const aliases = new Set(["www.goaza.xyz", "goaza.vercel.app"]);
-  if (!aliases.has(host)) return NextResponse.next();
+  const isAlias =
+    host === "www.goaza.xyz" ||
+    host === "goaza.vercel.app" ||
+    /^goaza(-[a-z0-9]+)?-azamat2009s-projects\.vercel\.app$/.test(host) ||
+    /^goaza-git-[a-z0-9-]+-azamat2009s-projects\.vercel\.app$/.test(host);
+
+  if (!isAlias) return NextResponse.next();
 
   const url = req.nextUrl.clone();
   url.protocol = "https:";

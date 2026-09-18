@@ -14,7 +14,7 @@ export default async function HomePage() {
   return (
     <LandingPage
       stats={stats}
-      botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || ""}
+      botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
     />
   );
 }

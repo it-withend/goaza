@@ -5,8 +5,11 @@ export const metadata: Metadata = {
   title: "Studyaza 2026 — Каталог университетов",
   description: "Каталог университетов и грантов для международных студентов",
   icons: {
-    icon: "/favicon.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 

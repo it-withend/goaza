@@ -21,9 +21,17 @@ describe("LandingPage", () => {
         botUsername="goazabot"
       />,
     );
-    expect(screen.getByText("1 213")).toBeInTheDocument();
+    expect(screen.getByText("1000+")).toBeInTheDocument();
     expect(screen.queryByText(/100%/)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^@studyaza$/i })).toHaveAttribute(
+      "href",
+      "https://t.me/studyaza",
+    );
     await userEvent.click(screen.getByRole("button", { name: /открыть атлас/i }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /открыть канал @studyaza/i })).toHaveAttribute(
+      "href",
+      "https://t.me/studyaza",
+    );
   });
 });

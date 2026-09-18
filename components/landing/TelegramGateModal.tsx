@@ -40,9 +40,21 @@ export function TelegramGateModal({
           ×
         </button>
         <h2 id="telegram-title">Открой атлас</h2>
-        <p>Подпишись на @studyaza и войди через Telegram.</p>
+        <p>
+          1) Подпишись на канал @studyaza. 2) Войди через Telegram. Без
+          подписки вход не откроется. Открывай сайт только на{" "}
+          <strong>goaza.xyz</strong>.
+        </p>
+        <a
+          className={styles.channelLink}
+          href="https://t.me/studyaza"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Открыть канал @studyaza
+        </a>
         <TelegramLogin
-          botUsername={botUsername}
+          botUsername={botUsername || "goazabot"}
           onSubscribed={() => {
             router.replace("/dashboard");
             router.refresh();
