@@ -63,6 +63,11 @@ Avoid purple AI gradients. Color should appear as decisive fields, route lines, 
 
 ## Landing `/`
 
+Tone:
+- Student-first, energetic, curious, and useful; never corporate, sales-led, or artificially formal.
+- The service is free and should not imply that Studyaza sells admissions or guarantees outcomes.
+- Use natural conversational Russian without forced slang or childish gamification.
+
 Header:
 - Actual Studyaza logo plus wordmark.
 - Links: Возможности, База, Как работает.
@@ -75,14 +80,19 @@ Hero:
 - Supporting copy about tuition, aid, admission, and deadlines.
 - Primary CTA opens Telegram authentication.
 - Secondary CTA scrolls to dashboard preview.
-- A large interactive globe/map composition shows real university markers and route lines.
+- A large active globe/map composition shows real university markers, route lines, floating university labels, and a small factual grant signal.
 
 Proof/data rail:
-- Live values: 1,213 universities; 31 countries; 419 full grants; 1 searchable database.
+- Live values only: 1,213 universities; 31 countries; 419 full grants.
+
+Discovery:
+- A prominent `Что ищешь?` interaction offers `Полный грант`, `Доступное обучение`, and `Высокий шанс поступления`.
+- Changing a choice updates a compact sample result and count immediately.
 
 Product preview:
 - Framed, high-fidelity preview of the actual dashboard with search, filters, cards, and visible university logos.
 - Make it feel usable, not like a decorative screenshot.
+- On mobile this becomes swipeable result cards rather than a scaled-down desktop dashboard.
 
 How it works:
 - `01 Подключите Telegram`
@@ -126,6 +136,8 @@ Logo data requirement:
 - Filters become a full-width bottom sheet.
 - University dossier cards collapse to one primary metric row plus expandable details.
 - Logo, university name, grant state, and deadline remain visible above the fold.
+- Landing discovery choices and university previews use horizontal scroll snap.
+- Landing gets a mobile-only sticky `Открыть атлас` action with 44px minimum touch targets.
 
 ## Accessibility and performance
 

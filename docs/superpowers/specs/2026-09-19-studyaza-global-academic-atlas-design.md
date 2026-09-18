@@ -35,7 +35,16 @@ Unauthenticated requests to `/dashboard` redirect to `/`. Successful Telegram ve
 
 ## Landing interaction
 
-The hero should communicate utility before decoration. The map contains selected real university points and subtle route lines. The primary CTA launches Telegram Login. The secondary CTA scrolls to the live dashboard preview.
+The landing is student-first and conversational rather than corporate or sales-led. Studyaza is a free utility, so it must not imply paid admission services, guaranteed outcomes, or unsupported accuracy claims.
+
+The hero should communicate utility before decoration. The map contains selected real university points, route lines, floating university labels, and a small grant signal. The primary CTA launches Telegram Login. The secondary CTA scrolls to an interactive discovery section.
+
+The `Что ищешь?` section offers three useful starting points:
+- full grant;
+- affordable tuition;
+- higher admission chance.
+
+Changing a choice updates a compact example result and result count. The dashboard preview uses swipeable university cards and visible filter feedback instead of a static screenshot.
 
 Metrics are computed from database metadata rather than hardcoded where practical:
 - university count;
@@ -91,11 +100,13 @@ Successful login changes the product state rather than simply unlocking controls
 
 - Public visitors see a complete landing page, not disabled catalog controls.
 - Landing communicates live database scale and clearly explains Telegram access.
+- Landing feels energetic and student-oriented without forced slang or childish gamification.
+- No unsupported `100% accuracy` or similar trust claims are displayed.
 - Verified users arrive at `/dashboard`.
 - Dashboard preserves all current search/filter capabilities.
 - Cards display a university logo or stable monogram fallback.
 - Landing and dashboard share one recognizable Global Academic Atlas system.
-- Desktop and mobile both remain readable and usable.
+- Mobile uses a purpose-built one-column hero, swipeable discovery/results, 44px touch targets, and a sticky access CTA.
 - UI meets keyboard, contrast, reduced-motion, and layout-shift requirements.
 
 ## Deferred

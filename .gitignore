@@ -45,3 +45,6 @@ scripts/import_batches/
 scripts/*.sql
 scripts/payload*.json
 
+# Superdesign temporary authored drafts
+.superdesign/tmp/
+
