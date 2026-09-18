@@ -3,6 +3,7 @@ export type University = {
   slug: string;
   name: string;
   country: string;
+  website_domain: string | null;
   city: string | null;
   tuition_display: string | null;
   tuition_num: number | null;

@@ -44,6 +44,7 @@ scripts/import_chunks/
 scripts/import_batches/
 scripts/*.sql
 scripts/payload*.json
+scripts/enrich_reports/
 
 # Superdesign temporary authored drafts
 .superdesign/tmp/

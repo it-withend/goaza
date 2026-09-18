@@ -623,6 +623,14 @@
   margin-bottom: 10px;
 }
 
+.cardTitleBlock {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
 .cardName {
   margin: 0 0 6px;
   font-family: "Source Serif 4", Georgia, serif;

@@ -2,6 +2,7 @@
 
 import type { University } from "@/lib/types";
 import { INST_LABEL, countryRu } from "@/lib/types";
+import { UniversityLogo } from "@/components/UniversityLogo";
 import styles from "./dashboard/Dashboard.module.css";
 
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
@@ -44,44 +45,47 @@ export function UniversityCard({
       data-aidtype={(u.aid_types || []).join(",")}
     >
       <header className={styles.cardHead}>
-        <div>
-          {onSelect ? (
-            <button
-              type="button"
-              className={styles.cardSelect}
-              onClick={onSelect}
-              aria-pressed={selected}
-            >
-              <span className={styles.cardName}>{u.name}</span>
-            </button>
-          ) : (
-            <h3 className={styles.cardName}>{u.name}</h3>
-          )}
-          <p className={styles.cardMeta}>
-            <span className={styles.tag}>{ru}</span>
-            {u.city ? (
-              <>
-                <span>·</span>
-                <span>{u.city}</span>
-              </>
-            ) : null}
-          </p>
-          <div className={styles.tags}>
-            {u.full_grant ? <span className={`${styles.tag} ${styles.tagGrant}`}>Полный грант</span> : null}
-            {u.intl_aid_policy ? <span className={styles.tag}>{u.intl_aid_policy}</span> : null}
-            {(u.inst_tags || []).slice(0, 3).map((t) => (
-              <span className={styles.tag} key={t}>
-                {INST_LABEL[t] || t}
-              </span>
-            ))}
-            {(u.aid_types || []).slice(0, 2).map((t) => (
-              <span className={styles.tag} key={t}>
-                {t}
-              </span>
-            ))}
-            {nearestDeadline ? (
-              <span className={`${styles.tag} ${styles.tagDeadline}`}>{nearestDeadline}</span>
-            ) : null}
+        <div className={styles.cardTitleBlock}>
+          <UniversityLogo name={u.name} domain={u.website_domain ?? null} size={48} />
+          <div>
+            {onSelect ? (
+              <button
+                type="button"
+                className={styles.cardSelect}
+                onClick={onSelect}
+                aria-pressed={selected}
+              >
+                <span className={styles.cardName}>{u.name}</span>
+              </button>
+            ) : (
+              <h3 className={styles.cardName}>{u.name}</h3>
+            )}
+            <p className={styles.cardMeta}>
+              <span className={styles.tag}>{ru}</span>
+              {u.city ? (
+                <>
+                  <span>·</span>
+                  <span>{u.city}</span>
+                </>
+              ) : null}
+            </p>
+            <div className={styles.tags}>
+              {u.full_grant ? <span className={`${styles.tag} ${styles.tagGrant}`}>Полный грант</span> : null}
+              {u.intl_aid_policy ? <span className={styles.tag}>{u.intl_aid_policy}</span> : null}
+              {(u.inst_tags || []).slice(0, 3).map((t) => (
+                <span className={styles.tag} key={t}>
+                  {INST_LABEL[t] || t}
+                </span>
+              ))}
+              {(u.aid_types || []).slice(0, 2).map((t) => (
+                <span className={styles.tag} key={t}>
+                  {t}
+                </span>
+              ))}
+              {nearestDeadline ? (
+                <span className={`${styles.tag} ${styles.tagDeadline}`}>{nearestDeadline}</span>
+              ) : null}
+            </div>
           </div>
         </div>
         <div className={styles.quick}>
