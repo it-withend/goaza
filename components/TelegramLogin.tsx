@@ -10,9 +10,11 @@ declare global {
 
 type Props = {
   botUsername: string;
+  /** Called after server-verified Telegram membership succeeds. */
   onSubscribed: (username: string | null) => void;
 };
 
+/** Telegram Login Widget host; verified success is reported via onSubscribed. */
 export function TelegramLogin({ botUsername, onSubscribed }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
