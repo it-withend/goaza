@@ -51,3 +51,6 @@ scripts/payload*.json
 # Isolated feature worktrees
 .worktrees/
 
+# Subagent-driven development scratch state
+.superpowers/
+
