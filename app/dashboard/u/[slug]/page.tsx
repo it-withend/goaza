@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
@@ -63,8 +64,15 @@ export default async function UniversityPage({
   return (
     <main className={styles.page}>
       <div className={styles.hero}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.heroImg} src={photo} alt="" />
+        <Image
+          className={styles.heroImg}
+          src={photo}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+        />
         <div className={styles.heroShade} />
         <div className={styles.heroInner}>
           <Link href={backHref} className={styles.back}>
