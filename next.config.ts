@@ -22,7 +22,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ["cobe"],
+    optimizePackageImports: ["jose"],
   },
   async headers() {
     return [

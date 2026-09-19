@@ -1,66 +1,56 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import createGlobe from "cobe";
+import dynamic from "next/dynamic";
 import { countryRu } from "@/lib/types";
 import { COUNTRY_COORDS } from "@/lib/country-coords";
 import styles from "./LandingPage.module.css";
 
 type CountryCount = { country: string; count: number };
 
-type Marker = {
-  location: [number, number];
-  size: number;
+type GlobePoint = {
+  lat: number;
+  lng: number;
   country: string;
   count: number;
+  size: number;
 };
 
-export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [hover, setHover] = useState<Marker | null>(null);
-  const [active, setActive] = useState(false);
-  const [side, setSide] = useState(420);
+const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
 
-  const markers = useMemo(
+export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
+  const globeRef = useRef<{
+    controls?: { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
+    pointOfView: (p: object, ms?: number) => void;
+  } | null>(null);
+  const [hover, setHover] = useState<GlobePoint | null>(null);
+  const [size, setSize] = useState({ w: 480, h: 420 });
+
+  const points = useMemo(
     () =>
       byCountry
         .map((row) => {
           const coords = COUNTRY_COORDS[row.country];
           if (!coords) return null;
           return {
-            location: [coords[0], coords[1]] as [number, number],
-            size: Math.max(0.04, Math.min(0.14, 0.035 + Math.sqrt(row.count) / 55)),
+            lat: coords[0],
+            lng: coords[1],
             country: row.country,
             count: row.count,
-          } satisfies Marker;
+            size: Math.max(0.28, Math.min(1.15, 0.22 + Math.sqrt(row.count) / 12)),
+          } satisfies GlobePoint;
         })
-        .filter(Boolean) as Marker[],
+        .filter(Boolean) as GlobePoint[],
     [byCountry],
   );
 
   useEffect(() => {
-    const node = wrapRef.current;
-    if (!node) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setActive(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "120px" },
-    );
-    io.observe(node);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const node = wrapRef.current;
+    const node = document.getElementById("studyaza-globe");
     if (!node) return;
     const sync = () => {
-      const w = Math.min(Math.max(260, Math.floor(node.clientWidth)), 520);
-      setSide(w);
+      const rect = node.getBoundingClientRect();
+      const side = Math.min(Math.max(260, Math.floor(rect.width)), Math.floor(rect.height) || 480);
+      setSize({ w: side, h: side });
     };
     sync();
     const ro = new ResizeObserver(sync);
@@ -69,96 +59,37 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
   }, []);
 
   useEffect(() => {
-    if (!active || !canvasRef.current) return;
-    const canvas = canvasRef.current;
-    let phi = 0;
-    let dragging = false;
-    let lastX = 0;
-    let dragPhi = 0;
-    let raf = 0;
-
-    const globe = createGlobe(canvas, {
-      devicePixelRatio: Math.min(2, window.devicePixelRatio || 1),
-      width: side * 2,
-      height: side * 2,
-      phi: 0,
-      theta: 0.28,
-      dark: 0,
-      diffuse: 1.15,
-      mapSamples: 14000,
-      mapBrightness: 5.2,
-      baseColor: [0.93, 0.93, 0.91],
-      markerColor: [0.83, 0.63, 0.09],
-      glowColor: [0.98, 0.94, 0.86],
-      markers: markers.map((m) => ({ location: m.location, size: m.size })),
-    });
-
-    const tick = () => {
-      if (!dragging) phi += 0.0028;
-      globe.update({ phi: phi + dragPhi });
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    const onDown = (e: PointerEvent) => {
-      dragging = true;
-      lastX = e.clientX;
-      canvas.setPointerCapture(e.pointerId);
-    };
-    const onMove = (e: PointerEvent) => {
-      if (!dragging) return;
-      dragPhi += (e.clientX - lastX) / 200;
-      lastX = e.clientX;
-    };
-    const onUp = (e: PointerEvent) => {
-      dragging = false;
-      try {
-        canvas.releasePointerCapture(e.pointerId);
-      } catch {
-        /* ignore */
-      }
-    };
-
-    canvas.addEventListener("pointerdown", onDown);
-    canvas.addEventListener("pointermove", onMove);
-    canvas.addEventListener("pointerup", onUp);
-    canvas.addEventListener("pointercancel", onUp);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      globe.destroy();
-      canvas.removeEventListener("pointerdown", onDown);
-      canvas.removeEventListener("pointermove", onMove);
-      canvas.removeEventListener("pointerup", onUp);
-      canvas.removeEventListener("pointercancel", onUp);
-    };
-  }, [active, markers, side]);
-
-  const topCountry = markers[0] ?? null;
+    const g = globeRef.current;
+    if (!g?.controls) return;
+    g.controls.autoRotate = true;
+    g.controls.autoRotateSpeed = 0.45;
+    g.controls.enableZoom = false;
+    g.pointOfView({ lat: 25, lng: 15, altitude: 1.85 }, 0);
+  }, [size.w]);
 
   return (
-    <div
-      ref={wrapRef}
-      className={styles.globeWrap}
-      id="studyaza-globe"
-      aria-label="Глобус университетов"
-    >
+    <div className={styles.globeWrap} id="studyaza-globe" aria-label="Глобус университетов">
       <div className={styles.globeGlow} aria-hidden="true" />
-      {active ? (
-        <canvas
-          ref={canvasRef}
-          className={styles.globeCanvas}
-          style={{ width: side, height: side }}
-          width={side * 2}
-          height={side * 2}
-          onMouseEnter={() => setHover(topCountry)}
-          onMouseLeave={() => setHover(null)}
-        />
-      ) : (
-        <div className={styles.globeSkeleton} style={{ width: side, height: side }} aria-hidden>
-          Загрузка карты…
-        </div>
-      )}
+      <Globe
+        // @ts-expect-error globe ref typing from react-globe.gl
+        ref={globeRef}
+        width={size.w}
+        height={size.h}
+        backgroundColor="rgba(0,0,0,0)"
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+        pointsData={points}
+        pointAltitude={0.006}
+        pointRadius="size"
+        pointColor={() => "#d4a017"}
+        pointLabel={(d: object) => {
+          const p = d as GlobePoint;
+          return `${countryRu(p.country)} · ${p.count}`;
+        }}
+        onPointHover={(d: object | null) => setHover((d as GlobePoint | null) ?? null)}
+        atmosphereColor="#c9a227"
+        atmosphereAltitude={0.18}
+      />
       <div className={styles.globeHint} aria-live="polite">
         {hover ? (
           <>
@@ -166,7 +97,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
             <span>{hover.count} университетов в базе</span>
           </>
         ) : (
-          <span>Покрути глобус · точки стран в базе</span>
+          <span>Покрути · наведи на золотую точку</span>
         )}
       </div>
     </div>

@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import type { LandingStats } from "@/lib/landing-stats";
-import { countryRu } from "@/lib/types";
 import { TelegramGateModal } from "./TelegramGateModal";
 import { WorldGlobe } from "./WorldGlobe";
 import styles from "./LandingPage.module.css";
@@ -25,6 +23,11 @@ export function LandingPage({
 }) {
   const [gateOpen, setGateOpen] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("gate") === "1") setGateOpen(true);
+  }, []);
+
   return (
     <main className={styles.page}>
       <div className={styles.atmosphere} aria-hidden="true" />
@@ -35,9 +38,6 @@ export function LandingPage({
           <strong className={styles.wordmark}>Studyaza</strong>
         </div>
         <div className={styles.headerActions}>
-          <Link className={styles.channelHeader} href="/unis">
-            Каталог вузов
-          </Link>
           <a
             className={styles.channelHeader}
             href="https://t.me/studyaza"
@@ -74,9 +74,6 @@ export function LandingPage({
             >
               Открыть атлас
             </button>
-            <Link href="/unis" className={`${styles.cta} ${styles.ctaGhost}`}>
-              Смотреть каталог
-            </Link>
           </div>
         </div>
 
@@ -136,51 +133,6 @@ export function LandingPage({
             <strong>{formatStat(stats.grants)}</strong>
           </div>
         </article>
-      </section>
-
-      <section className={styles.seoBlock} aria-labelledby="seo-countries">
-        <h2 id="seo-countries">Университеты по странам</h2>
-        <p>
-          Studyaza помогает найти университет за границей: сравни стоимость обучения, полные гранты,
-          acceptance rate и дедлайны для международных студентов.
-        </p>
-        <ul className={styles.countryChips}>
-          {stats.byCountry.slice(0, 16).map((row) => (
-            <li key={row.country}>
-              <Link href={`/unis`}>
-                {countryRu(row.country)}
-                <span>{row.count}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className={styles.seoBlock} aria-labelledby="seo-faq">
-        <h2 id="seo-faq">Как найти университет и грант</h2>
-        <div className={styles.faq}>
-          <details open>
-            <summary>Где искать университеты с полным грантом?</summary>
-            <p>
-              В атласе Studyaza отмечены вузы с full grant и need-blind политикой. Открой каталог или
-              войди через Telegram, чтобы фильтровать по грантам, tuition и шансам поступления.
-            </p>
-          </details>
-          <details>
-            <summary>Какие страны есть в базе?</summary>
-            <p>
-              США, Великобритания, Канада, Европа, Азия и другие направления — всего{" "}
-              {formatStat(stats.countries)} стран и {formatUniversityCount(stats.total)} университетов.
-            </p>
-          </details>
-          <details>
-            <summary>Это бесплатно?</summary>
-            <p>
-              Доступ к атласу открывается после подписки на канал @studyaza и входа через Telegram Login.
-              Публичный каталог вузов доступен без входа.
-            </p>
-          </details>
-        </div>
       </section>
 
       <TelegramGateModal
