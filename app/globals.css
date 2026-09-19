@@ -1,29 +1,34 @@
 :root {
-  --atlas: #1636d9;
-  --ink: #101528;
-  --paper: #f4f0e6;
-  --porcelain: #fcfbf7;
-  --signal: #ff5a36;
-  --cyan: #36d8d0;
-  --moss: #2d8a62;
-  --hairline: rgba(16, 21, 40, 0.14);
+  /* Academic Night */
+  --ink: #1a1a1a;
+  --muted: #5c5c5c;
+  --paper: #f7f7f5;
+  --porcelain: #ffffff;
+  --gold: #d4a017;
+  --gold-deep: #b8860b;
+  --graphite: #2c2c2c;
+  --atlas: #2c2c2c;
+  --signal: #d4a017;
+  --cyan: #8a8a86;
+  --moss: #3d7a4a;
+  --hairline: rgba(26, 26, 26, 0.12);
   --bg: var(--paper);
   --surface: var(--porcelain);
-  --muted: rgba(16, 21, 40, 0.62);
   --line: var(--hairline);
-  --brand: var(--atlas);
-  --brand-soft: rgba(22, 54, 217, 0.1);
-  --accent: var(--signal);
-  --accent-soft: rgba(255, 90, 54, 0.12);
+  --brand: var(--ink);
+  --brand-soft: rgba(26, 26, 26, 0.06);
+  --accent: var(--gold);
+  --accent-soft: rgba(212, 160, 23, 0.16);
   --ok: var(--moss);
-  --ok-bg: rgba(45, 138, 98, 0.12);
-  --no: #9a3412;
-  --no-bg: #ffedd5;
-  --maybe: #854d0e;
-  --maybe-bg: #fef3c7;
-  --shadow: 0 10px 30px rgba(16, 21, 40, 0.08);
+  --ok-bg: rgba(61, 122, 74, 0.12);
+  --no: #8b3a2a;
+  --no-bg: #f5e6e2;
+  --maybe: #8a6a12;
+  --maybe-bg: #f8efd4;
+  --shadow: 0 12px 32px rgba(26, 26, 26, 0.08);
   --radius: 16px;
   --max: 1180px;
+  --touch: 44px;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }

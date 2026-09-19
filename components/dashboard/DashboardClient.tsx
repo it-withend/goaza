@@ -40,8 +40,6 @@ export function DashboardClient({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"list" | "map">("list");
-  const [selected, setSelected] = useState<University | null>(null);
 
   const filtersActive = useMemo(() => {
     return Boolean(
@@ -203,14 +201,19 @@ export function DashboardClient({
 
   const filters = (
     <aside className={styles.filtersPanel} aria-label="Фильтры">
-      <h2 className={styles.filtersTitle}>Инструменты</h2>
-      <p className={styles.hint}>Все активные фильтры работают вместе (И).</p>
+      <div className={styles.filtersHead}>
+        <h2 className={styles.filtersTitle}>Фильтры</h2>
+        <button type="button" className={styles.filtersDone} onClick={() => setFiltersOpen(false)}>
+          Готово
+        </button>
+      </div>
+      <p className={styles.hint}>Активные фильтры работают вместе (И).</p>
 
       <div className={styles.searchWrap}>
         <span aria-hidden>⌕</span>
         <input
           type="search"
-          placeholder="Поиск: университет, город, грант…"
+          placeholder="Университет, город, грант…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Поиск университетов"
@@ -294,7 +297,6 @@ export function DashboardClient({
 
       <div className={styles.fBlock}>
         <h4>Тип вуза</h4>
-        <p className={styles.hint}>Несколько типов = все сразу (И).</p>
         <div className={styles.chips}>
           {meta.inst.map(([key, n]) => (
             <label className={styles.chip} key={key}>
@@ -312,7 +314,6 @@ export function DashboardClient({
 
       <div className={styles.fBlock}>
         <h4>Тип помощи</h4>
-        <p className={styles.hint}>Несколько типов помощи тоже через И.</p>
         <div className={styles.chips}>
           {meta.aidTypes.slice(0, 12).map(([key, n]) => (
             <label className={styles.chip} key={key}>
@@ -331,18 +332,8 @@ export function DashboardClient({
   );
 
   return (
-    <DashboardShell
-      accountName={accountName}
-      onLogout={() => void logout()}
-      view={view}
-      onViewChange={setView}
-      onOpenFilters={() => setFiltersOpen(true)}
-    >
-      <div
-        className={`${styles.workspace}${selected ? ` ${styles.workspaceWithDetail}` : ""}${
-          filtersOpen ? ` ${styles.filtersDrawerOpen}` : ""
-        }`}
-      >
+    <DashboardShell accountName={accountName} onLogout={() => void logout()} onOpenFilters={() => setFiltersOpen(true)}>
+      <div className={`${styles.workspace}${filtersOpen ? ` ${styles.filtersDrawerOpen}` : ""}`}>
         <button
           type="button"
           className={styles.filtersDrawerBackdrop}
@@ -354,7 +345,10 @@ export function DashboardClient({
           <div className={styles.commandBar}>
             <div className={styles.statsLine}>
               Показано: <strong>{loading ? "…" : unis.length}</strong> / {meta.total}
-              <span> · Полные гранты: <strong>{meta.grants}</strong></span>
+              <span>
+                {" "}
+                · Гранты: <strong>{meta.grants}</strong>
+              </span>
             </div>
           </div>
 
@@ -375,97 +369,26 @@ export function DashboardClient({
               Все <span className={styles.n}>{meta.total}</span>
             </button>
             {meta.countries.map(([c, n]) => (
-              <button
-                type="button"
-                key={c}
-                aria-pressed={country === c}
-                onClick={() => setCountry(c)}
-              >
+              <button type="button" key={c} aria-pressed={country === c} onClick={() => setCountry(c)}>
                 {countryRu(c)} <span className={styles.n}>{n}</span>
               </button>
             ))}
           </nav>
 
-          {view === "map" ? (
-            <div className={styles.mapPlaceholder}>Карта появится в следующем релизе</div>
-          ) : (
-            <>
-              <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
-                Ничего не найдено. Ослабьте фильтры.
-              </div>
-              {grouped.map(([c, list], groupIndex) => (
-                <section className={styles.countrySection} key={c} id={`sec-${c}`}>
-                  <h2>
-                    {countryRu(c)} ({list.length})
-                  </h2>
-                  {list.map((u, index) => (
-                    <UniversityCard
-                      key={u.id || u.slug}
-                      u={u}
-                      selected={selected?.slug === u.slug}
-                      onSelect={() => setSelected(u)}
-                      staggerIndex={groupIndex * 3 + index}
-                    />
-                  ))}
-                </section>
+          <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
+            Ничего не найдено. Ослабьте фильтры.
+          </div>
+          {grouped.map(([c, list], groupIndex) => (
+            <section className={styles.countrySection} key={c} id={`sec-${c}`}>
+              <h2>
+                {countryRu(c)} ({list.length})
+              </h2>
+              {list.map((u, index) => (
+                <UniversityCard key={u.id || u.slug} u={u} staggerIndex={groupIndex * 3 + index} />
               ))}
-            </>
-          )}
+            </section>
+          ))}
         </section>
-
-        {selected ? (
-          <aside className={styles.detail} aria-label="Карточка университета">
-            <div className={styles.detailHeader}>
-              <h3>{selected.name}</h3>
-              <button
-                type="button"
-                className={styles.detailClose}
-                aria-label="Закрыть"
-                onClick={() => setSelected(null)}
-              >
-                ×
-              </button>
-            </div>
-            <p className={styles.detailMeta}>
-              {countryRu(selected.country)}
-              {selected.city ? ` · ${selected.city}` : ""}
-            </p>
-            <div className={styles.detailGrid}>
-              <div className={styles.detailFact}>
-                <span>Стоимость</span>
-                <strong>{selected.tuition_display || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Поступление</span>
-                <strong>{selected.acceptance_rate || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Помощь</span>
-                <strong>{selected.aid_max || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Полный грант</span>
-                <strong>{selected.full_grant ? "Да" : "Нет данных"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Ранний дедлайн</span>
-                <strong>{selected.early_deadline || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Основной дедлайн</span>
-                <strong>{selected.regular_deadline || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Типы помощи</span>
-                <strong>{(selected.aid_types || []).join(", ") || "—"}</strong>
-              </div>
-              <div className={styles.detailFact}>
-                <span>Язык</span>
-                <strong>{selected.lang || "—"}</strong>
-              </div>
-            </div>
-          </aside>
-        ) : null}
       </div>
       <ToTop />
     </DashboardShell>

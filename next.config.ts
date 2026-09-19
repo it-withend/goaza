@@ -8,6 +8,11 @@ const nextConfig = {
         hostname: "logos.context.dev",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };

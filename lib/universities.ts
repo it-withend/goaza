@@ -74,6 +74,13 @@ export async function fetchBrowseUniversities(): Promise<University[]> {
   return fetchUniversities({ sort: "name", limit: 2000 });
 }
 
+export async function fetchUniversityBySlug(slug: string): Promise<University | null> {
+  const sb = getSupabaseAnon();
+  const { data, error } = await sb.from("universities").select("*").eq("slug", slug).maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as University | null) ?? null;
+}
+
 export function groupByCountry(unis: University[]) {
   const map = new Map<string, University[]>();
   for (const u of unis) {
