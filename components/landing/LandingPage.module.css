@@ -151,50 +151,79 @@
 
 .map {
   position: relative;
-  min-height: 420px;
-  border-radius: 24px;
-  overflow: hidden;
-  background:
-    linear-gradient(145deg, #2c2c2c, #1a1a1a 58%, #0f0f0f),
-    var(--ink);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 24px 60px rgba(26, 26, 26, 0.22);
-}
-
-.globeWrap {
-  position: absolute;
-  inset: 0;
+  min-height: min(52vh, 480px);
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   display: grid;
   place-items: center;
 }
 
+.globeWrap {
+  position: relative;
+  width: min(100%, 520px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.globeGlow {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 160, 23, 0.28) 0%, rgba(212, 160, 23, 0.08) 42%, transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  animation: globePulse 4.5s ease-in-out infinite;
+}
+
 .globeHint {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(10, 10, 10, 0.72);
-  color: #f5f5f2;
-  font-size: 0.86rem;
-  backdrop-filter: blur(10px);
+  min-width: min(90%, 240px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(26, 26, 26, 0.08);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
   pointer-events: none;
+  box-shadow: 0 8px 24px rgba(26, 26, 26, 0.08);
+  text-align: center;
 }
 
 .globeHint strong {
   font-family: "Source Serif 4", Georgia, serif;
-  font-size: 1.05rem;
-  color: #d4a017;
+  font-size: 1rem;
+  color: #8a6a12;
 }
 
 .globeSkeleton {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(26, 26, 26, 0.45);
   font-weight: 600;
+}
+
+@keyframes globePulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
 }
 
 .title {
@@ -331,33 +360,106 @@
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0 clamp(18px, 4vw, 40px) 28px;
-  padding: 16px 18px;
-  border-radius: 18px;
-  background: rgba(252, 251, 247, 0.72);
-  border: 1px solid var(--hairline);
-  backdrop-filter: blur(18px);
+  gap: 14px;
+  margin: 0 clamp(18px, 4vw, 40px) 32px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  backdrop-filter: none;
 }
 
 .stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 10px 28px rgba(26, 26, 26, 0.05);
+  animation: statIn 560ms ease both;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(26, 26, 26, 0.09);
+  border-color: rgba(212, 160, 23, 0.35);
+}
+
+.statA {
+  animation-delay: 80ms;
+}
+.statB {
+  animation-delay: 160ms;
+}
+.statC {
+  animation-delay: 240ms;
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: grid;
-  gap: 4px;
+  place-items: center;
+  color: #8a6a12;
+  background: linear-gradient(145deg, rgba(212, 160, 23, 0.22), rgba(212, 160, 23, 0.08));
+  flex-shrink: 0;
+  animation: iconFloat 3.2s ease-in-out infinite;
+}
+
+.statB .statIcon {
+  animation-delay: 0.4s;
+}
+.statC .statIcon {
+  animation-delay: 0.8s;
+}
+
+.statIcon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .stat small {
+  display: block;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(16, 21, 40, 0.58);
+  color: rgba(26, 26, 26, 0.55);
 }
 
 .stat strong {
+  display: block;
   font-variant-numeric: tabular-nums;
-  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(1.55rem, 2.6vw, 2.15rem);
   letter-spacing: -0.02em;
   color: var(--ink);
+  line-height: 1.1;
+}
+
+@keyframes statIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .modalBackdrop {
@@ -483,7 +585,7 @@
   }
 
   .map {
-    min-height: 280px;
+    min-height: 300px;
   }
 
   .ctaRow {
@@ -520,8 +622,15 @@
 @media (prefers-reduced-motion: reduce) {
   .route,
   .marker,
-  .floatingUniversity {
+  .floatingUniversity,
+  .globeGlow,
+  .stat,
+  .statIcon {
     animation: none;
+  }
+
+  .stat:hover {
+    transform: none;
   }
 
   .route {

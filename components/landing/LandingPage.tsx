@@ -78,18 +78,56 @@ export function LandingPage({
       </section>
 
       <section className={styles.stats} aria-label="Размер базы">
-        <div className={styles.stat}>
-          <small>Университетов</small>
-          <strong>{formatUniversityCount(stats.total)}</strong>
-        </div>
-        <div className={styles.stat}>
-          <small>Стран</small>
-          <strong>{formatStat(stats.countries)}</strong>
-        </div>
-        <div className={styles.stat}>
-          <small>Полных грантов</small>
-          <strong>{formatStat(stats.grants)}</strong>
-        </div>
+        <article className={`${styles.stat} ${styles.statA}`}>
+          <span className={styles.statIcon} aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <small>Университетов</small>
+            <strong>{formatUniversityCount(stats.total)}</strong>
+          </div>
+        </article>
+        <article className={`${styles.stat} ${styles.statB}`}>
+          <span className={styles.statIcon} aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+              <path
+                d="M3 12h18M12 3c2.5 2.8 3.8 5.8 3.8 9S14.5 18.2 12 21c-2.5-2.8-3.8-5.8-3.8-9S9.5 5.8 12 3Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <small>Стран</small>
+            <strong>{formatStat(stats.countries)}</strong>
+          </div>
+        </article>
+        <article className={`${styles.stat} ${styles.statC}`}>
+          <span className={styles.statIcon} aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l2.2 4.5 5 .7-3.6 3.5.9 5.1L12 14.8 7.5 16.8l.9-5.1L4.8 8.2l5-.7L12 3Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <small>Полных грантов</small>
+            <strong>{formatStat(stats.grants)}</strong>
+          </div>
+        </article>
       </section>
 
       <TelegramGateModal
