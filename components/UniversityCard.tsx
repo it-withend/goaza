@@ -8,14 +8,17 @@ import styles from "./dashboard/Dashboard.module.css";
 
 export function UniversityCard({
   u,
+  catalogQuery = "",
   staggerIndex = 0,
 }: {
   u: University;
+  catalogQuery?: string;
   staggerIndex?: number;
 }) {
   const ru = countryRu(u.country);
   const nearestDeadline = u.early_deadline || u.regular_deadline;
-  const href = `/dashboard/u/${encodeURIComponent(u.slug)}`;
+  const from = catalogQuery ? `?from=${encodeURIComponent(catalogQuery)}` : "";
+  const href = `/dashboard/u/${encodeURIComponent(u.slug)}${from}`;
 
   return (
     <article
@@ -61,6 +64,21 @@ export function UniversityCard({
             </div>
           </div>
         </header>
+
+        <div className={styles.cardFacts}>
+          <span>
+            <em>Помощь</em> {u.aid_max || "—"}
+          </span>
+          <span>
+            <em>Язык</em> {u.lang || "—"}
+          </span>
+          <span>
+            <em>Дедлайн</em> {nearestDeadline || "—"}
+          </span>
+          <span>
+            <em>Грант</em> {u.full_grant ? "да" : "нет данных"}
+          </span>
+        </div>
         <span className={styles.cardCta}>Открыть профиль →</span>
       </Link>
     </article>

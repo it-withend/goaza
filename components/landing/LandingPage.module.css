@@ -161,6 +161,42 @@
   box-shadow: 0 24px 60px rgba(26, 26, 26, 0.22);
 }
 
+.globeWrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.globeHint {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(10, 10, 10, 0.72);
+  color: #f5f5f2;
+  font-size: 0.86rem;
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+.globeHint strong {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.05rem;
+  color: #d4a017;
+}
+
+.globeSkeleton {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
 .title {
   margin: 0;
   font-family: "Source Serif 4", Georgia, serif;

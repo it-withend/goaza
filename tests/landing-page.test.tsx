@@ -7,6 +7,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
 }));
 
+vi.mock("@/components/landing/WorldGlobe", () => ({
+  WorldGlobe: () => <div>Globe</div>,
+}));
+
 vi.mock("@/components/TelegramLogin", () => ({
   TelegramLogin: ({ onSubscribed }: { onSubscribed: (name: string) => void }) => (
     <button onClick={() => onSubscribed("student")}>Telegram test login</button>
@@ -17,7 +21,15 @@ describe("LandingPage", () => {
   it("shows only factual database metrics and opens Telegram gate", async () => {
     render(
       <LandingPage
-        stats={{ total: 1213, countries: 31, grants: 419 }}
+        stats={{
+          total: 1213,
+          countries: 31,
+          grants: 419,
+          byCountry: [
+            { country: "USA", count: 400 },
+            { country: "UK", count: 80 },
+          ],
+        }}
         botUsername="goazabot"
       />,
     );

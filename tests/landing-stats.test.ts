@@ -9,6 +9,14 @@ describe("summarizeLandingRows", () => {
         { country: "USA", full_grant: false },
         { country: "Korea", full_grant: true },
       ]),
-    ).toEqual({ total: 3, countries: 2, grants: 2 });
+    ).toEqual({
+      total: 3,
+      countries: 2,
+      grants: 2,
+      byCountry: [
+        { country: "USA", count: 2 },
+        { country: "Korea", count: 1 },
+      ],
+    });
   });
 });

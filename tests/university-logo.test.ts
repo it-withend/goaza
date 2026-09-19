@@ -7,8 +7,11 @@ describe("university logo helpers", () => {
       "https://logos.context.dev/?publicClientId=brandLL_test&domain=harvard.edu",
     );
   });
-  it("falls back to stable initials", () => {
+  it("falls back to Google favicon without Logo Link key", () => {
     expect(universityInitials("Australian National University")).toBe("ANU");
     expect(logoLinkUrl(null, "brandLL_test")).toBeNull();
+    expect(logoLinkUrl("harvard.edu")).toBe(
+      "https://www.google.com/s2/favicons?domain=harvard.edu&sz=128",
+    );
   });
 });

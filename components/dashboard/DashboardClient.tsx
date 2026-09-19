@@ -16,45 +16,67 @@ function money(n: number) {
   return n.toLocaleString("en-US");
 }
 
+function readParam(sp: URLSearchParams, key: string, fallback = "") {
+  return sp.get(key) ?? fallback;
+}
+
 export function DashboardClient({
   initial,
   meta,
   accountName,
+  initialQuery = "",
 }: {
   initial: University[];
   meta: Meta;
   accountName: string;
+  initialQuery?: string;
 }) {
   const router = useRouter();
+  const boot = useMemo(() => new URLSearchParams(initialQuery), [initialQuery]);
+
   const [unis, setUnis] = useState(initial);
-  const [q, setQ] = useState("");
-  const [country, setCountry] = useState("");
-  const [grantOnly, setGrantOnly] = useState(false);
-  const [needBlind, setNeedBlind] = useState(false);
-  const [tuitionMax, setTuitionMax] = useState(meta.tuitionMax);
-  const [aidMin, setAidMin] = useState(0);
-  const [rateMax, setRateMax] = useState(100);
-  const [sort, setSort] = useState("name");
-  const [inst, setInst] = useState<string[]>([]);
-  const [aidTypes, setAidTypes] = useState<string[]>([]);
+  const [q, setQ] = useState(() => readParam(boot, "q"));
+  const [country, setCountry] = useState(() => readParam(boot, "country"));
+  const [grantOnly, setGrantOnly] = useState(() => boot.get("grantOnly") === "1");
+  const [needBlind, setNeedBlind] = useState(() => boot.get("needBlind") === "1");
+  const [tuitionMax, setTuitionMax] = useState(() =>
+    boot.has("tuitionMax") ? Number(boot.get("tuitionMax")) : meta.tuitionMax,
+  );
+  const [aidMin, setAidMin] = useState(() => (boot.has("aidMin") ? Number(boot.get("aidMin")) : 0));
+  const [rateMax, setRateMax] = useState(() => (boot.has("rateMax") ? Number(boot.get("rateMax")) : 100));
+  const [sort, setSort] = useState(() => readParam(boot, "sort", "name"));
+  const [inst, setInst] = useState(() => boot.get("inst")?.split(",").filter(Boolean) || []);
+  const [aidTypes, setAidTypes] = useState(() => boot.get("aidTypes")?.split(",").filter(Boolean) || []);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const filtersActive = useMemo(() => {
-    return Boolean(
-      q.trim() ||
-        country ||
-        grantOnly ||
-        needBlind ||
-        tuitionMax < meta.tuitionMax ||
-        aidMin > 0 ||
-        rateMax < 100 ||
-        inst.length ||
-        aidTypes.length ||
-        sort !== "name",
-    );
+  const catalogQuery = useMemo(() => {
+    const sp = new URLSearchParams();
+    if (q.trim()) sp.set("q", q.trim());
+    if (country) sp.set("country", country);
+    if (grantOnly) sp.set("grantOnly", "1");
+    if (needBlind) sp.set("needBlind", "1");
+    if (tuitionMax < meta.tuitionMax) sp.set("tuitionMax", String(tuitionMax));
+    if (aidMin > 0) sp.set("aidMin", String(aidMin));
+    if (rateMax < 100) sp.set("rateMax", String(rateMax));
+    if (inst.length) sp.set("inst", inst.join(","));
+    if (aidTypes.length) sp.set("aidTypes", aidTypes.join(","));
+    if (sort !== "name") sp.set("sort", sort);
+    const raw = sp.toString();
+    return raw ? `?${raw}` : "";
   }, [q, country, grantOnly, needBlind, tuitionMax, aidMin, rateMax, inst, aidTypes, sort, meta.tuitionMax]);
+
+  useEffect(() => {
+    const next = catalogQuery ? `/dashboard${catalogQuery}` : "/dashboard";
+    if (typeof window !== "undefined") {
+      const current = `${window.location.pathname}${window.location.search}`;
+      if (current === next) return;
+    }
+    router.replace(next, { scroll: false });
+  }, [catalogQuery, router]);
+
+  const filtersActive = useMemo(() => Boolean(catalogQuery), [catalogQuery]);
 
   const load = useCallback(async () => {
     if (!filtersActive) {
@@ -384,7 +406,12 @@ export function DashboardClient({
                 {countryRu(c)} ({list.length})
               </h2>
               {list.map((u, index) => (
-                <UniversityCard key={u.id || u.slug} u={u} staggerIndex={groupIndex * 3 + index} />
+                <UniversityCard
+                  key={u.id || u.slug}
+                  u={u}
+                  catalogQuery={catalogQuery}
+                  staggerIndex={groupIndex * 3 + index}
+                />
               ))}
             </section>
           ))}

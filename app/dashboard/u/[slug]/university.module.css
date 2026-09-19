@@ -93,6 +93,19 @@
   font-weight: 700;
 }
 
+.siteLink {
+  display: inline-flex;
+  margin-top: 12px;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(212, 160, 23, 0.95);
+  color: #1a1a1a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .body {
   max-width: 960px;
   margin: 0 auto;

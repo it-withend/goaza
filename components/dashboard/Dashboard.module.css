@@ -172,6 +172,28 @@
   color: #8a6a12;
 }
 
+.cardFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.84rem;
+  color: var(--ink);
+}
+
+.cardFacts em {
+  display: block;
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted, #5c5c5c);
+  margin-bottom: 2px;
+}
+
 .card:hover {
   border-color: rgba(212, 160, 23, 0.45);
   box-shadow: 0 14px 36px rgba(26, 26, 26, 0.1);

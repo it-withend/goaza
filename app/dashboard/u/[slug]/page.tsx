@@ -4,6 +4,7 @@ import Link from "next/link";
 import { fetchUniversityBySlug } from "@/lib/universities";
 import { countryRu, INST_LABEL } from "@/lib/types";
 import { campusPhotoUrl } from "@/lib/campus-photo";
+import { websiteUrl } from "@/lib/university-logo";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import styles from "./university.module.css";
@@ -21,20 +22,38 @@ function Row({ label, value }: { label: string; value?: string | number | null |
   );
 }
 
+function safeBackHref(from: string | undefined): string {
+  if (!from) return "/dashboard";
+  try {
+    const decoded = decodeURIComponent(from);
+    if (decoded.startsWith("/dashboard")) return decoded;
+    if (decoded.startsWith("?")) return `/dashboard${decoded}`;
+    if (/^[a-z0-9=&_%.-]+$/i.test(decoded)) return `/dashboard?${decoded}`;
+  } catch {
+    /* ignore */
+  }
+  return "/dashboard";
+}
+
 export default async function UniversityPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const jar = await cookies();
   const session = await readSessionToken(jar.get(SESSION_COOKIE)?.value).catch(() => null);
   if (!session?.subscribed) redirect("/");
 
   const { slug } = await params;
+  const sp = await searchParams;
+  const backHref = safeBackHref(sp.from);
   const u = await fetchUniversityBySlug(slug);
   if (!u) notFound();
 
   const photo = campusPhotoUrl(u.slug);
+  const site = websiteUrl(u.website_domain);
   const tags = [
     ...(u.full_grant ? ["Полный грант"] : []),
     ...(u.need_blind ? ["Need-blind"] : []),
@@ -48,7 +67,7 @@ export default async function UniversityPage({
         <img className={styles.heroImg} src={photo} alt="" />
         <div className={styles.heroShade} />
         <div className={styles.heroInner}>
-          <Link href="/dashboard" className={styles.back}>
+          <Link href={backHref} className={styles.back}>
             ← К списку
           </Link>
           <div className={styles.heroBrand}>
@@ -65,6 +84,11 @@ export default async function UniversityPage({
                     <span key={t}>{t}</span>
                   ))}
                 </div>
+              ) : null}
+              {site ? (
+                <a className={styles.siteLink} href={site} target="_blank" rel="noopener noreferrer">
+                  Официальный сайт ↗
+                </a>
               ) : null}
             </div>
           </div>
@@ -104,6 +128,7 @@ export default async function UniversityPage({
             <Row label="Политика для иностранцев" value={u.intl_aid_policy} />
             <Row label="Как подать на помощь" value={u.how_apply_aid} />
             <Row label="Need-blind" value={u.need_blind} />
+            <Row label="Сайт" value={site} />
           </dl>
         </section>
 

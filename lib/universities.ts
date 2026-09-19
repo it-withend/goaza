@@ -15,15 +15,15 @@ export type UniQuery = {
   limit?: number;
 };
 
-export async function fetchUniversities(query: UniQuery = {}): Promise<University[]> {
-  const sb = getSupabaseAnon();
+const PAGE = 1000;
+
+function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
   let q = sb.from("universities").select("*");
 
   if (query.country) q = q.eq("country", query.country);
   if (query.grantOnly) q = q.eq("full_grant", true);
   if (query.needBlind) q = q.eq("need_blind", true);
   if (query.tuitionMax != null && Number.isFinite(query.tuitionMax)) {
-    // Active tuition filter: unknown tuition fails out
     q = q.not("tuition_num", "is", null).lte("tuition_num", query.tuitionMax);
   }
   if (query.aidMin != null && query.aidMin > 0) {
@@ -33,7 +33,6 @@ export async function fetchUniversities(query: UniQuery = {}): Promise<Universit
     q = q.not("rate_num", "is", null).lte("rate_num", query.rateMax);
   }
   if (query.inst && query.inst.length) {
-    // AND across tags: contains all
     q = q.contains("inst_tags", query.inst);
   }
   if (query.aidTypes && query.aidTypes.length) {
@@ -63,15 +62,30 @@ export async function fetchUniversities(query: UniQuery = {}): Promise<Universit
       q = q.order("country").order("name");
   }
 
-  q = q.limit(query.limit ?? 2000);
+  return q;
+}
 
-  const { data, error } = await q;
-  if (error) throw new Error(error.message);
-  return (data || []) as University[];
+export async function fetchUniversities(query: UniQuery = {}): Promise<University[]> {
+  const sb = getSupabaseAnon();
+  const hardLimit = query.limit ?? 5000;
+  const all: University[] = [];
+  let from = 0;
+
+  while (from < hardLimit) {
+    const to = Math.min(from + PAGE - 1, hardLimit - 1);
+    const { data, error } = await applyFilters(sb, query).range(from, to);
+    if (error) throw new Error(error.message);
+    const page = (data || []) as University[];
+    all.push(...page);
+    if (page.length < PAGE) break;
+    from += PAGE;
+  }
+
+  return all;
 }
 
 export async function fetchBrowseUniversities(): Promise<University[]> {
-  return fetchUniversities({ sort: "name", limit: 2000 });
+  return fetchUniversities({ sort: "name", limit: 5000 });
 }
 
 export async function fetchUniversityBySlug(slug: string): Promise<University | null> {
@@ -91,6 +105,23 @@ export function groupByCountry(unis: University[]) {
   return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 }
 
+function normalizeTagList(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map(String).map((t) => t.trim()).filter(Boolean);
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return normalizeTagList(parsed);
+    } catch {
+      /* ignore */
+    }
+    return raw
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 export function computeMeta(unis: University[]) {
   const countries = new Map<string, number>();
   const inst = new Map<string, number>();
@@ -103,10 +134,9 @@ export function computeMeta(unis: University[]) {
     if (u.full_grant) grants++;
     if (u.tuition_num && u.tuition_num > tMax) tMax = u.tuition_num;
     if (u.aid_num && u.aid_num > aMax) aMax = u.aid_num;
-    for (const t of u.inst_tags || []) inst.set(t, (inst.get(t) || 0) + 1);
-    for (const t of u.aid_types || []) {
-      const key = t.trim();
-      if (key) aidTypes.set(key, (aidTypes.get(key) || 0) + 1);
+    for (const t of normalizeTagList(u.inst_tags)) inst.set(t, (inst.get(t) || 0) + 1);
+    for (const t of normalizeTagList(u.aid_types)) {
+      aidTypes.set(t, (aidTypes.get(t) || 0) + 1);
     }
   }
   return {

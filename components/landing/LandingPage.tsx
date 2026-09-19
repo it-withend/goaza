@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { LandingStats } from "@/lib/landing-stats";
 import { TelegramGateModal } from "./TelegramGateModal";
+import { WorldGlobe } from "./WorldGlobe";
 import styles from "./LandingPage.module.css";
 
 function formatStat(value: number): string {
@@ -57,7 +58,8 @@ export function LandingPage({
             Найди вуз, который подходит <em>именно тебе.</em>
           </h1>
           <p className={styles.lede}>
-            Стоимость, гранты, шансы поступления и дедлайны — в одной понятной базе.
+            Стоимость, гранты, шансы поступления и дедлайны — в одной понятной базе по{" "}
+            {formatStat(stats.countries)} странам.
           </p>
           <div className={styles.ctaRow}>
             <button
@@ -70,25 +72,8 @@ export function LandingPage({
           </div>
         </div>
 
-        <div className={styles.map} aria-label="Карта университетов">
-          <div className={styles.mapGrid} aria-hidden="true" />
-          <svg className={styles.mapSvg} viewBox="0 0 700 520" aria-hidden="true">
-            <path className={styles.route} d="M65 390 Q250 70 620 250" />
-            <path className={`${styles.route} ${styles.routeAlt}`} d="M110 155 Q330 360 605 105" />
-            <circle className={styles.marker} cx="65" cy="390" r="6" />
-            <circle className={`${styles.marker} ${styles.markerPulse}`} cx="620" cy="250" r="6" />
-            <circle className={styles.marker} cx="110" cy="155" r="5" />
-            <circle className={`${styles.marker} ${styles.markerAccent}`} cx="605" cy="105" r="6" />
-          </svg>
-          <span className={`${styles.mapLabel} ${styles.floatingUniversity} ${styles.labelA}`}>
-            Harvard University · полный грант
-          </span>
-          <span className={`${styles.mapLabel} ${styles.floatingUniversity} ${styles.labelB}`}>
-            KAIST · full coverage
-          </span>
-          <span className={`${styles.mapLabel} ${styles.floatingUniversity} ${styles.labelC}`}>
-            ANU · 20 программ
-          </span>
+        <div className={styles.map} aria-label="Интерактивный глобус университетов">
+          <WorldGlobe byCountry={stats.byCountry} />
         </div>
       </section>
 
