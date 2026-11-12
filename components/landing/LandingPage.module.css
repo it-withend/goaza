@@ -498,6 +498,16 @@
   line-height: 1.5;
 }
 
+.steps {
+  margin: 0 0 16px;
+  padding: 0 0 0 20px;
+  display: grid;
+  gap: 6px;
+  color: rgba(16, 21, 40, 0.78);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
 .channelLink {
   display: inline-flex;
   align-items: center;
@@ -585,16 +595,21 @@
 
   .hero {
     grid-template-columns: 1fr;
-    padding: 28px 16px 96px;
+    padding: 20px 16px 28px;
     align-items: start;
   }
 
   .title {
-    font-size: clamp(2.2rem, 10vw, 3rem);
+    font-size: clamp(1.95rem, 8.2vw, 2.65rem);
+    overflow-wrap: break-word;
   }
 
   .map {
     min-height: 300px;
+  }
+
+  .globeHint {
+    bottom: 14px;
   }
 
   .ctaRow {

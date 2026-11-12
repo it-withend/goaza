@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
-    exclude: ["**/node_modules/**", "**/.worktrees/**", "**/dist/**"],
+    exclude: ["**/node_modules/**", "**/.worktrees/**", "**/.claude/**", "**/dist/**"],
   },
   esbuild: { jsx: "automatic" },
   resolve: { alias: { "@": path.resolve(__dirname, ".") } },

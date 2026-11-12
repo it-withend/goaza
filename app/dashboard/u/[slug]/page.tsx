@@ -76,6 +76,9 @@ export default async function UniversityPage({
   const backHref = safeBackHref(sp.from);
   const u = await fetchUniversityBySlug(slug);
   if (!u) notFound();
+  if (u.slug !== slug) {
+    redirect(`/dashboard/u/${u.slug}${sp.from ? `?from=${encodeURIComponent(sp.from)}` : ""}`);
+  }
 
   const photo = campusPhotoUrl(u.slug);
   const site = websiteUrl(u.website_domain);
@@ -167,7 +170,9 @@ export default async function UniversityPage({
           </div>
           <div>
             <small>Ближайший дедлайн</small>
-            <strong>{(early || regular)?.label || "—"}</strong>
+            <strong>
+              {(early && (early.daysLeft == null || early.daysLeft >= 0) ? early : regular || early)?.label || "—"}
+            </strong>
           </div>
         </section>
 

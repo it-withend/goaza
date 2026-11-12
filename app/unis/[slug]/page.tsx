@@ -53,6 +53,9 @@ export default async function PublicUniversityPage({ params }: Props) {
   if (session?.subscribed) {
     redirect(`/dashboard/u/${u.slug}`);
   }
+  if (u.slug !== slug) {
+    redirect(`/unis/${u.slug}`);
+  }
 
   const teaser = toTeaser(u);
   const related = await fetchRelatedUniversities(u.country, u.slug).catch(() => []);

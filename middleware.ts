@@ -23,10 +23,15 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (url.pathname === "/") {
+  if (url.pathname === "/" || url.pathname === "/unis" || url.pathname.startsWith("/unis/")) {
     const session = await readSessionToken(req.cookies.get(SESSION_COOKIE)?.value).catch(() => null);
     if (session?.subscribed) {
-      url.pathname = "/dashboard";
+      if (url.pathname.startsWith("/unis/")) {
+        const slug = url.pathname.slice("/unis/".length);
+        url.pathname = `/dashboard/u/${slug}`;
+      } else {
+        url.pathname = "/dashboard";
+      }
       return NextResponse.redirect(url);
     }
   }

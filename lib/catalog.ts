@@ -1,3 +1,4 @@
+import { describeDeadline } from "@/lib/deadline";
 import type { University } from "@/lib/types";
 
 /**
@@ -67,6 +68,12 @@ export function toCatalogUni(u: University, hasLogo: boolean): CatalogUni {
     .map((x) => x.toLowerCase())
     .filter((x) => !searchText.includes(x));
   const haystack = [searchText, ...extra].filter(Boolean).join(" ");
+  const earlyInfo = describeDeadline(u.early_deadline);
+  const nextDeadline =
+    u.early_deadline && earlyInfo?.daysLeft != null && earlyInfo.daysLeft < 0 && u.regular_deadline
+      ? u.regular_deadline
+      : u.early_deadline || u.regular_deadline || null;
+
   return {
     slug: u.slug,
     name: u.name,
@@ -76,7 +83,7 @@ export function toCatalogUni(u: University, hasLogo: boolean): CatalogUni {
     need_blind: Boolean(u.need_blind),
     inst_tags: list(u.inst_tags),
     aid_types: list(u.aid_types),
-    deadline: u.early_deadline || u.regular_deadline || null,
+    deadline: nextDeadline,
     tuition_display: u.tuition_display,
     tuition_num: u.tuition_num,
     acceptance_rate: u.acceptance_rate,

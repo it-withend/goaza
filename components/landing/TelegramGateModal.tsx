@@ -40,11 +40,14 @@ export function TelegramGateModal({
           ×
         </button>
         <h2 id="telegram-title">Открой атлас</h2>
-        <p>
-          1) Подпишись на канал @studyaza. 2) Войди через Telegram. Без
-          подписки вход не откроется. Открывай сайт только на{" "}
-          <strong>goaza.xyz</strong>.
-        </p>
+        <ol className={styles.steps}>
+          <li>
+            Подпишись на Telegram-канал <strong>@studyaza</strong>
+          </li>
+          <li>
+            Войди через кнопку Telegram ниже (домен <strong>goaza.xyz</strong>)
+          </li>
+        </ol>
         <a
           className={styles.channelLink}
           href="https://t.me/studyaza"
