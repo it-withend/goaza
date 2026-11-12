@@ -616,7 +616,7 @@
   overflow: hidden;
   /* Skip layout/paint for off-screen cards. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 210px;
+  contain-intrinsic-size: auto 235px;
 }
 
 .card:hover {
