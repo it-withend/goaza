@@ -3,40 +3,17 @@ import { NextResponse } from "next/server";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { fetchUniversities, type UniQuery } from "@/lib/universities";
 
-function hasFilterParams(sp: URLSearchParams) {
-  const keys = [
-    "q",
-    "country",
-    "grantOnly",
-    "needBlind",
-    "tuitionMax",
-    "aidMin",
-    "rateMax",
-    "inst",
-    "aidTypes",
-    "sort",
-  ];
-  return keys.some((k) => {
-    const v = sp.get(k);
-    if (v == null || v === "") return false;
-    if (k === "tuitionMax" && v === "120000") return false;
-    if (k === "aidMin" && v === "0") return false;
-    if (k === "rateMax" && v === "100") return false;
-    if (k === "sort" && v === "name") return false;
-    return true;
-  });
-}
-
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const sp = url.searchParams;
   const jar = await cookies();
   const session = await readSessionToken(jar.get(SESSION_COOKIE)?.value);
 
-  if (hasFilterParams(sp) && !session?.subscribed) {
+  // The catalog is gated: no data leaves this endpoint without a subscribed session.
+  if (!session?.subscribed) {
     return NextResponse.json(
       { error: "subscription_required", message: "Нужна подписка на @studyaza" },
-      { status: 401 },
+      { status: 401, headers: { "Cache-Control": "private, no-store" } },
     );
   }
 
@@ -56,7 +33,10 @@ export async function GET(req: Request) {
 
   try {
     const data = await fetchUniversities(query);
-    return NextResponse.json({ data, count: data.length });
+    return NextResponse.json(
+      { data, count: data.length },
+      { headers: { "Cache-Control": "private, no-store" } },
+    );
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Query failed";
     return NextResponse.json({ error: msg }, { status: 500 });
