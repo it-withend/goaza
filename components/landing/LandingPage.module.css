@@ -589,8 +589,8 @@
   }
 
   .ctaRow {
-    height: 0;
-    margin: 0;
+    height: auto;
+    margin: 12px 0 0;
     overflow: visible;
   }
 
@@ -642,4 +642,18 @@
     transition: none;
     transform: none;
   }
+}
+
+.browseLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 6px;
+  color: rgba(26, 26, 26, 0.65);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.browseLink:hover {
+  color: #8a6a12;
 }

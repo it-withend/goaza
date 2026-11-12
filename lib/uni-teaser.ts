@@ -1,0 +1,107 @@
+import { countryRu, INST_LABEL, type University } from "@/lib/types";
+
+/**
+ * Public, indexable slice of a university profile. Only these fields may leave the
+ * server for anonymous visitors; everything else stays behind the Telegram gate.
+ */
+export type UniTeaser = {
+  slug: string;
+  name: string;
+  countryRu: string;
+  city: string | null;
+  tuitionBand: string | null;
+  acceptance: string | null;
+  fullGrant: boolean;
+  needBlind: boolean;
+  instType: string | null;
+  majors: string[];
+  enrollment: string | null;
+  intlPct: string | null;
+  /** Labels of the gated fields that actually have data for this university. */
+  locked: string[];
+};
+
+export function tuitionBand(n: number | null | undefined): string | null {
+  if (n == null || !Number.isFinite(n) || n < 0) return null;
+  if (n === 0) return "Бесплатно";
+  if (n < 5000) return "до $5 000 / год";
+  if (n < 15000) return "$5–15 тыс. / год";
+  if (n < 30000) return "$15–30 тыс. / год";
+  if (n < 50000) return "$30–50 тыс. / год";
+  return "от $50 тыс. / год";
+}
+
+function clean(v: string | null | undefined): string | null {
+  const s = (v ?? "").trim();
+  return s ? s : null;
+}
+
+function instTypeOf(u: Pick<University, "inst_type" | "inst_tags">): string | null {
+  const t = clean(u.inst_type);
+  if (t) return t;
+  const tags = Array.isArray(u.inst_tags) ? u.inst_tags : [];
+  const labels = tags.map((x) => INST_LABEL[x]).filter(Boolean);
+  return labels.length ? labels.join(" / ") : null;
+}
+
+function majorsOf(raw: string | null): string[] {
+  const s = clean(raw);
+  if (!s) return [];
+  return s
+    .split(/[,;]/)
+    .map((x) => x.trim())
+    .filter((x) => x.length > 1 && x.length < 60)
+    .slice(0, 4);
+}
+
+const LOCKED_FIELDS: [keyof University, string][] = [
+  ["tuition_display", "Точная стоимость обучения"],
+  ["aid_max", "Максимальная финансовая помощь"],
+  ["avg_aid_award", "Средний размер гранта"],
+  ["intl_aid_policy", "Политика помощи иностранцам"],
+  ["regular_deadline", "Дедлайны подачи"],
+  ["lang", "Языковые требования"],
+  ["sat", "SAT / экзамены"],
+  ["essay", "Эссе"],
+  ["how_apply_aid", "Как подать на грант"],
+  ["merit_scholarship_name", "Стипендии за успеваемость"],
+  ["living_note", "Проживание и расходы"],
+];
+
+export function toTeaser(u: University): UniTeaser {
+  const locked = LOCKED_FIELDS.filter(([k]) => {
+    const v = u[k];
+    return typeof v === "string" ? v.trim() !== "" : v != null;
+  }).map(([, label]) => label);
+
+  return {
+    slug: u.slug,
+    name: u.name,
+    countryRu: countryRu(u.country),
+    city: clean(u.city),
+    tuitionBand: tuitionBand(u.tuition_num),
+    acceptance: clean(u.acceptance_rate),
+    fullGrant: Boolean(u.full_grant),
+    needBlind: Boolean(u.need_blind),
+    instType: instTypeOf(u),
+    majors: majorsOf(u.majors),
+    enrollment: clean(u.undergrad_enrollment),
+    intlPct: clean(u.intl_undergrad_pct),
+    locked,
+  };
+}
+
+/** Short factual sentence for meta description / intro copy. */
+export function teaserSummary(t: UniTeaser): string {
+  const parts: string[] = [];
+  const place = [t.countryRu, t.city].filter(Boolean).join(", ");
+  parts.push(`${t.name} — университет (${place}).`);
+  if (t.acceptance) parts.push(`Acceptance rate — ${t.acceptance}.`);
+  if (t.tuitionBand) parts.push(`Стоимость обучения: ${t.tuitionBand}.`);
+  parts.push(
+    t.fullGrant
+      ? "Есть полный грант для иностранных студентов."
+      : "Полного гранта для иностранцев нет — смотри частичную помощь в атласе.",
+  );
+  return parts.join(" ");
+}

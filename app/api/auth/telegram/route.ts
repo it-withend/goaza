@@ -9,7 +9,14 @@ import {
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as Record<string, string>;
+    const raw: unknown = await req.json().catch(() => null);
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    }
+    const body: Record<string, string> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      if (typeof v === "string" || typeof v === "number") body[k] = String(v);
+    }
     if (!body.id || !body.hash || !body.auth_date) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
@@ -51,8 +58,8 @@ export async function POST(req: Request) {
     });
     return res;
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Auth failed";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("[api/auth/telegram]", e);
+    return NextResponse.json({ error: "auth_failed" }, { status: 500 });
   }
 }
 

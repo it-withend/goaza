@@ -88,7 +88,11 @@ export async function fetchBrowseUniversities(): Promise<University[]> {
   return fetchUniversities({ sort: "name", limit: 5000 });
 }
 
+/** Slugs are generated as lowercase ascii + dashes; anything else is a 404, not a DB call. */
+export const SLUG_RE = /^[a-z0-9-]{1,160}$/;
+
 export async function fetchUniversityBySlug(slug: string): Promise<University | null> {
+  if (typeof slug !== "string" || !SLUG_RE.test(slug)) return null;
   const sb = getSupabaseAnon();
   const { data, error } = await sb.from("universities").select("*").eq("slug", slug).maybeSingle();
   if (error) throw new Error(error.message);
@@ -148,4 +152,44 @@ export function computeMeta(unis: University[]) {
     tuitionMax: Math.ceil(tMax / 500) * 500 || 120000,
     aidMax: Math.ceil(aMax / 500) * 500 || 100000,
   };
+}
+
+export type UniDirectoryEntry = Pick<University, "slug" | "name" | "country" | "city" | "full_grant">;
+
+/** Lightweight public directory (names + links only) for SEO hub pages. */
+export async function fetchUniversityDirectory(): Promise<UniDirectoryEntry[]> {
+  const sb = getSupabaseAnon();
+  const all: UniDirectoryEntry[] = [];
+  for (let from = 0; from < 10000; from += PAGE) {
+    const { data, error } = await sb
+      .from("universities")
+      .select("slug,name,country,city,full_grant")
+      .order("country")
+      .order("name")
+      .range(from, from + PAGE - 1);
+    if (error) throw new Error(error.message);
+    const page = (data || []) as UniDirectoryEntry[];
+    all.push(...page);
+    if (page.length < PAGE) break;
+  }
+  return all;
+}
+
+/** A few other universities in the same country, for internal linking. */
+export async function fetchRelatedUniversities(
+  country: string,
+  excludeSlug: string,
+  limit = 8,
+): Promise<UniDirectoryEntry[]> {
+  const sb = getSupabaseAnon();
+  const { data, error } = await sb
+    .from("universities")
+    .select("slug,name,country,city,full_grant")
+    .eq("country", country)
+    .neq("slug", excludeSlug)
+    .order("full_grant", { ascending: false })
+    .order("name")
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data || []) as UniDirectoryEntry[];
 }

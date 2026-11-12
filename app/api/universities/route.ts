@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { fetchUniversities, type UniQuery } from "@/lib/universities";
 
+function num(v: string | null): number | undefined {
+  if (v == null || v === "") return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const sp = url.searchParams;
@@ -22,9 +28,9 @@ export async function GET(req: Request) {
     country: sp.get("country") || undefined,
     grantOnly: sp.get("grantOnly") === "1",
     needBlind: sp.get("needBlind") === "1",
-    tuitionMax: sp.has("tuitionMax") ? Number(sp.get("tuitionMax")) : undefined,
-    aidMin: sp.has("aidMin") ? Number(sp.get("aidMin")) : undefined,
-    rateMax: sp.has("rateMax") ? Number(sp.get("rateMax")) : undefined,
+    tuitionMax: num(sp.get("tuitionMax")),
+    aidMin: num(sp.get("aidMin")),
+    rateMax: num(sp.get("rateMax")),
     inst: sp.get("inst")?.split(",").filter(Boolean),
     aidTypes: sp.get("aidTypes")?.split(",").filter(Boolean),
     sort: (sp.get("sort") as UniQuery["sort"]) || "name",
@@ -38,7 +44,7 @@ export async function GET(req: Request) {
       { headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Query failed";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("[api/universities]", e);
+    return NextResponse.json({ error: "query_failed" }, { status: 500 });
   }
 }

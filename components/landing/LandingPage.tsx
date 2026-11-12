@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { LandingStats } from "@/lib/landing-stats";
 import { TelegramGateModal } from "./TelegramGateModal";
 import { WorldGlobe } from "./WorldGlobe";
@@ -74,6 +75,9 @@ export function LandingPage({
             >
               Открыть атлас
             </button>
+            <Link href="/unis" className={styles.browseLink}>
+              Список всех вузов →
+            </Link>
           </div>
         </div>
 
