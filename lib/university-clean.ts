@@ -1,7 +1,26 @@
 import domainsJson from "@/scripts/logo-output/domains.json";
+import enrichmentJson from "@/lib/university-enrichment.json";
 import type { University } from "./types";
 
 const EXTRA_DOMAINS: Record<string, string> = domainsJson as Record<string, string>;
+
+interface EnrichmentPatch {
+  city?: string;
+  tuition_num?: number;
+  tuition_display?: string;
+  rate_num?: number;
+  acceptance_rate?: string;
+  undergrad_enrollment?: string;
+  intl_undergrad_pct?: string;
+  intl_undergrad_count?: string;
+  sat?: string;
+  inst_type?: string;
+  inst_tags?: string[];
+  majors?: string;
+  notes?: string;
+}
+
+const ENRICHMENT: Record<string, EnrichmentPatch> = enrichmentJson as Record<string, EnrichmentPatch>;
 
 /**
  * Explicit duplicate university slug mappings: duplicateSlug -> canonicalSlug.
@@ -230,10 +249,56 @@ const MONTH_MAP: Record<string, number> = {
 };
 
 function toCycle2027Iso(month: number, day: number): string {
-  // Admissions cycle 2026/2027: Nov 15 – Dec 31 is late 2026; Jan 1 – Nov 14 is 2027.
-  const year = month === 12 || (month === 11 && day >= 15) ? 2026 : 2027;
+  // Admissions cycle 2026/2027: Oct 1 – Dec 31 is Fall 2026 (Early Action / Early Decision / Sem 1);
+  // Jan 1 – Sep 30 is 2027 (Regular Decision / Spring & Autumn 2027 intakes).
+  const year = month >= 10 ? 2026 : 2027;
   return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
+
+/** Explicit cleanup for messy multi-phrase/ambiguous text deadlines across countries. */
+const DEADLINE_FIXES: Record<string, { early?: string | null; regular?: string | null }> = {
+  // Hungary
+  "university-of-p-cs-hungary": { early: "2027-01-15", regular: "2027-06-30" },
+  "p-zm-ny-p-ter-catholic-university-hungary": { early: "2027-03-31", regular: "2027-05-30" },
+  // Spain
+  "u-tad-university-of-technology-arts-and-design-spain": { early: "2027-06-30" },
+  "united-international-business-school-spain": { early: "2027-05-31" },
+  "ie-university-spain": { early: "Rolling", regular: "2027-05-31" },
+  "istituto-europeo-di-design-spain": { early: "2027-06-30" },
+  // UAE
+  "the-british-university-in-dubai-uae": { early: "Зависит от программы", regular: null },
+  "zayed-university-uae": { early: "2027-06-30", regular: null },
+  "ajman-university-uae": { early: "2027-08-15", regular: null },
+  "canadian-university-in-dubai-uae": { early: "2027-01-15", regular: "2027-08-31" },
+  "united-arab-emirates-university-uae": { early: "2027-05-31", regular: "2027-07-31" },
+  // Netherlands
+  "utrecht-university-netherlands": { early: "2027-02-01", regular: "2027-04-01" },
+  "university-of-amsterdam-netherlands": { early: "2027-01-15", regular: "2027-03-01" },
+  "radboud-university-nijmegen-netherlands": { early: "2027-01-15", regular: "2027-04-01" },
+  // Poland
+  "jagiellonian-university-poland": { early: "2027-04-07", regular: "2027-06-13" },
+  "university-of-gdansk-poland": { early: "2027-07-05", regular: "2027-09-09" },
+  "university-of-rzesz-w-poland": { early: "2027-07-16", regular: null },
+  "university-of-wroclaw-poland": { early: "2027-06-21", regular: "2027-08-31" },
+  // Denmark (Quota 2 intl: Mar 15, Quota 1: Jul 5)
+  "roskilde-university-denmark": { early: "2027-03-15", regular: "2027-07-05" },
+  // South Korea
+  "dongguk-university-south-korea": { early: "2027-05-15", regular: "2027-10-15" },
+  "sogang-university-south-korea": { early: "2026-11-30", regular: "2027-05-15" },
+  // Turkey
+  "sabanci-university-turkey": { early: "2027-05-14", regular: "2027-07-02" },
+  // Australia
+  "university-of-new-south-wales-unsw-australia": { early: "2026-11-30", regular: "2027-03-31" },
+  "university-of-adelaide-australia": { early: "Rolling", regular: null },
+  // Singapore
+  "singapore-management-university-singapore": { early: "2027-03-19", regular: "2027-07-15" },
+  // Czech Republic
+  "charles-university-czech-republic": { early: "2027-02-28", regular: "2027-04-30" },
+  // Northern Cyprus
+  "cyprys-international-university-turkish-republic-of-northern-cyprus": { early: "2027-08-30", regular: null },
+  // UK (UCAS 2027 Equal Consideration: 2027-01-13; Oxbridge/Med: 2026-10-15)
+  "ucl-university-college-of-london-uk": { early: null, regular: "2027-01-13" },
+};
 
 /**
  * Clean corrupted deadlines (shifted IELTS scores, raw URLs) and update past dates to the 2026/2027 cycle.
@@ -375,14 +440,102 @@ export function normalizeUniversityRow(raw: University): University {
   }
 
   // 5. Normalize deadlines to 2026/2027 cycle
-  u.early_deadline = normalizeDeadlineTo2027(u.early_deadline);
-  u.regular_deadline = normalizeDeadlineTo2027(u.regular_deadline);
+  const dfix = DEADLINE_FIXES[u.slug];
+  if (dfix) {
+    if (dfix.early !== undefined) u.early_deadline = dfix.early;
+    else u.early_deadline = normalizeDeadlineTo2027(u.early_deadline);
+    if (dfix.regular !== undefined) u.regular_deadline = dfix.regular;
+    else u.regular_deadline = normalizeDeadlineTo2027(u.regular_deadline);
+  } else {
+    u.early_deadline = normalizeDeadlineTo2027(u.early_deadline);
+    u.regular_deadline = normalizeDeadlineTo2027(u.regular_deadline);
+  }
+
+  // Country-level official deadlines where absent in DB:
+  // UK UCAS 2027 Equal Consideration Deadline = 2027-01-13 (Oxbridge is 2026-10-15)
+  if (
+    u.country === "UK" &&
+    !u.regular_deadline &&
+    u.slug !== "university-of-oxford-uk" &&
+    u.slug !== "university-of-cambridge-uk"
+  ) {
+    u.regular_deadline = "2027-01-13";
+  }
+  // Turkey: Türkiye Bursları government scholarship annual window closes Feb 20
+  if (u.country === "Turkey" && !u.early_deadline && !u.regular_deadline && /TÜRKIYE BURSLARI/i.test(u.notes || "")) {
+    u.early_deadline = "2027-02-20";
+  }
+  // Hungary: Stipendium Hungaricum annual deadline = Jan 15
+  if (u.country === "Hungary" && /STIPENDIUM HUNGARICUM/i.test(u.notes || "")) {
+    if (!u.early_deadline && !u.regular_deadline) {
+      u.early_deadline = "2027-01-15";
+    } else if (u.early_deadline && !u.regular_deadline && /^\d{4}-\d{2}-\d{2}$/.test(u.early_deadline) && u.early_deadline > "2027-01-15") {
+      u.regular_deadline = u.early_deadline;
+      u.early_deadline = "2027-01-15";
+    }
+  }
+
+  // Ensure chronological order when both early & regular are ISO dates (fixes inverted Finland, Austria, Sweden, Germany rows)
+  const isoRe = /^\d{4}-\d{2}-\d{2}$/;
+  if (u.early_deadline && u.regular_deadline && isoRe.test(u.early_deadline) && isoRe.test(u.regular_deadline)) {
+    if (u.early_deadline > u.regular_deadline) {
+      const tmp = u.early_deadline;
+      u.early_deadline = u.regular_deadline;
+      u.regular_deadline = tmp;
+    }
+  }
 
   // 6. Ensure array fields are clean arrays
   u.inst_tags = normalizeList(u.inst_tags);
   u.aid_types = normalizeList(u.aid_types);
 
+  // 7. Fill missing metadata & Russian overview from verified external datasets
+  applyEnrichment(u);
+
   return u;
+}
+
+function hasText(v: string | null | undefined): boolean {
+  return v != null && v.trim().length > 0;
+}
+
+function applyEnrichment(u: University): void {
+  const patch = ENRICHMENT[u.slug] ?? ENRICHMENT[canonicalSlug(u.slug)];
+  if (!patch) return;
+
+  if (!hasText(u.city) && patch.city) u.city = patch.city;
+  if (!u.tuition_num && !hasText(u.tuition_display) && patch.tuition_num && patch.tuition_display) {
+    u.tuition_num = patch.tuition_num;
+    u.tuition_display = patch.tuition_display;
+  }
+  if (u.rate_num == null && !hasText(u.acceptance_rate) && patch.rate_num != null && patch.acceptance_rate) {
+    u.rate_num = patch.rate_num;
+    u.acceptance_rate = patch.acceptance_rate;
+  }
+  if (!hasText(u.undergrad_enrollment) && patch.undergrad_enrollment) {
+    u.undergrad_enrollment = patch.undergrad_enrollment;
+  }
+  if (!hasText(u.intl_undergrad_pct) && !hasText(u.intl_undergrad_count) && patch.intl_undergrad_pct && patch.intl_undergrad_count) {
+    u.intl_undergrad_pct = patch.intl_undergrad_pct;
+    u.intl_undergrad_count = patch.intl_undergrad_count;
+  }
+  if (!hasText(u.sat) && patch.sat) u.sat = patch.sat;
+  if (!hasText(u.inst_type) && patch.inst_type) u.inst_type = patch.inst_type;
+  if (u.inst_tags.length === 0 && patch.inst_tags?.length) {
+    u.inst_tags = normalizeList(patch.inst_tags);
+  }
+  if (!hasText(u.majors) && patch.majors) u.majors = patch.majors;
+
+  if (patch.notes) {
+    if (!hasText(u.notes)) {
+      u.notes = patch.notes;
+    } else if (
+      /^(TÜRKIYE BURSLARI|GLOBAL KOREA SCHOLARSHIP|STIPENDIUM HUNGARICUM)\b/i.test(u.notes!.trim()) &&
+      patch.notes.includes("\n\n")
+    ) {
+      u.notes = patch.notes;
+    }
+  }
 }
 
 /** Merge two normalized University rows (preferring canonical metadata + richest non-null fields). */
@@ -434,6 +587,12 @@ export function mergeUniversityPair(primary: University, secondary: University):
 
   out.early_deadline = preferStr(primary.early_deadline, secondary.early_deadline);
   out.regular_deadline = preferStr(primary.regular_deadline, secondary.regular_deadline);
+  const isoRe = /^\d{4}-\d{2}-\d{2}$/;
+  if (out.early_deadline && out.regular_deadline && isoRe.test(out.early_deadline) && isoRe.test(out.regular_deadline) && out.early_deadline > out.regular_deadline) {
+    const tmp = out.early_deadline;
+    out.early_deadline = out.regular_deadline;
+    out.regular_deadline = tmp;
+  }
   out.lang = preferStr(primary.lang, secondary.lang);
   out.undergrad_enrollment = preferStr(primary.undergrad_enrollment, secondary.undergrad_enrollment);
   out.intl_undergrad_pct = preferStr(primary.intl_undergrad_pct, secondary.intl_undergrad_pct);

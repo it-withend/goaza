@@ -1,4 +1,4 @@
-import { describeDeadline } from "@/lib/deadline";
+import { pickNearestDeadline } from "@/lib/deadline";
 import type { University } from "@/lib/types";
 
 /**
@@ -68,11 +68,7 @@ export function toCatalogUni(u: University, hasLogo: boolean): CatalogUni {
     .map((x) => x.toLowerCase())
     .filter((x) => !searchText.includes(x));
   const haystack = [searchText, ...extra].filter(Boolean).join(" ");
-  const earlyInfo = describeDeadline(u.early_deadline);
-  const nextDeadline =
-    u.early_deadline && earlyInfo?.daysLeft != null && earlyInfo.daysLeft < 0 && u.regular_deadline
-      ? u.regular_deadline
-      : u.early_deadline || u.regular_deadline || null;
+  const nextDeadline = pickNearestDeadline(u.early_deadline, u.regular_deadline)?.raw ?? null;
 
   return {
     slug: u.slug,

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { fetchRelatedUniversities, fetchUniversityBySlug } from "@/lib/universities";
-import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
+import { daysLeftLabel, describeDeadline, pickNearestDeadline } from "@/lib/deadline";
 import { countryRu, INST_LABEL } from "@/lib/types";
 import { campusPhotoUrl } from "@/lib/campus-photo";
 import { websiteUrl } from "@/lib/university-logo";
@@ -89,10 +89,14 @@ export default async function UniversityPage({
   ];
   const early = describeDeadline(u.early_deadline);
   const regular = describeDeadline(u.regular_deadline);
-  const deadlines = [
-    { label: "Ранний", d: early },
-    { label: "Основной", d: regular },
-  ].filter((x) => x.d);
+  const nearest = pickNearestDeadline(u.early_deadline, u.regular_deadline)?.info ?? null;
+  const deadlines =
+    early && regular && u.early_deadline?.trim() === u.regular_deadline?.trim()
+      ? [{ label: "Основной", d: regular }]
+      : [
+          { label: "Ранний", d: early },
+          { label: "Основной", d: regular },
+        ].filter((x) => x.d);
   const majors = splitList(u.majors);
   const aidTypes = (u.aid_types || []).filter(Boolean);
   const finance: [string, Val][] = [
@@ -170,9 +174,7 @@ export default async function UniversityPage({
           </div>
           <div>
             <small>Ближайший дедлайн</small>
-            <strong>
-              {(early && (early.daysLeft == null || early.daysLeft >= 0) ? early : regular || early)?.label || "—"}
-            </strong>
+            <strong>{nearest?.label || "—"}</strong>
           </div>
         </section>
 

@@ -28,3 +28,27 @@ export function daysLeftLabel(days: number): string {
   const word = n > 10 && n < 20 ? "дней" : n1 === 1 ? "день" : n1 >= 2 && n1 <= 4 ? "дня" : "дней";
   return `через ${days} ${word}`;
 }
+
+/** Pick the genuinely nearest upcoming deadline between early and regular. */
+export function pickNearestDeadline(
+  earlyRaw: string | null | undefined,
+  regularRaw: string | null | undefined,
+  now: Date = new Date(),
+): { raw: string; info: DeadlineInfo } | null {
+  const e = earlyRaw?.trim() || "";
+  const r = regularRaw?.trim() || "";
+  const ei = describeDeadline(e, now);
+  const ri = describeDeadline(r, now);
+  if (!ei && !ri) return null;
+  if (ei && !ri) return { raw: e, info: ei };
+  if (ri && !ei) return { raw: r, info: ri };
+
+  const eUp = ei!.daysLeft != null && ei!.daysLeft >= 0;
+  const rUp = ri!.daysLeft != null && ri!.daysLeft >= 0;
+  if (eUp && rUp) {
+    return ri!.daysLeft! < ei!.daysLeft! ? { raw: r, info: ri! } : { raw: e, info: ei! };
+  }
+  if (rUp && !eUp) return { raw: r, info: ri! };
+  if (eUp && !rUp) return { raw: e, info: ei! };
+  return ei!.daysLeft == null && ri!.daysLeft == null ? { raw: e, info: ei! } : { raw: r, info: ri! };
+}
