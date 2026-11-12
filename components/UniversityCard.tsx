@@ -1,34 +1,32 @@
-"use client";
-
 import Link from "next/link";
-import type { University } from "@/lib/types";
+import { memo } from "react";
+import type { CatalogUni } from "@/lib/catalog";
 import { INST_LABEL, countryRu } from "@/lib/types";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import styles from "./dashboard/Dashboard.module.css";
 
-export function UniversityCard({
+function UniversityCardImpl({
   u,
   catalogQuery = "",
   staggerIndex = 0,
 }: {
-  u: University;
+  u: CatalogUni;
   catalogQuery?: string;
   staggerIndex?: number;
 }) {
   const ru = countryRu(u.country);
-  const nearestDeadline = u.early_deadline || u.regular_deadline;
   const from = catalogQuery ? `?from=${encodeURIComponent(catalogQuery)}` : "";
   const href = `/dashboard/u/${encodeURIComponent(u.slug)}${from}`;
 
   return (
     <article
       className={styles.card}
-      style={{ animationDelay: `${Math.min(staggerIndex, 12) * 24}ms` }}
+      style={staggerIndex < 12 ? { animationDelay: `${staggerIndex * 24}ms` } : { animation: "none" }}
     >
-      <Link href={href} className={styles.cardLink}>
+      <Link href={href} className={styles.cardLink} prefetch={false}>
         <header className={styles.cardHead}>
           <div className={styles.cardTitleBlock}>
-            <UniversityLogo name={u.name} domain={u.website_domain ?? null} size={48} />
+            <UniversityLogo name={u.name} slug={u.slug} logo={u.logo} size={52} priority={staggerIndex < 6} />
             <div>
               <h3 className={styles.cardName}>{u.name}</h3>
               <p className={styles.cardMeta}>
@@ -42,14 +40,12 @@ export function UniversityCard({
               </p>
               <div className={styles.tags}>
                 {u.full_grant ? <span className={`${styles.tag} ${styles.tagGrant}`}>Полный грант</span> : null}
-                {(u.inst_tags || []).slice(0, 2).map((t) => (
+                {u.need_blind ? <span className={styles.tag}>Need-blind</span> : null}
+                {u.inst_tags.slice(0, 2).map((t) => (
                   <span className={styles.tag} key={t}>
                     {INST_LABEL[t] || t}
                   </span>
                 ))}
-                {nearestDeadline ? (
-                  <span className={`${styles.tag} ${styles.tagDeadline}`}>{nearestDeadline}</span>
-                ) : null}
               </div>
             </div>
           </div>
@@ -70,13 +66,10 @@ export function UniversityCard({
             <em>Помощь</em> {u.aid_max || "—"}
           </span>
           <span>
+            <em>Дедлайн</em> {u.deadline || "—"}
+          </span>
+          <span className={styles.factWide}>
             <em>Язык</em> {u.lang || "—"}
-          </span>
-          <span>
-            <em>Дедлайн</em> {nearestDeadline || "—"}
-          </span>
-          <span>
-            <em>Грант</em> {u.full_grant ? "да" : "нет данных"}
           </span>
         </div>
         <span className={styles.cardCta}>Открыть профиль →</span>
@@ -84,3 +77,5 @@ export function UniversityCard({
     </article>
   );
 }
+
+export const UniversityCard = memo(UniversityCardImpl);

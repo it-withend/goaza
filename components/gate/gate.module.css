@@ -364,3 +364,13 @@
     display: none;
   }
 }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.titleRow .eyebrow {
+  margin-bottom: 4px;
+}

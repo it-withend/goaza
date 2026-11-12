@@ -10,6 +10,7 @@ import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { teaserSummary, toTeaser } from "@/lib/uni-teaser";
 import { fetchRelatedUniversities, fetchUniversityBySlug } from "@/lib/universities";
 import { websiteUrl } from "@/lib/university-logo";
+import { hasLogo } from "@/lib/logos";
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +91,7 @@ export default async function PublicUniversityPage({ params }: Props) {
           teaser={teaser}
           summary={teaserSummary(teaser)}
           related={related}
+          logo={hasLogo(u.slug)}
           botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
         />
       </UniGateScreen>

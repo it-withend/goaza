@@ -97,7 +97,10 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
             <span>{hover.count} университетов в базе</span>
           </>
         ) : (
-          <span>Покрути · наведи на золотую точку</span>
+          <>
+            <span className={styles.hintPointer}>Покрути · наведи на золотую точку</span>
+            <span className={styles.hintTouch}>Покрути глобус · нажми на золотую точку</span>
+          </>
         )}
       </div>
     </div>

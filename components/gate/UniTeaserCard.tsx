@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { UniTeaser } from "@/lib/uni-teaser";
 import type { UniDirectoryEntry } from "@/lib/universities";
+import { UniversityLogo } from "@/components/UniversityLogo";
 import { GateCta } from "./GateCta";
 import styles from "./gate.module.css";
 
@@ -19,7 +20,9 @@ export function UniTeaserCard({
   summary,
   related,
   botUsername,
+  logo = false,
 }: {
+  logo?: boolean;
   teaser: UniTeaser;
   summary: string;
   related: UniDirectoryEntry[];
@@ -41,8 +44,13 @@ export function UniTeaserCard({
       </nav>
 
       <article className={styles.card}>
-        <p className={styles.eyebrow}>Профиль университета</p>
-        <h1>{t.name}</h1>
+        <div className={styles.titleRow}>
+          <UniversityLogo name={t.name} slug={t.slug} logo={logo} size={64} priority />
+          <div>
+            <p className={styles.eyebrow}>Профиль университета</p>
+            <h1>{t.name}</h1>
+          </div>
+        </div>
         {place ? <p className={styles.place}>{place}</p> : null}
 
         <div className={styles.badges}>

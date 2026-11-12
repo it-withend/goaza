@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { University } from "@/lib/types";
+import { filterCatalog, type CatalogUni } from "@/lib/catalog";
 import { INST_LABEL, countryRu } from "@/lib/types";
 import type { computeMeta } from "@/lib/universities";
 import { UniversityCard } from "@/components/UniversityCard";
@@ -11,6 +11,9 @@ import { DashboardShell } from "./DashboardShell";
 import styles from "./Dashboard.module.css";
 
 type Meta = ReturnType<typeof computeMeta>;
+
+const FIRST_BATCH = 24;
+const BATCH = 36;
 
 function money(n: number) {
   return n.toLocaleString("en-US");
@@ -26,7 +29,7 @@ export function DashboardClient({
   accountName,
   initialQuery = "",
 }: {
-  initial: University[];
+  initial: CatalogUni[];
   meta: Meta;
   accountName: string;
   initialQuery?: string;
@@ -34,7 +37,6 @@ export function DashboardClient({
   const router = useRouter();
   const boot = useMemo(() => new URLSearchParams(initialQuery), [initialQuery]);
 
-  const [unis, setUnis] = useState(initial);
   const [q, setQ] = useState(() => readParam(boot, "q"));
   const [country, setCountry] = useState(() => readParam(boot, "country"));
   const [grantOnly, setGrantOnly] = useState(() => boot.get("grantOnly") === "1");
@@ -48,8 +50,6 @@ export function DashboardClient({
   const [inst, setInst] = useState(() => boot.get("inst")?.split(",").filter(Boolean) || []);
   const [aidTypes, setAidTypes] = useState(() => boot.get("aidTypes")?.split(",").filter(Boolean) || []);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const catalogQuery = useMemo(() => {
     const sp = new URLSearchParams();
@@ -73,73 +73,51 @@ export function DashboardClient({
       const current = `${window.location.pathname}${window.location.search}`;
       if (current === next) return;
     }
-    router.replace(next, { scroll: false });
-  }, [catalogQuery, router]);
+    // Shallow URL update: keeps filters shareable without a server round-trip
+    // (router.replace would re-render the whole dashboard on the server).
+    window.history.replaceState(window.history.state, "", next);
+  }, [catalogQuery]);
 
-  const filtersActive = useMemo(() => Boolean(catalogQuery), [catalogQuery]);
+  // Filtering runs in memory: no network round-trip per change. The search text is
+  // deferred so typing stays responsive while the list re-renders.
+  const deferredQ = useDeferredValue(q);
+  const unis = useMemo(
+    () =>
+      filterCatalog(initial, {
+        q: deferredQ,
+        country,
+        grantOnly,
+        needBlind,
+        tuitionMax: tuitionMax < meta.tuitionMax ? tuitionMax : undefined,
+        aidMin,
+        rateMax,
+        inst,
+        aidTypes,
+        sort,
+      }),
+    [initial, deferredQ, country, grantOnly, needBlind, tuitionMax, meta.tuitionMax, aidMin, rateMax, inst, aidTypes, sort],
+  );
+  const loading = deferredQ !== q;
 
-  const load = useCallback(async () => {
-    if (!filtersActive) {
-      setUnis(initial);
-      setError(null);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    const sp = new URLSearchParams();
-    if (q.trim()) sp.set("q", q.trim());
-    if (country) sp.set("country", country);
-    if (grantOnly) sp.set("grantOnly", "1");
-    if (needBlind) sp.set("needBlind", "1");
-    if (tuitionMax < meta.tuitionMax) sp.set("tuitionMax", String(tuitionMax));
-    if (aidMin > 0) sp.set("aidMin", String(aidMin));
-    if (rateMax < 100) sp.set("rateMax", String(rateMax));
-    if (inst.length) sp.set("inst", inst.join(","));
-    if (aidTypes.length) sp.set("aidTypes", aidTypes.join(","));
-    if (sort !== "name") sp.set("sort", sort);
-    try {
-      const res = await fetch(`/api/universities?${sp.toString()}`);
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.message || json.error || "Ошибка фильтра");
-        if (res.status === 401) {
-          router.replace("/");
-          router.refresh();
-        }
-        return;
-      }
-      setUnis(json.data as University[]);
-    } catch {
-      setError("Сеть недоступна");
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    filtersActive,
-    q,
-    country,
-    grantOnly,
-    needBlind,
-    tuitionMax,
-    aidMin,
-    rateMax,
-    inst,
-    aidTypes,
-    sort,
-    meta.tuitionMax,
-    initial,
-    router,
-  ]);
-
+  // Progressive rendering: mount cards in batches as the user scrolls.
+  const [visible, setVisible] = useState(FIRST_BATCH);
+  useEffect(() => setVisible(FIRST_BATCH), [unis]);
+  const sentinel = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const t = setTimeout(() => {
-      void load();
-    }, 220);
-    return () => clearTimeout(t);
-  }, [load]);
+    const node = sentinel.current;
+    if (!node || visible >= unis.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) setVisible((v) => Math.min(v + BATCH, unis.length));
+      },
+      { rootMargin: "1200px 0px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, [visible, unis.length]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, University[]>();
+    const map = new Map<string, CatalogUni[]>();
     for (const u of unis) {
       const list = map.get(u.country) || [];
       list.push(u);
@@ -374,8 +352,6 @@ export function DashboardClient({
             </div>
           </div>
 
-          {error ? <div className={styles.errorBanner}>{error}</div> : null}
-
           {activeTokens.length ? (
             <div className={styles.tokens} aria-label="Активные фильтры">
               {activeTokens.map((token) => (
@@ -400,21 +376,34 @@ export function DashboardClient({
           <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
             Ничего не найдено. Ослабьте фильтры.
           </div>
-          {grouped.map(([c, list], groupIndex) => (
-            <section className={styles.countrySection} key={c} id={`sec-${c}`}>
-              <h2>
-                {countryRu(c)} ({list.length})
-              </h2>
-              {list.map((u, index) => (
-                <UniversityCard
-                  key={u.id || u.slug}
-                  u={u}
-                  catalogQuery={catalogQuery}
-                  staggerIndex={groupIndex * 3 + index}
-                />
-              ))}
-            </section>
-          ))}
+          {(() => {
+            let budget = visible;
+            let rendered = 0;
+            return grouped.map(([c, list]) => {
+              if (budget <= 0) return null;
+              const shown = list.slice(0, budget);
+              budget -= shown.length;
+              const offset = rendered;
+              rendered += shown.length;
+              return (
+                <section className={styles.countrySection} key={c} id={`sec-${c}`}>
+                  <h2>
+                    {countryRu(c)} ({list.length})
+                  </h2>
+                  {shown.map((u, index) => (
+                    <UniversityCard key={u.slug} u={u} catalogQuery={catalogQuery} staggerIndex={offset + index} />
+                  ))}
+                </section>
+              );
+            });
+          })()}
+          {visible < unis.length ? (
+            <div ref={sentinel} className={styles.loadMore}>
+              <button type="button" onClick={() => setVisible((v) => Math.min(v + BATCH, unis.length))}>
+                Показать ещё · осталось {unis.length - visible}
+              </button>
+            </div>
+          ) : null}
         </section>
       </div>
       <ToTop />

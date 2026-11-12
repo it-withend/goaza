@@ -55,3 +55,4 @@ scripts/enrich_reports/
 # Subagent-driven development scratch state
 .superpowers/
 
+scripts/logo-output/report.txt

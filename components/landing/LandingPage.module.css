@@ -567,6 +567,15 @@
 @media (max-width: 768px) {
   .header {
     padding: 12px 14px;
+    flex-wrap: nowrap;
+  }
+
+  .headerActions {
+    flex-wrap: nowrap;
+  }
+
+  .channelHeader {
+    display: none;
   }
 
   .ctaGhost {
@@ -656,4 +665,18 @@
 
 .browseLink:hover {
   color: #8a6a12;
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintPointer {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
 }

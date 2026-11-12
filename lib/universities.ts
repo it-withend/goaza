@@ -1,3 +1,6 @@
+import { unstable_cache } from "next/cache";
+import { toCatalogUni, type CatalogUni } from "@/lib/catalog";
+import { hasLogo } from "@/lib/logos";
 import { getSupabaseAnon } from "./supabase";
 import type { University } from "./types";
 
@@ -88,6 +91,19 @@ export async function fetchBrowseUniversities(): Promise<University[]> {
   return fetchUniversities({ sort: "name", limit: 5000 });
 }
 
+/**
+ * Catalog for the dashboard, cached for 10 minutes across requests (the data changes
+ * rarely; the session check stays per-request in the page).
+ */
+export const fetchCatalog = unstable_cache(
+  async (): Promise<CatalogUni[]> => {
+    const rows = await fetchUniversities({ sort: "name", limit: 5000 });
+    return rows.map((u) => toCatalogUni(u, hasLogo(u.slug)));
+  },
+  ["dashboard-catalog-v1"],
+  { revalidate: 600, tags: ["universities"] },
+);
+
 /** Slugs are generated as lowercase ascii + dashes; anything else is a 404, not a DB call. */
 export const SLUG_RE = /^[a-z0-9-]{1,160}$/;
 
@@ -126,7 +142,12 @@ function normalizeTagList(raw: unknown): string[] {
   return [];
 }
 
-export function computeMeta(unis: University[]) {
+type MetaRow = Pick<University, "country" | "full_grant" | "tuition_num" | "aid_num"> & {
+  inst_tags: unknown;
+  aid_types: unknown;
+};
+
+export function computeMeta(unis: MetaRow[]) {
   const countries = new Map<string, number>();
   const inst = new Map<string, number>();
   const aidTypes = new Map<string, number>();

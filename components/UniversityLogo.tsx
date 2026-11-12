@@ -1,21 +1,31 @@
-"use client";
+import { universityInitials } from "@/lib/university-logo";
 
-import { useState } from "react";
-import { logoLinkUrl, universityInitials } from "@/lib/university-logo";
+const MONO_TINTS = ["#8a6a12", "#2f4b7c", "#3d6b4f", "#7a3b3b", "#4b3f72", "#2f6a73"];
 
+function tintFor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return MONO_TINTS[h % MONO_TINTS.length];
+}
+
+/**
+ * Self-hosted, pre-sized logo (public/logos/<slug>.webp, 128px) or a monogram.
+ * We never upscale tiny favicons: a crisp monogram beats a blurry 16px icon.
+ */
 export function UniversityLogo({
   name,
-  domain,
+  slug,
+  logo,
   size = 48,
+  priority = false,
 }: {
   name: string;
-  domain: string | null;
+  slug: string;
+  logo: boolean;
   size?: number;
+  priority?: boolean;
 }) {
-  const [failed, setFailed] = useState(false);
-  const src = logoLinkUrl(domain, process.env.NEXT_PUBLIC_LOGOLINK_KEY);
-  const initials = universityInitials(name);
-
+  const tint = tintFor(name);
   return (
     <span
       className="uniLogo"
@@ -23,35 +33,36 @@ export function UniversityLogo({
         width: size,
         height: size,
         minWidth: size,
-        minHeight: size,
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
         overflow: "hidden",
-        borderRadius: 10,
-        background: "rgba(26, 26, 26, 0.06)",
-        color: "var(--ink, #1a1a1a)",
+        borderRadius: Math.round(size * 0.22),
+        background: logo ? "#fff" : `${tint}14`,
+        border: `1px solid ${logo ? "rgba(26,26,26,0.08)" : `${tint}33`}`,
+        color: tint,
+        fontFamily: 'var(--font-serif), "Source Serif 4", Georgia, serif',
         fontWeight: 700,
-        fontSize: Math.max(11, Math.round(size * 0.32)),
-        letterSpacing: "0.02em",
+        fontSize: Math.max(11, Math.round(size * 0.34)),
+        letterSpacing: "0.01em",
         lineHeight: 1,
       }}
       aria-hidden
     >
-      {!src || failed ? (
-        <span>{initials}</span>
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element -- Logo Link CDN URL; next/image not required
+      {logo ? (
+        // eslint-disable-next-line @next/next/no-img-element -- static pre-optimized 128px webp
         <img
-          src={src}
+          src={`/logos/${slug}.webp`}
           width={size}
           height={size}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
           alt=""
-          onError={() => setFailed(true)}
-          style={{ width: size, height: size, objectFit: "contain", display: "block" }}
+          style={{ width: "86%", height: "86%", objectFit: "contain", display: "block" }}
         />
+      ) : (
+        <span>{universityInitials(name)}</span>
       )}
     </span>
   );
