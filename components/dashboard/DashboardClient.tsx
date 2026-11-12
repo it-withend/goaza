@@ -15,6 +15,15 @@ type Meta = ReturnType<typeof computeMeta>;
 const FIRST_BATCH = 24;
 const BATCH = 36;
 
+const SORT_LABELS: Record<string, string> = {
+  grant: "Сначала полные гранты",
+  intl_aid: "Бюджет помощи иностранцам ↓",
+  intl_avg: "Средний грант иностранцам ↓",
+  rate: "По % поступления",
+  tuition: "По стоимости",
+  aid: "По макс. помощи",
+};
+
 function money(n: number) {
   return n.toLocaleString("en-US");
 }
@@ -196,7 +205,7 @@ export function DashboardClient({
     });
   }
   if (sort !== "name") {
-    activeTokens.push({ key: "sort", label: `Сорт: ${sort}`, clear: () => setSort("name") });
+    activeTokens.push({ key: "sort", label: `Сорт: ${SORT_LABELS[sort] || sort}`, clear: () => setSort("name") });
   }
 
   const filters = (
@@ -285,9 +294,11 @@ export function DashboardClient({
           <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Сортировка">
             <option value="name">Сортировка: имя</option>
             <option value="grant">Сначала полные гранты</option>
+            <option value="intl_aid">По бюджету помощи иностранцам</option>
+            <option value="intl_avg">По среднему гранту иностранцам</option>
             <option value="rate">По % поступления</option>
             <option value="tuition">По стоимости</option>
-            <option value="aid">По помощи</option>
+            <option value="aid">По макс. помощи</option>
           </select>
         </div>
         <button type="button" className={styles.resetBtn} onClick={resetFilters}>
@@ -376,27 +387,40 @@ export function DashboardClient({
           <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
             Ничего не найдено. Ослабьте фильтры.
           </div>
-          {(() => {
-            let budget = visible;
-            let rendered = 0;
-            return grouped.map(([c, list]) => {
-              if (budget <= 0) return null;
-              const shown = list.slice(0, budget);
-              budget -= shown.length;
-              const offset = rendered;
-              rendered += shown.length;
-              return (
-                <section className={styles.countrySection} key={c} id={`sec-${c}`}>
-                  <h2>
-                    {countryRu(c)} ({list.length})
-                  </h2>
-                  {shown.map((u, index) => (
-                    <UniversityCard key={u.slug} u={u} catalogQuery={catalogQuery} staggerIndex={offset + index} />
-                  ))}
-                </section>
-              );
-            });
-          })()}
+          {sort !== "name" ? (
+            unis.length > 0 ? (
+              <section className={styles.countrySection}>
+                <h2>
+                  {SORT_LABELS[sort] || "Результаты"} ({unis.length})
+                </h2>
+                {unis.slice(0, visible).map((u, index) => (
+                  <UniversityCard key={u.slug} u={u} catalogQuery={catalogQuery} staggerIndex={index} />
+                ))}
+              </section>
+            ) : null
+          ) : (
+            (() => {
+              let budget = visible;
+              let rendered = 0;
+              return grouped.map(([c, list]) => {
+                if (budget <= 0) return null;
+                const shown = list.slice(0, budget);
+                budget -= shown.length;
+                const offset = rendered;
+                rendered += shown.length;
+                return (
+                  <section className={styles.countrySection} key={c} id={`sec-${c}`}>
+                    <h2>
+                      {countryRu(c)} ({list.length})
+                    </h2>
+                    {shown.map((u, index) => (
+                      <UniversityCard key={u.slug} u={u} catalogQuery={catalogQuery} staggerIndex={offset + index} />
+                    ))}
+                  </section>
+                );
+              });
+            })()
+          )}
           {visible < unis.length ? (
             <div ref={sentinel} className={styles.loadMore}>
               <button type="button" onClick={() => setVisible((v) => Math.min(v + BATCH, unis.length))}>

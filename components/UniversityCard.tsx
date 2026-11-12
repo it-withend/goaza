@@ -5,6 +5,13 @@ import { INST_LABEL, countryRu } from "@/lib/types";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import styles from "./dashboard/Dashboard.module.css";
 
+function formatAidPolicy(raw: string | null): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed || /^need-blind$/i.test(trimmed)) return null;
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
 function UniversityCardImpl({
   u,
   catalogQuery = "",
@@ -17,6 +24,14 @@ function UniversityCardImpl({
   const ru = countryRu(u.country);
   const from = catalogQuery ? `?from=${encodeURIComponent(catalogQuery)}` : "";
   const href = `/dashboard/u/${encodeURIComponent(u.slug)}${from}`;
+  const aidPolicy = formatAidPolicy(u.intl_aid_policy);
+  const intlAidSummary = [
+    u.total_aid_millions ? `${u.total_aid_millions}/год` : null,
+    u.avg_aid_award ? `ср. ${u.avg_aid_award}` : null,
+    u.intl_receiving_aid_pct ? `${u.intl_receiving_aid_pct} иностр.` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <article
@@ -41,6 +56,7 @@ function UniversityCardImpl({
               <div className={styles.tags}>
                 {u.full_grant ? <span className={`${styles.tag} ${styles.tagGrant}`}>Полный грант</span> : null}
                 {u.need_blind ? <span className={styles.tag}>Need-blind</span> : null}
+                {aidPolicy ? <span className={styles.tag}>{aidPolicy}</span> : null}
                 {u.inst_tags.slice(0, 2).map((t) => (
                   <span className={styles.tag} key={t}>
                     {INST_LABEL[t] || t}
@@ -63,11 +79,16 @@ function UniversityCardImpl({
 
         <div className={styles.cardFacts}>
           <span>
-            <em>Помощь</em> {u.aid_max || "—"}
+            <em>Помощь</em> {u.aid_max || u.avg_aid_award || "—"}
           </span>
           <span>
             <em>Дедлайн</em> {u.deadline || "—"}
           </span>
+          {intlAidSummary ? (
+            <span className={styles.factWide}>
+              <em>Фонд для иностранцев</em> {intlAidSummary}
+            </span>
+          ) : null}
           <span className={styles.factWide}>
             <em>Язык</em> {u.lang || "—"}
           </span>

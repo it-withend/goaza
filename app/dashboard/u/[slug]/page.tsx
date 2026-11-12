@@ -100,10 +100,10 @@ export default async function UniversityPage({
   const majors = splitList(u.majors);
   const aidTypes = (u.aid_types || []).filter(Boolean);
   const finance: [string, Val][] = [
-    ["Средний грант", u.avg_aid_award],
-    ["Иностранцев с помощью", u.intl_receiving_aid_pct],
+    ["Бюджет помощи иностранцам (в год)", u.total_aid_millions],
+    ["Средний грант иностранцу", u.avg_aid_award],
+    ["Доля иностранцев с помощью", u.intl_receiving_aid_pct],
     ["Стоимость после помощи", u.coa_after_aid_pct],
-    ["Общий бюджет помощи", u.total_aid_millions],
     ["Стипендия за успеваемость", u.merit_scholarship_name],
     ["Политика для иностранцев", u.intl_aid_policy],
     ["Как подать на помощь", u.how_apply_aid],
@@ -169,8 +169,18 @@ export default async function UniversityPage({
             ) : null}
           </div>
           <div>
-            <small>Макс. помощь</small>
-            <strong>{u.aid_max || "—"}</strong>
+            <small>Помощь иностранцам</small>
+            <strong>{u.aid_max || u.avg_aid_award || "—"}</strong>
+            {u.total_aid_millions || u.intl_receiving_aid_pct ? (
+              <span className={styles.metricSub}>
+                {[
+                  u.total_aid_millions ? `Фонд ${u.total_aid_millions}/год` : null,
+                  u.intl_receiving_aid_pct ? `${u.intl_receiving_aid_pct} иностр.` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
+            ) : null}
           </div>
           <div>
             <small>Ближайший дедлайн</small>
@@ -182,7 +192,7 @@ export default async function UniversityPage({
           <div className={styles.main}>
             {hasFinance ? (
               <section className={styles.panel}>
-                <h2>Финансы и гранты</h2>
+                <h2>Финансы и помощь иностранцам</h2>
                 {aidTypes.length ? (
                   <div className={styles.chips}>
                     {aidTypes.map((t) => (

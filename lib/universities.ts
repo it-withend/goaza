@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { toCatalogUni, type CatalogUni } from "@/lib/catalog";
+import { parseAidMillions, parseCurrencyAmount, toCatalogUni, type CatalogUni } from "@/lib/catalog";
 import { hasLogo } from "@/lib/logos";
 import {
   canonicalSlug,
@@ -20,7 +20,7 @@ export type UniQuery = {
   rateMax?: number;
   inst?: string[];
   aidTypes?: string[];
-  sort?: "name" | "grant" | "rate" | "tuition" | "aid";
+  sort?: "name" | "grant" | "intl_aid" | "intl_avg" | "rate" | "tuition" | "aid";
   limit?: number;
 };
 
@@ -71,6 +71,8 @@ function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
       q = q.order("tuition_num", { ascending: true, nullsFirst: false }).order("name");
       break;
     case "aid":
+    case "intl_aid":
+    case "intl_avg":
       q = q.order("aid_num", { ascending: false, nullsFirst: false }).order("name");
       break;
     default:
@@ -96,7 +98,27 @@ export async function fetchUniversities(query: UniQuery = {}): Promise<Universit
     from += PAGE;
   }
 
-  return cleanAndDeduplicateUniversities(all);
+  const cleaned = cleanAndDeduplicateUniversities(all);
+  if (query.sort === "intl_aid" || query.sort === "intl_avg") {
+    const numDesc = (a: number | null, b: number | null) =>
+      a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : b - a;
+    cleaned.sort((a, b) => {
+      const aTotal = parseAidMillions(a.total_aid_millions);
+      const bTotal = parseAidMillions(b.total_aid_millions);
+      const aAvg = parseCurrencyAmount(a.avg_aid_award);
+      const bAvg = parseCurrencyAmount(b.avg_aid_award);
+      const primary = query.sort === "intl_aid" ? numDesc(aTotal, bTotal) : numDesc(aAvg, bAvg);
+      const secondary = query.sort === "intl_aid" ? numDesc(aAvg, bAvg) : numDesc(aTotal, bTotal);
+      return (
+        primary ||
+        secondary ||
+        numDesc(a.aid_num, b.aid_num) ||
+        Number(b.full_grant) - Number(a.full_grant) ||
+        a.name.localeCompare(b.name)
+      );
+    });
+  }
+  return cleaned;
 }
 
 export async function fetchBrowseUniversities(): Promise<University[]> {
@@ -112,7 +134,7 @@ export const fetchCatalog = unstable_cache(
     const rows = await fetchUniversities({ sort: "name", limit: 5000 });
     return rows.map((u) => toCatalogUni(u, hasLogo(u.slug)));
   },
-  ["dashboard-catalog-v2"],
+  ["dashboard-catalog-v3"],
   { revalidate: 600, tags: ["universities"] },
 );
 
