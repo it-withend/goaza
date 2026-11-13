@@ -168,4 +168,31 @@ describe("university-clean", () => {
     expect(getCountryGuide("Turkey")?.scholarships).toMatch(/Türkiye Bursları/);
     expect(getCountryGuide("Germany")?.after11Grade).toMatch(/Studienkolleg/);
   });
+
+  it("applies extended financial aid, merit scholarship, and CSS waiver enrichment patches", () => {
+    const uoft = normalizeUniversityRow(
+      makeRow({
+        slug: "university-of-toronto-canada",
+        name: "University of Toronto",
+        country: "Canada",
+        full_grant: false,
+        merit_scholarship_name: null,
+        notes: "",
+      }),
+    );
+    expect(uoft.full_grant).toBe(true);
+    expect(uoft.merit_scholarship_name).toMatch(/Lester B\. Pearson/i);
+    expect(uoft.notes).toMatch(/CAD/);
+
+    const columbia = normalizeUniversityRow(
+      makeRow({
+        slug: "columbia-university-usa",
+        name: "Columbia University",
+        country: "USA",
+        how_apply_aid: "CSS Profile + supplements",
+      }),
+    );
+    expect(columbia.how_apply_aid).toMatch(/CSS Waiver: Request via email/i);
+    expect(columbia.full_grant).toBe(true);
+  });
 });

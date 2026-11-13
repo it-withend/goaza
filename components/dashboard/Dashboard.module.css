@@ -82,6 +82,40 @@
   color: rgba(244, 242, 236, 0.56);
 }
 
+.topNav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.topNavLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: rgba(244, 242, 236, 0.78);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.topNavLink:hover {
+  color: #f4f2ec;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.topNavLinkActive {
+  background: rgba(226, 179, 60, 0.2);
+  color: #f4cb66;
+  border: 1px solid rgba(226, 179, 60, 0.35);
+}
+
 .accountBar {
   display: flex;
   align-items: center;

@@ -10,9 +10,29 @@ interface EnrichmentPatch {
   tuition_display?: string;
   rate_num?: number;
   acceptance_rate?: string;
+  full_grant?: boolean;
+  need_blind?: boolean;
+  aid_max?: string;
+  aid_num?: number;
+  aid_types?: string[];
+  total_aid_millions?: string;
+  avg_aid_award?: string;
+  intl_receiving_aid_pct?: string;
+  coa_after_aid_pct?: string;
+  intl_aid_policy?: string;
+  how_apply_aid?: string;
+  merit_scholarship_name?: string;
+  early_deadline?: string;
+  regular_deadline?: string;
+  lang?: string;
+  essay?: string;
+  living_note?: string;
   undergrad_enrollment?: string;
   intl_undergrad_pct?: string;
   intl_undergrad_count?: string;
+  countries_represented?: string;
+  intl_acceptance_rate?: string;
+  intl_yield?: string;
   sat?: string;
   inst_type?: string;
   inst_tags?: string[];
@@ -547,6 +567,47 @@ function applyEnrichment(u: University): void {
     u.rate_num = patch.rate_num;
     u.acceptance_rate = patch.acceptance_rate;
   }
+  if (patch.full_grant && !u.full_grant) u.full_grant = true;
+  if (patch.need_blind && !u.need_blind) u.need_blind = true;
+  if (!hasText(u.aid_max) && patch.aid_max) u.aid_max = patch.aid_max;
+  if ((u.aid_num == null || u.aid_num <= 0) && patch.aid_num != null && patch.aid_num > 0) {
+    u.aid_num = patch.aid_num;
+  }
+  if (patch.aid_types?.length) {
+    u.aid_types = normalizeAidTypes([...u.aid_types, ...patch.aid_types]);
+  }
+  if (!hasText(u.total_aid_millions) && patch.total_aid_millions) {
+    u.total_aid_millions = patch.total_aid_millions;
+  }
+  if (!hasText(u.avg_aid_award) && patch.avg_aid_award) u.avg_aid_award = patch.avg_aid_award;
+  if (!hasText(u.intl_receiving_aid_pct) && patch.intl_receiving_aid_pct) {
+    u.intl_receiving_aid_pct = patch.intl_receiving_aid_pct;
+  }
+  if (!hasText(u.coa_after_aid_pct) && patch.coa_after_aid_pct) {
+    u.coa_after_aid_pct = patch.coa_after_aid_pct;
+  }
+  if (!hasText(u.intl_aid_policy) && patch.intl_aid_policy) {
+    u.intl_aid_policy = patch.intl_aid_policy;
+  }
+  if (patch.how_apply_aid) {
+    if (!hasText(u.how_apply_aid) || patch.how_apply_aid.length > (u.how_apply_aid?.length ?? 0) + 12) {
+      u.how_apply_aid = patch.how_apply_aid;
+    }
+  }
+  if (!hasText(u.merit_scholarship_name) && patch.merit_scholarship_name) {
+    u.merit_scholarship_name = patch.merit_scholarship_name;
+  }
+  if (!hasText(u.early_deadline) && patch.early_deadline) {
+    u.early_deadline = patch.early_deadline;
+  }
+  if (!hasText(u.regular_deadline) && patch.regular_deadline) {
+    u.regular_deadline = patch.regular_deadline;
+  }
+  if (!hasText(u.lang) && patch.lang) {
+    u.lang = normalizeLang(patch.lang);
+  }
+  if (!hasText(u.essay) && patch.essay) u.essay = patch.essay;
+  if (!hasText(u.living_note) && patch.living_note) u.living_note = patch.living_note;
   if (!hasText(u.undergrad_enrollment) && patch.undergrad_enrollment) {
     u.undergrad_enrollment = patch.undergrad_enrollment;
   }
@@ -554,6 +615,13 @@ function applyEnrichment(u: University): void {
     u.intl_undergrad_pct = patch.intl_undergrad_pct;
     u.intl_undergrad_count = patch.intl_undergrad_count;
   }
+  if (!hasText(u.countries_represented) && patch.countries_represented) {
+    u.countries_represented = patch.countries_represented;
+  }
+  if (!hasText(u.intl_acceptance_rate) && patch.intl_acceptance_rate) {
+    u.intl_acceptance_rate = patch.intl_acceptance_rate;
+  }
+  if (!hasText(u.intl_yield) && patch.intl_yield) u.intl_yield = patch.intl_yield;
   if (!hasText(u.sat) && patch.sat) u.sat = patch.sat;
   if (!hasText(u.inst_type) && patch.inst_type) u.inst_type = patch.inst_type;
   if (u.inst_tags.length === 0 && patch.inst_tags?.length) {
@@ -564,10 +632,7 @@ function applyEnrichment(u: University): void {
   if (patch.notes) {
     if (!hasText(u.notes)) {
       u.notes = patch.notes;
-    } else if (
-      /^(TÜRKIYE BURSLARI|GLOBAL KOREA SCHOLARSHIP|STIPENDIUM HUNGARICUM)\b/i.test(u.notes!.trim()) &&
-      patch.notes.includes("\n\n")
-    ) {
+    } else if (patch.notes.length > (u.notes?.length ?? 0) + 20) {
       u.notes = patch.notes;
     }
   }

@@ -19,6 +19,11 @@ it("shows the verified Telegram account and calls logout", async () => {
     </DashboardShell>,
   );
   expect(screen.getByText("@student")).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: /каталог вузов/i })).toHaveAttribute("href", "/dashboard");
+  expect(screen.getByRole("link", { name: /гай.*абитуриента/i })).toHaveAttribute(
+    "href",
+    "/dashboard/guide",
+  );
   expect(screen.queryByText(/explorer/i)).not.toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: /выйти/i }));
   expect(onLogout).toHaveBeenCalledOnce();
