@@ -1,0 +1,150 @@
+.group {
+  margin-top: 40px;
+}
+
+.groupHead {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 8px 32px;
+  align-items: baseline;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.groupHead h2 {
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.5rem;
+}
+
+.groupHead p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--hairline);
+  scroll-margin-top: 80px;
+}
+
+.card:target {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.25);
+}
+
+.country {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #8a6a12;
+}
+
+.card h3 {
+  margin: 2px 0 6px;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.22rem;
+  line-height: 1.2;
+}
+
+.card header p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.levels span {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(61, 122, 74, 0.12);
+  color: #2f5f3a;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.facts {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 0.93rem;
+}
+
+.facts dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  line-height: 1.45;
+}
+
+.facts ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.notes {
+  margin: 0;
+  padding: 10px 12px 10px 28px;
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.warning {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(181, 101, 13, 0.12);
+  color: #7a430a;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.card footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.card footer a {
+  color: #8a6a12;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .groupHead {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

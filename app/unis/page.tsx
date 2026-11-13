@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { GateCta } from "@/components/gate/GateCta";
-import { UniGateScreen } from "@/components/gate/UniGateScreen";
+import { SitePage } from "@/components/site/SitePage";
 import styles from "@/components/gate/gate.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
-import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { countryRu } from "@/lib/types";
 import { fetchUniversityDirectory, type UniDirectoryEntry } from "@/lib/universities";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Каталог университетов за границей по странам",
@@ -26,10 +23,6 @@ function countryAnchor(country: string) {
 }
 
 export default async function UnisIndexPage() {
-  const jar = await cookies();
-  const session = await readSessionToken(jar.get(SESSION_COOKIE)?.value).catch(() => null);
-  if (session?.subscribed) redirect("/dashboard");
-
   const all = await fetchUniversityDirectory().catch(() => [] as UniDirectoryEntry[]);
   const byCountry = new Map<string, UniDirectoryEntry[]>();
   for (const u of all) {
@@ -51,8 +44,8 @@ export default async function UnisIndexPage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <UniGateScreen>
-        <div className={styles.wrapWide}>
+      <SitePage wide>
+        <div>
           <section className={styles.hero}>
             <p className={styles.eyebrow}>Атлас Studyaza</p>
             <h1>{all.length} университетов в {groups.length} странах</h1>
@@ -91,7 +84,7 @@ export default async function UnisIndexPage() {
             </section>
           ))}
         </div>
-      </UniGateScreen>
+      </SitePage>
     </>
   );
 }

@@ -214,3 +214,27 @@ export async function fetchRelatedUniversities(
   if (error) throw new Error(error.message);
   return (data || []) as UniDirectoryEntry[];
 }
+
+/** Rows for the shortlist builder (server-only, cached 10 min). */
+export const fetchMatchRows = unstable_cache(
+  async () => {
+    const rows = await fetchUniversities({ sort: "name", limit: 5000 });
+    return rows.map((u) => ({
+      slug: u.slug,
+      name: u.name,
+      country: u.country,
+      city: u.city,
+      tuition_num: u.tuition_num,
+      rate_num: u.rate_num,
+      full_grant: Boolean(u.full_grant),
+      aid_num: u.aid_num,
+      need_blind: Boolean(u.need_blind),
+      lang: u.lang,
+      sat: u.sat,
+      majors: u.majors,
+      logo: hasLogo(u.slug),
+    }));
+  },
+  ["match-rows-v1"],
+  { revalidate: 600, tags: ["universities"] },
+);

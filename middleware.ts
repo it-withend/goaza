@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 
 const CANONICAL_HOST = "goaza.xyz";
 
@@ -20,14 +19,6 @@ export async function middleware(req: NextRequest) {
       url.protocol = "https:";
       url.host = CANONICAL_HOST;
       return NextResponse.redirect(url, 308);
-    }
-  }
-
-  if (url.pathname === "/") {
-    const session = await readSessionToken(req.cookies.get(SESSION_COOKIE)?.value).catch(() => null);
-    if (session?.subscribed) {
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
     }
   }
 

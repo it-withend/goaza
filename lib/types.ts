@@ -37,6 +37,22 @@ export type University = {
   intl_acceptance_rate: string | null;
   intl_yield: string | null;
   merit_scholarship_name: string | null;
+  // imported admissions facts (2021–2023 sources); optional until every row has them
+  recommendations?: string | null;
+  app_fee?: string | null;
+  fee_waiver?: string | null;
+  apply_url?: string | null;
+  finaid_url?: string | null;
+  rank_national?: string | null;
+  rank_world?: string | null;
+  ed_acceptance_rate?: string | null;
+  rd_acceptance_rate?: string | null;
+  early_rounds?: string | null;
+  aid_forms?: string | null;
+  css_fee_waiver?: string | null;
+  avg_gpa?: string | null;
+  admission_factors?: Record<string, string> | null;
+  data_year?: number | null;
 };
 
 export const COUNTRY_RU: Record<string, string> = {

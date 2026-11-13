@@ -3,7 +3,7 @@
  * Avoids cold-start timeouts that cause Search Console "Couldn't fetch".
  */
 import { createClient } from "@supabase/supabase-js";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SITE = "https://goaza.xyz";
@@ -62,10 +62,22 @@ async function fetchSlugs() {
   return slugs;
 }
 
+/** Guide slugs are read from content/guides.ts (top-level `slug:` entries of GUIDES). */
+function guideSlugs() {
+  const src = readFileSync(resolve(process.cwd(), "content", "guides.ts"), "utf8");
+  return [...src.matchAll(/^    slug: "([a-z0-9-]+)",$/gm)].map((m) => m[1]);
+}
+
 async function main() {
   const slugs = await fetchSlugs();
   const urls = [
     urlEntry(`${SITE}/`, "1.0", "daily"),
+    urlEntry(`${SITE}/start`, "0.9", "monthly"),
+    urlEntry(`${SITE}/podbor`, "0.9", "monthly"),
+    urlEntry(`${SITE}/grants`, "0.9", "weekly"),
+    urlEntry(`${SITE}/guides`, "0.9", "weekly"),
+    urlEntry(`${SITE}/deadlines`, "0.8", "monthly"),
+    ...guideSlugs().map((slug) => urlEntry(`${SITE}/guides/${slug}`, "0.8", "monthly")),
     urlEntry(`${SITE}/unis`, "0.9", "daily"),
     ...slugs.map((slug) => urlEntry(`${SITE}/unis/${slug}`, "0.7", "weekly")),
   ];

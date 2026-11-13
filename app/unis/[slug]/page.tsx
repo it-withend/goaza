@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { cache } from "react";
-import { UniGateScreen } from "@/components/gate/UniGateScreen";
-import { UniTeaserCard } from "@/components/gate/UniTeaserCard";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { UniProfile } from "@/components/uni/UniProfile";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { teaserSummary, toTeaser } from "@/lib/uni-teaser";
 import { fetchRelatedUniversities, fetchUniversityBySlug } from "@/lib/universities";
 import { websiteUrl } from "@/lib/university-logo";
-import { hasLogo } from "@/lib/logos";
 
 export const dynamic = "force-dynamic";
 
@@ -50,12 +50,10 @@ export default async function PublicUniversityPage({ params }: Props) {
 
   const jar = await cookies();
   const session = await readSessionToken(jar.get(SESSION_COOKIE)?.value).catch(() => null);
-  if (session?.subscribed) {
-    redirect(`/dashboard/u/${u.slug}`);
-  }
+  const full = Boolean(session?.subscribed);
 
   const teaser = toTeaser(u);
-  const related = await fetchRelatedUniversities(u.country, u.slug).catch(() => []);
+  const related = await fetchRelatedUniversities(u.country, u.slug, 6).catch(() => []);
   const site = websiteUrl(u.website_domain);
 
   const jsonLd = [
@@ -86,15 +84,17 @@ export default async function PublicUniversityPage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <UniGateScreen>
-        <UniTeaserCard
-          teaser={teaser}
-          summary={teaserSummary(teaser)}
-          related={related}
-          logo={hasLogo(u.slug)}
-          botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
-        />
-      </UniGateScreen>
+      <SiteHeader />
+      <UniProfile
+        u={u}
+        related={related}
+        full={full}
+        backHref="/unis"
+        backLabel="Все вузы"
+        relatedBase="/unis"
+        botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
+      />
+      <SiteFooter />
     </>
   );
 }

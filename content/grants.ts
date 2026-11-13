@@ -1,0 +1,375 @@
+/**
+ * Scholarship and low-cost study directory. Facts collected from public program pages and
+ * the source lists in D:/goo/goazaBD (2024–2025 editions). Amounts change every year —
+ * the UI always shows `checked` and links to the official page.
+ */
+
+export type Level = "bachelor" | "master" | "phd";
+export type GrantKind = "government" | "university" | "low-cost";
+
+export type Grant = {
+  slug: string;
+  name: string;
+  country: string;
+  kind: GrantKind;
+  levels: Level[];
+  /** One line: what it is. */
+  summary: string;
+  covers: string[];
+  stipend?: string;
+  scope?: string;
+  quota?: string;
+  /** Things that decide whether it is worth applying. */
+  notes?: string[];
+  /** Restrictions that may exclude the reader. */
+  warning?: string;
+  majors?: string[];
+  url: string;
+  checked: string;
+};
+
+export const LEVEL_RU: Record<Level, string> = {
+  bachelor: "Бакалавриат",
+  master: "Магистратура",
+  phd: "PhD",
+};
+
+export const KIND_RU: Record<GrantKind, string> = {
+  government: "Государственная программа",
+  university: "Стипендия университета",
+  "low-cost": "Недорогое обучение",
+};
+
+export const GRANTS: Grant[] = [
+  {
+    slug: "stipendium-hungaricum",
+    name: "Stipendium Hungaricum",
+    country: "Венгрия",
+    kind: "government",
+    levels: ["bachelor", "master", "phd"],
+    summary: "Государственная стипендия Венгрии: бесплатное обучение, общежитие и ежемесячная выплата.",
+    covers: [
+      "Полное освобождение от оплаты обучения",
+      "Место в общежитии или около €100 в месяц на жильё",
+      "Медицинская страховка",
+    ],
+    stipend: "≈43 700 форинтов в месяц (около €110), 12 месяцев в году",
+    scope: "57 университетов Венгрии",
+    notes: [
+      "Подача через сайт программы, затем отдельно в выбранные вузы.",
+      "Есть программы на английском — венгерский знать не нужно.",
+      "Список стран-партнёров меняется каждый год: проверьте, есть ли ваша страна.",
+    ],
+    url: "https://stipendiumhungaricum.hu",
+    checked: "2025",
+  },
+  {
+    slug: "turkiye-burslari",
+    name: "Türkiye Bursları",
+    country: "Турция",
+    kind: "government",
+    levels: ["bachelor", "master", "phd"],
+    summary: "Государственный грант Турции с полным покрытием, включая год турецкого языка.",
+    covers: [
+      "Оплата обучения",
+      "Общежитие",
+      "Год подготовительного турецкого",
+      "Медицинская страховка",
+      "Авиабилеты в начале и в конце обучения",
+    ],
+    stipend: "Бакалавриат $100, магистратура $150, PhD $200 в месяц (в лирах по курсу)",
+    scope: "103 университета Турции",
+    notes: [
+      "Вуз и факультет распределяет программа по вашим приоритетам.",
+      "Подача онлайн, обычно с января по февраль; затем собеседование.",
+    ],
+    url: "https://turkiyeburslari.gov.tr/",
+    checked: "2025",
+  },
+  {
+    slug: "global-korea-scholarship",
+    name: "Global Korea Scholarship (GKS)",
+    country: "Южная Корея",
+    kind: "government",
+    levels: ["bachelor", "master", "phd"],
+    summary: "Стипендия правительства Кореи: обучение, перелёт, ежемесячная выплата и год корейского.",
+    covers: [
+      "Обучение до $3 365 за семестр (разницу покрывает вуз)",
+      "Авиабилеты эконом-класса туда и обратно",
+      "Подъёмные при приезде и медицинская страховка",
+      "Год корейского языка перед основной программой",
+    ],
+    stipend: "≈$740–1 110 в месяц в зависимости от уровня",
+    scope: "64 университета",
+    quota: "≈150 человек в год на бакалавриат",
+    notes: [
+      "Подать можно через посольство Кореи или напрямую через университет.",
+      "Высокий уровень корейского (TOPIK 5–6) даёт доплату.",
+    ],
+    url: "https://gksscholarship.com/",
+    checked: "2025",
+  },
+  {
+    slug: "csc-china",
+    name: "Chinese Government Scholarship (CSC)",
+    country: "Китай",
+    kind: "government",
+    levels: ["bachelor", "master", "phd"],
+    summary: "Стипендия правительства Китая: бесплатное обучение и общежитие.",
+    covers: ["Бесплатное обучение", "Бесплатное общежитие (бакалавриат)", "Медицинская страховка"],
+    stipend: "≈$360 в месяц на бакалавриате",
+    scope: "279 университетов Китая",
+    notes: ["Многие программы на китайском: часто нужен HSK или подготовительный год."],
+    url: "https://www.campuschina.org/",
+    checked: "2025",
+  },
+  {
+    slug: "mext-japan",
+    name: "MEXT",
+    country: "Япония",
+    kind: "government",
+    levels: ["bachelor", "master", "phd"],
+    summary: "Стипендия правительства Японии с одной из самых высоких ежемесячных выплат.",
+    covers: ["Оплата обучения", "Авиабилеты туда и обратно", "Ежемесячная выплата на жизнь"],
+    stipend: "≈$735 в месяц",
+    scope: "Около 400 университетов Японии",
+    notes: [
+      "Основной путь — через посольство Японии: письменные экзамены и собеседование.",
+      "Магистратура и PhD обычно начинаются со статуса Research Student на 6–12 месяцев.",
+    ],
+    url: "https://www.studyinjapan.go.jp/en/smap-stopj-applications-scholarship.html",
+    checked: "2025",
+  },
+  {
+    slug: "erasmus-mundus",
+    name: "Erasmus Mundus Joint Masters",
+    country: "Европа",
+    kind: "government",
+    levels: ["master"],
+    summary: "Магистратура сразу в 2–3 странах Европы с полным покрытием.",
+    covers: ["Полное освобождение от оплаты", "Перелёты и переезды", "Единовременные выплаты на переезд"],
+    stipend: "≈€1 000–1 400 в месяц",
+    scope: "Десятки консорциумов европейских вузов",
+    notes: ["Подаётесь напрямую в конкретную программу из каталога; дедлайны чаще всего с октября по январь."],
+    url: "https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en",
+    checked: "2025",
+  },
+  {
+    slug: "daad",
+    name: "DAAD",
+    country: "Германия",
+    kind: "government",
+    levels: ["master", "phd"],
+    summary: "Стипендии Немецкой службы академических обменов на магистратуру и PhD.",
+    covers: ["Ежемесячная стипендия", "Медицинская страховка", "Перелёт"],
+    stipend: "≈€934 в месяц на магистратуре",
+    scope: "Почти все аккредитованные вузы Германии",
+    warning: "В России DAAD признан нежелательной организацией — гражданам РФ стоит учитывать риски.",
+    url: "https://www.daad.de/en/",
+    checked: "2025",
+  },
+  {
+    slug: "chevening",
+    name: "Chevening",
+    country: "Великобритания",
+    kind: "government",
+    levels: ["master"],
+    summary: "Стипендия правительства Великобритании на годичную магистратуру.",
+    covers: ["Полная оплата обучения", "Проживание", "Авиабилеты"],
+    notes: ["Нужно минимум 2 года опыта работы после бакалавриата.", "Подаётесь сразу на три программы в разных вузах."],
+    warning: "Сейчас Chevening не принимает заявки от граждан России.",
+    url: "https://www.chevening.org/",
+    checked: "2025",
+  },
+  {
+    slug: "uoft-pearson",
+    name: "Lester B. Pearson International Scholarship",
+    country: "Канада",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "University of Toronto: полное покрытие на 4 года для выдающихся школьников.",
+    covers: ["Обучение", "Учебники", "Проживание и расходы на жизнь"],
+    quota: "≈37 человек в год",
+    majors: ["Computer Science", "Data Science", "Economics", "Business"],
+    notes: ["Нужна номинация от школы; отдельная анкета до раннего дедлайна вуза."],
+    url: "https://future.utoronto.ca/pearson-scholarships",
+    checked: "2025",
+  },
+  {
+    slug: "ubc-international-scholars",
+    name: "UBC International Scholars Program",
+    country: "Канада",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "University of British Columbia: обучение и жизнь, размер зависит от финансовой нужды.",
+    covers: ["Обучение", "Проживание и расходы на жизнь"],
+    quota: "≈50–60 студентов в год",
+    majors: ["Computer Science", "Data Science", "Engineering", "Business"],
+    url: "https://you.ubc.ca/financial-planning/scholarships-awards-international-students/international-scholars/",
+    checked: "2025",
+  },
+  {
+    slug: "york-pise",
+    name: "York University PISE",
+    country: "Канада",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "President's International Scholarship of Excellence — до полной оплаты обучения на 4 года.",
+    covers: ["До ≈45 000 CAD в год на обучение"],
+    quota: "≈10–20 студентов",
+    majors: ["Computer Science", "Business", "Data Analytics"],
+    url: "https://futurestudents.yorku.ca/pise",
+    checked: "2025",
+  },
+  {
+    slug: "sciences-po-boutmy",
+    name: "Emile Boutmy Scholarship",
+    country: "Франция",
+    kind: "university",
+    levels: ["bachelor", "master"],
+    summary: "Sciences Po: до ≈€19 000 в год на обучение и жизнь.",
+    covers: ["Обучение", "Часть расходов на жизнь"],
+    majors: ["Economics", "Political Science", "International Relations"],
+    url: "https://www.sciencespo.fr/students/en/fees-funding/bursaries-financial-aid/emile-boutmy-scholarship/",
+    checked: "2025",
+  },
+  {
+    slug: "padua-excellence",
+    name: "Padua International Excellence Scholarship",
+    country: "Италия",
+    kind: "university",
+    levels: ["bachelor", "master"],
+    summary: "University of Padua: обучение плюс ≈€8 000 в год и помощь с жильём.",
+    covers: ["Обучение", "≈€8 000 в год", "Поддержка с жильём"],
+    quota: "67 человек в год",
+    majors: ["Data Science", "Information Engineering", "Psychology"],
+    url: "https://www.unipd.it/en/padua-excellence",
+    checked: "2025",
+  },
+  {
+    slug: "italy-dsu",
+    name: "Региональные стипендии Италии (DSU)",
+    country: "Италия",
+    kind: "government",
+    levels: ["bachelor", "master"],
+    summary: "Стипендии регионов Италии по доходу семьи: освобождение от оплаты, деньги и общежитие.",
+    covers: ["Освобождение от оплаты обучения", "Ежегодная выплата", "Общежитие или столовая"],
+    notes: [
+      "Решает доход и имущество семьи (ISEE parificato), а не оценки — подходит семьям с небольшим доходом.",
+      "Каждый регион ведёт свой конкурс: DiSCo (Лацио), ER.GO (Эмилия-Романья), EDISU (Пьемонт) и другие.",
+      "Документы о доходах нужно заранее перевести и легализовать.",
+    ],
+    url: "https://www.universitaly.it/",
+    checked: "2025",
+  },
+  {
+    slug: "ie-personal-excellence",
+    name: "IE Scholarship for Personal Excellence",
+    country: "Испания",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "IE University: скидки вплоть до полного покрытия.",
+    covers: ["До полного покрытия обучения"],
+    quota: "Полное покрытие — единицы с курса",
+    majors: ["Economics", "Business", "Data Analytics"],
+    url: "https://www.ie.edu/financial-aid/scholarship-list/",
+    checked: "2025",
+  },
+  {
+    slug: "hkust-global-learners",
+    name: "HKUST Global Learners Scholarship",
+    country: "Гонконг",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "Полное освобождение от оплаты обучения на весь срок программы.",
+    covers: ["Полное освобождение от оплаты обучения"],
+    majors: ["Computer Science", "Economics", "Business"],
+    url: "https://join.hkust.edu.hk/global-learners-scholarship",
+    checked: "2025",
+  },
+  {
+    slug: "nus-international",
+    name: "NUS International Undergraduate Scholarship",
+    country: "Сингапур",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "National University of Singapore: обучение, жильё и пособие на жизнь.",
+    covers: ["100% обучения (вместе с MOE Tuition Grant)", "4 500 S$ в год на жизнь", "3 900 S$ в год на общежитие", "1 300 S$ на компьютер"],
+    quota: "≈20–30 человек в год",
+    majors: ["Computer Science", "Data Science", "Business", "Engineering"],
+    notes: ["MOE Tuition Grant обязывает отработать 3 года в Сингапуре после выпуска."],
+    url: "https://nus.edu.sg/oam/scholarships",
+    checked: "2025",
+  },
+  {
+    slug: "ntu-president-award",
+    name: "NTU President Award",
+    country: "Сингапур",
+    kind: "university",
+    levels: ["bachelor"],
+    summary: "Nanyang Technological University: гарантированное общежитие и денежные гранты.",
+    covers: ["Общежитие на 4 года", "Единовременно 10 000 S$ на учёбу", "Грант на зарубежные поездки"],
+    majors: ["AI", "Computer Science", "Engineering"],
+    url: "https://www.ntu.edu.sg/admissions/undergraduate/scholarships",
+    checked: "2025",
+  },
+  {
+    slug: "kaist-international",
+    name: "KAIST International Student Scholarship",
+    country: "Южная Корея",
+    kind: "university",
+    levels: ["master", "phd"],
+    summary: "Полная оплата обучения, общежитие и ежемесячная стипендия.",
+    covers: ["Обучение", "Общежитие", "Ежемесячная стипендия", "Медицинская страховка"],
+    majors: ["AI", "Computer Science", "Robotics"],
+    url: "https://admission.kaist.ac.kr/",
+    checked: "2025",
+  },
+  {
+    slug: "germany-public",
+    name: "Государственные вузы Германии",
+    country: "Германия",
+    kind: "low-cost",
+    levels: ["bachelor", "master"],
+    summary: "Обучение в государственных вузах бесплатное — платите только семестровый взнос.",
+    covers: ["Бесплатное обучение (кроме земли Баден-Вюртемберг: €1 500 за семестр)"],
+    stipend: "Семестровый взнос ≈€150–400; для визы нужен блокированный счёт ≈€11 900 на год",
+    notes: [
+      "На бакалавриат часто нужен Studienkolleg или 1–2 курса вуза дома.",
+      "Многие программы бакалавриата на немецком.",
+    ],
+    url: "https://www.study-in-germany.de/",
+    checked: "2025",
+  },
+  {
+    slug: "czech-in-czech",
+    name: "Обучение на чешском в Чехии",
+    country: "Чехия",
+    kind: "low-cost",
+    levels: ["bachelor", "master"],
+    summary: "Государственные вузы Чехии бесплатны для всех, если учиться на чешском.",
+    covers: ["Бесплатное обучение на чешском языке"],
+    notes: ["Обычно нужен год языковых курсов перед поступлением."],
+    url: "https://www.studyin.cz/",
+    checked: "2025",
+  },
+  {
+    slug: "portugal-belgium",
+    name: "Португалия и Бельгия",
+    country: "Европа",
+    kind: "low-cost",
+    levels: ["bachelor", "master"],
+    summary: "Вузы, где учёба и жизнь стоят примерно как в крупном российском городе.",
+    covers: [
+      "University of Lisbon / Porto: €1 000–2 500 в год, жизнь ≈€800–900 в месяц",
+      "KU Leuven: €2 000–3 000 в год, жизнь ≈€900 в месяц",
+      "Ghent University: €1 800–4 800 в год, жизнь ≈€900 в месяц",
+    ],
+    url: "https://www.studyinbelgium.be/",
+    checked: "2025",
+  },
+];
+
+export function grantBySlug(slug: string) {
+  return GRANTS.find((g) => g.slug === slug) ?? null;
+}

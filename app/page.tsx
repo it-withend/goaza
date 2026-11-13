@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { LandingPage } from "@/components/landing/LandingPage";
+import { HomeHub } from "@/components/home/HomeHub";
+import { SitePage } from "@/components/site/SitePage";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { fetchLandingStats } from "@/lib/landing-stats";
 import { getSupabaseAnon } from "@/lib/supabase";
@@ -9,7 +10,7 @@ import { countryRu } from "@/lib/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} — каталог университетов и грантов за границей`,
+  title: `${SITE_NAME} — как поступить за границу бесплатно: вузы, гранты, гайды`,
   description: SITE_DESCRIPTION,
   alternates: { canonical: "/" },
 };
@@ -85,10 +86,9 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <LandingPage
-        stats={stats}
-        botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
-      />
+      <SitePage wide>
+        <HomeHub stats={stats} />
+      </SitePage>
     </>
   );
 }

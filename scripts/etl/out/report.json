@@ -1,0 +1,103 @@
+{
+ "universities_updated": 795,
+ "fields_filled": {
+  "recommendations": 257,
+  "app_fee": 314,
+  "finaid_url": 188,
+  "rank_world": 387,
+  "aid_forms": 95,
+  "css_fee_waiver": 76,
+  "sources": 795,
+  "data_year": 795,
+  "rank_national": 404,
+  "majors": 12,
+  "intl_undergrad_count": 216,
+  "intl_receiving_aid_pct": 204,
+  "intl_aid_policy": 19,
+  "lang": 10,
+  "sat": 11,
+  "essay": 5,
+  "notes": 3,
+  "rd_acceptance_rate": 185,
+  "ed_acceptance_rate": 173,
+  "full_grant": 1,
+  "early_rounds": 203,
+  "fee_waiver": 7,
+  "avg_gpa": 6,
+  "admission_factors": 13,
+  "apply_url": 274
+ },
+ "full_grant_added": [
+  [
+   "columbia-university-college-and-seas-usa",
+   [
+    "tsvirkkoo",
+    "union86",
+    "us_full_aid_xlsx"
+   ]
+  ]
+ ],
+ "list_sizes": {
+  "tsvirkkoo": 75,
+  "union86": 86,
+  "ayfc": 0
+ },
+ "unmatched_counts": {
+  "universities_list": 4,
+  "cds": 47,
+  "us_full_aid": 1,
+  "tsvirkkoo": 12
+ },
+ "unmatched_samples": {
+  "universities_list": [
+   "USA: NYUAD",
+   "USA: Washington&Lee University",
+   "Qatar: Texas A&M University at Qatar",
+   "Hungary: debrecen university"
+  ],
+  "cds": [
+   "Washington & Lee University",
+   "Albany College of Pharmacy & Health Sciences",
+   "Assumption College",
+   "Bridgewater College",
+   "Coe College",
+   "Columbia College Hollywood",
+   "Daemen College",
+   "Grove CIty College",
+   "Guilford College",
+   "Hampden-Sydney College",
+   "Hanover College",
+   "Hult International Business School",
+   "Iona College",
+   "Kings College",
+   "List College The Jewish Theological Seminary",
+   "Long Island University",
+   "Longwood University",
+   "Marymount Manhattan College",
+   "Merrimack College",
+   "Miami University of Ohio",
+   "Monmouth University",
+   "Moravian College",
+   "Nazareth College",
+   "Pennsylvania Academy of Fine Arts",
+   "Ramapo College of New Jersey"
+  ],
+  "us_full_aid": [
+   "Washington and Lee University"
+  ],
+  "tsvirkkoo": [
+   "Denison College",
+   "DKU",
+   "Georgetown in Qatar",
+   "HK Baptist University",
+   "HKUST",
+   "Minerva University",
+   "Notre Dame University",
+   "Northwestern in Qatar",
+   "NYUAD",
+   "Richmond University",
+   "UNC Chapel Hill",
+   "Washington and Lee University"
+  ]
+ }
+}
