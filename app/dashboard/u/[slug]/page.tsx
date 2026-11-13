@@ -5,6 +5,7 @@ import Link from "next/link";
 import { fetchRelatedUniversities, fetchUniversityBySlug } from "@/lib/universities";
 import { daysLeftLabel, describeDeadline, pickNearestDeadline } from "@/lib/deadline";
 import { countryRu, INST_LABEL } from "@/lib/types";
+import { getCountryGuide } from "@/lib/country-guides";
 import { campusPhotoUrl } from "@/lib/campus-photo";
 import { websiteUrl } from "@/lib/university-logo";
 import { UniversityLogo } from "@/components/UniversityLogo";
@@ -99,11 +100,14 @@ export default async function UniversityPage({
         ].filter((x) => x.d);
   const majors = splitList(u.majors);
   const aidTypes = (u.aid_types || []).filter(Boolean);
+  const countryGuide = getCountryGuide(u.country);
   const finance: [string, Val][] = [
+    ["Максимальная помощь", u.aid_max],
+    ["Полный грант иностранцам", u.full_grant ? "Доступно полное покрытие (Full Ride / 100%)" : null],
     ["Бюджет помощи иностранцам (в год)", u.total_aid_millions],
     ["Средний грант иностранцу", u.avg_aid_award],
     ["Доля иностранцев с помощью", u.intl_receiving_aid_pct],
-    ["Стоимость после помощи", u.coa_after_aid_pct],
+    ["Покрытие цены средним грантом", u.coa_after_aid_pct],
     ["Стипендия за успеваемость", u.merit_scholarship_name],
     ["Политика для иностранцев", u.intl_aid_policy],
     ["Как подать на помощь", u.how_apply_aid],
@@ -250,6 +254,21 @@ export default async function UniversityPage({
                   </p>
                 ) : null}
                 {has(u.notes) ? <p className={styles.prose}>{u.notes}</p> : null}
+              </section>
+            ) : null}
+
+            {countryGuide ? (
+              <section className={styles.panel}>
+                <h2>Гранты и поступление в стране: {countryRu(u.country)}</h2>
+                <p className={styles.guideSub}>
+                  Общие условия поступления, госстипендий и расходов для иностранных абитуриентов в этой стране.
+                </p>
+                <dl className={styles.dl}>
+                  <Row label="Нац. гранты и фонды" value={countryGuide.scholarships} />
+                  <Row label="После 11 класса" value={countryGuide.after11Grade} />
+                  <Row label="Ориентир на жизнь" value={countryGuide.livingBudget} />
+                  <Row label="Работа во время учёбы" value={countryGuide.workRights} />
+                </dl>
               </section>
             ) : null}
           </div>

@@ -6,6 +6,7 @@ import {
   normalizeDeadlineTo2027,
   normalizeUniversityRow,
 } from "@/lib/university-clean";
+import { getCountryGuide } from "@/lib/country-guides";
 import type { University } from "@/lib/types";
 
 function makeRow(p: Partial<University> & { slug: string; name: string }): University {
@@ -114,13 +115,13 @@ describe("university-clean", () => {
     expect(canonicalSlug("boston-university-partial-usa")).toBe("boston-university-usa");
     const rows = [
       makeRow({ slug: "boston-university-partial-usa", name: "Boston University PARTIAL /", aid_num: 35000 }),
-      makeRow({ slug: "boston-university-usa", name: "Boston University", tuition_num: 65000 }),
+      makeRow({ slug: "boston-university-usa", name: "Boston University", tuition_num: 65123 }),
     ];
     const cleaned = cleanAndDeduplicateUniversities(rows);
     expect(cleaned).toHaveLength(1);
     expect(cleaned[0].name).toBe("Boston University");
     expect(cleaned[0].aid_num).toBe(35000);
-    expect(cleaned[0].tuition_num).toBe(65000);
+    expect(cleaned[0].tuition_num).toBe(65123);
   });
 
   it("fixes truncated US tuition ($62 / год -> $62,000 / год) and unifies Korea -> South Korea", () => {
@@ -146,5 +147,25 @@ describe("university-clean", () => {
     expect(normalizeDeadlineTo2027("6.5")).toBeNull();
     expect(normalizeDeadlineTo2027("6")).toBeNull();
     expect(normalizeDeadlineTo2027("rolling")).toBe("Rolling");
+  });
+
+  it("deduplicates messy aid_types, prefixes bare IELTS scores, and replaces PolyU mismatch in CityU HK", () => {
+    const cityu = normalizeUniversityRow(
+      makeRow({
+        slug: "city-university-of-hong-kong-hong-kong",
+        name: "City University of Hong Kong",
+        country: "Hong Kong",
+        lang: "6.0",
+        aid_types: ["Need-based", "Merit", "merit-based", "Both", "both"],
+        notes: "All PolyU academic programmes follow a credit-based structure.",
+      }),
+    );
+    expect(cityu.lang).toBe("IELTS 6.0");
+    expect(cityu.aid_types).toEqual(["Need-based", "Merit-based"]);
+    expect(cityu.notes).toMatch(/Городской университет Гонконга/);
+    expect(cityu.notes).not.toMatch(/PolyU/);
+
+    expect(getCountryGuide("Turkey")?.scholarships).toMatch(/Türkiye Bursları/);
+    expect(getCountryGuide("Germany")?.after11Grade).toMatch(/Studienkolleg/);
   });
 });

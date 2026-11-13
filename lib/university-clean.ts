@@ -390,6 +390,37 @@ function normalizeList(raw: unknown): string[] {
   return [];
 }
 
+function normalizeAidTypes(raw: unknown): string[] {
+  const tokens = normalizeList(raw);
+  const out = new Set<string>();
+  for (const t of tokens) {
+    const low = t.toLowerCase();
+    if (low === "need-based") out.add("Need-based");
+    else if (low === "merit" || low === "merit-based") out.add("Merit-based");
+    else if (low === "both" || low === "mixed" || low === "need+a") {
+      out.add("Need-based");
+      out.add("Merit-based");
+    } else if (low === "scholarship") out.add("Scholarship");
+    else if (low === "full funding") out.add("Full funding");
+    else if (low === "jobs") out.add("Campus jobs");
+    else out.add(t);
+  }
+  return [...out];
+}
+
+function normalizeLang(raw: string | null | undefined): string | null {
+  const s = cleanText(raw);
+  if (!s) return null;
+  // Bare numeric IELTS scores (e.g. "6.0", "6.5", "7") -> "IELTS 6.0"
+  if (/^\d(?:\.\d)?$/.test(s)) {
+    const num = Number(s);
+    if (num >= 4.0 && num <= 9.0) {
+      return `IELTS ${num.toFixed(1)}`;
+    }
+  }
+  return s;
+}
+
 /** Normalize a single University row (domain, name, city, country, tuition, deadlines). */
 export function normalizeUniversityRow(raw: University): University {
   const u: University = { ...raw };
@@ -485,11 +516,15 @@ export function normalizeUniversityRow(raw: University): University {
     }
   }
 
-  // 6. Ensure array fields are clean arrays
+  // 6. Normalize array fields, language scores, and mismatched notes
   u.inst_tags = normalizeList(u.inst_tags);
-  u.aid_types = normalizeList(u.aid_types);
+  u.aid_types = normalizeAidTypes(u.aid_types);
+  u.lang = normalizeLang(u.lang);
+  if (u.slug === "city-university-of-hong-kong-hong-kong" && /\bPolyU\b/i.test(u.notes || "")) {
+    u.notes = null;
+  }
 
-  // 7. Fill missing metadata & Russian overview from verified external datasets
+  // 7. Fill missing metadata & overview from verified external datasets
   applyEnrichment(u);
 
   return u;
