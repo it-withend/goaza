@@ -79,8 +79,8 @@ async function get(url, { timeout = 12000, accept } = {}) {
   }
 }
 
-/** .ico files often embed PNG frames; return the largest PNG frame (sharp cannot read ICO). */
-function largestPngInIco(buf) {
+/** .ico files embed PNG frames or BMP/DIB frames; decode largest frame for sharp. */
+function decodeIco(buf) {
   if (buf.length < 22 || buf.readUInt16LE(0) !== 0 || buf.readUInt16LE(2) !== 1) return null;
   const count = buf.readUInt16LE(4);
   let best = null;
@@ -88,14 +88,63 @@ function largestPngInIco(buf) {
     const e = 6 + i * 16;
     if (e + 16 > buf.length) break;
     const w = buf[e] || 256;
+    const h = buf[e + 1] || 256;
+    const side = Math.min(w, h);
     const size = buf.readUInt32LE(e + 8);
     const off = buf.readUInt32LE(e + 12);
     if (off + size > buf.length || size < 8) continue;
     const frame = buf.subarray(off, off + size);
     const isPng = frame[0] === 0x89 && frame[1] === 0x50 && frame[2] === 0x4e && frame[3] === 0x47;
-    if (isPng && (!best || w > best.w)) best = { w, frame };
+    if (isPng && (!best || side > best.side)) {
+      best = { side, type: "png", buf: Buffer.from(frame) };
+      continue;
+    }
+    // Check BITMAPINFOHEADER (size 40, planes 1, bpp 32 or 24)
+    if (frame.length >= 40 && frame.readUInt32LE(0) === 40) {
+      const bw = frame.readInt32LE(4);
+      const bh = Math.floor(Math.abs(frame.readInt32LE(8)) / 2);
+      const bpp = frame.readUInt16LE(14);
+      const comp = frame.readUInt32LE(16);
+      if (bw > 0 && bh > 0 && bw <= 512 && bh <= 512 && comp === 0 && (bpp === 32 || bpp === 24)) {
+        const rowStride = Math.floor((bw * bpp + 31) / 32) * 4;
+        const maskStride = Math.floor((bw + 31) / 32) * 4;
+        const xorOff = 40;
+        const andOff = xorOff + rowStride * bh;
+        if (xorOff + rowStride * bh <= frame.length) {
+          const rgba = Buffer.alloc(bw * bh * 4);
+          const hasMask = andOff + maskStride * bh <= frame.length;
+          let anyAlpha = false;
+          for (let y = 0; y < bh; y++) {
+            const srcY = bh - 1 - y;
+            const rowStart = xorOff + srcY * rowStride;
+            const maskStart = andOff + srcY * maskStride;
+            for (let x = 0; x < bw; x++) {
+              const di = (y * bw + x) * 4;
+              const si = rowStart + x * (bpp >> 3);
+              rgba[di] = frame[si + 2];
+              rgba[di + 1] = frame[si + 1];
+              rgba[di + 2] = frame[si];
+              let a = bpp === 32 ? frame[si + 3] : 255;
+              if (a > 0) anyAlpha = true;
+              if (bpp === 24 && hasMask) {
+                const maskBit = (frame[maskStart + (x >> 3)] >> (7 - (x & 7))) & 1;
+                if (maskBit) a = 0;
+              }
+              rgba[di + 3] = a;
+            }
+          }
+          if (bpp === 32 && !anyAlpha) {
+            for (let p = 3; p < rgba.length; p += 4) rgba[p] = 255;
+          }
+          const bSide = Math.min(bw, bh);
+          if (!best || bSide > best.side) {
+            best = { side: bSide, type: "raw", buf: rgba, width: bw, height: bh };
+          }
+        }
+      }
+    }
   }
-  return best ? Buffer.from(best.frame) : null;
+  return best;
 }
 
 async function imageFrom(url) {
@@ -103,7 +152,11 @@ async function imageFrom(url) {
   if (!res || !res.ok) return null;
   let buf = Buffer.from(await res.arrayBuffer());
   if (buf.length < 100 || buf.length > 5_000_000) return null;
-  buf = largestPngInIco(buf) ?? buf;
+  const ico = decodeIco(buf);
+  if (ico && ico.type === "raw") {
+    return { url, buf: ico.buf, raw: { width: ico.width, height: ico.height, channels: 4 }, side: ico.side, isSvg: false };
+  }
+  if (ico && ico.type === "png") buf = ico.buf;
   try {
     const isSvg = /svg/.test(res.headers.get("content-type") || "") || /^\s*(<\?xml|<svg)/.test(buf.subarray(0, 200).toString());
     const img = sharp(buf, isSvg ? { density: 300 } : { pages: 1 });
@@ -162,38 +215,60 @@ function iconLinks(html, base) {
 }
 
 async function resolveLogo(row, domain, needVerify) {
-  let home = await get(`https://${domain}/`, { accept: "text/html" });
-  if ((!home || !home.ok) && !domain.startsWith("www.")) {
-    home = await get(`https://www.${domain}/`, { accept: "text/html" });
-  }
-  let html = "";
-  let base = `https://${domain}/`;
-  if (home && home.ok) {
-    base = home.url || base;
-    html = (await home.text()).slice(0, 400_000);
-  }
-  if (needVerify && !(html && verifyTitle(row.name, domain, html))) return { verified: false };
-
-  const candidates = [
-    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&url=https://${domain}&size=256`,
-    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&url=https://www.${domain.replace(/^www\./, "")}&size=256`,
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=256`,
-    ...iconLinks(html, base),
-    new URL("/apple-touch-icon.png", base).toString(),
-    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+  const bare = domain.replace(/^www\./, "");
+  const fastCandidates = [
+    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${bare}&size=256`,
+    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.${bare}&size=256`,
+    `https://www.google.com/s2/favicons?domain=${bare}&sz=256`,
+    `https://www.google.com/s2/favicons?domain=www.${bare}&sz=256`,
+    `https://icon.horse/icon/${bare}`,
+    `https://icons.duckduckgo.com/ip3/${bare}.ico`,
   ];
   const seen = new Set();
   let best = null;
-  for (const c of candidates) {
-    if (seen.has(c)) continue;
-    seen.add(c);
-    const img = await imageFrom(c);
-    if (img && (!best || img.side > best.side)) best = img;
-    if (best && best.side >= 180) break;
+
+  if (!needVerify) {
+    for (const c of fastCandidates) {
+      if (seen.has(c)) continue;
+      seen.add(c);
+      const img = await imageFrom(c);
+      if (img && (!best || img.side > best.side)) best = img;
+      if (best && best.side >= 64) break;
+    }
   }
+
+  if (needVerify || !best || best.side < MIN_SIDE) {
+    let home = await get(`https://${bare}/`, { timeout: 5000, accept: "text/html" });
+    if (!home || !home.ok) {
+      home = await get(`https://www.${bare}/`, { timeout: 5000, accept: "text/html" });
+    }
+    let html = "";
+    let base = `https://${bare}/`;
+    if (home && home.ok) {
+      base = home.url || base;
+      html = (await home.text()).slice(0, 400_000);
+    }
+    if (needVerify && !(html && verifyTitle(row.name, domain, html))) return { verified: false };
+
+    const homeCandidates = [
+      ...(needVerify ? fastCandidates : []),
+      ...iconLinks(html, base),
+      new URL("/apple-touch-icon.png", base).toString(),
+      new URL("/favicon.ico", base).toString(),
+    ];
+    for (const c of homeCandidates) {
+      if (seen.has(c)) continue;
+      seen.add(c);
+      const img = await imageFrom(c);
+      if (img && (!best || img.side > best.side)) best = img;
+      if (best && best.side >= 180) break;
+    }
+  }
+
   if (!best || best.side < MIN_SIDE) return { verified: true, logo: null, side: best?.side ?? 0 };
 
-  const out = await sharp(best.buf, best.isSvg ? { density: 300 } : { pages: 1 })
+  const sharpOpts = best.raw ? { raw: best.raw } : best.isSvg ? { density: 300 } : { pages: 1 };
+  const out = await sharp(best.buf, sharpOpts)
     .resize(OUT_SIZE, OUT_SIZE, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .webp({ quality: 90, alphaQuality: 100 })
     .toBuffer();
@@ -236,7 +311,7 @@ for (const f of fs.readdirSync(OUT)) {
 }
 if (ONLY) rows = rows.filter((r) => ONLY.includes(r.slug));
 const work = rows
-  .map((r) => ({ row: r, domain: r.website_domain || EXTRA[r.slug] || newDomains[r.slug], isNew: !r.website_domain }))
+  .map((r) => ({ row: r, domain: EXTRA[r.slug] || r.website_domain || newDomains[r.slug], isNew: !r.website_domain }))
   .filter((w) => w.domain && (FORCE || !manifest[w.row.slug]));
 
 const sorted = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));

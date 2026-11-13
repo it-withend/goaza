@@ -36,6 +36,9 @@ export default async function UniversityPage({
   const sp = await searchParams;
   const u = await fetchUniversityBySlug(slug);
   if (!u) notFound();
+  if (u.slug !== slug) {
+    redirect(`/dashboard/u/${u.slug}${sp.from ? `?from=${encodeURIComponent(sp.from)}` : ""}`);
+  }
   const related = await fetchRelatedUniversities(u.country, u.slug, 6).catch(() => []);
 
   return (

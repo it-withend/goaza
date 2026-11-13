@@ -20,6 +20,9 @@ export default function GuidesPage() {
       <header className={styles.lead}>
         <h1>Гайды по поступлению</h1>
         <p>Расставлены в том порядке, в котором вы будете с этим сталкиваться. Каждый гайд — на 5–10 минут.</p>
+        <p className={styles.inlineLinks} style={{ marginTop: 14 }}>
+          <Link href="/dashboard/guide">Интерактивный гайд для подписчиков: калькулятор стратегии и чек-лист эссе</Link>
+        </p>
       </header>
 
       {byStage.map((stage) => (

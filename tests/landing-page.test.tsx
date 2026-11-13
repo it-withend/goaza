@@ -1,7 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { LandingPage } from "@/components/landing/LandingPage";
+
+afterEach(cleanup);
 
 vi.mock("next/link", () => ({
   default: ({
@@ -55,5 +57,31 @@ describe("LandingPage", () => {
       "href",
       "https://t.me/studyaza",
     );
+  });
+
+  it("switches preview tabs and toggles FAQ items", async () => {
+    render(
+      <LandingPage
+        stats={{
+          total: 1058,
+          countries: 29,
+          grants: 300,
+          byCountry: [
+            { country: "USA", count: 496 },
+            { country: "Turkey", count: 115 },
+          ],
+        }}
+        botUsername="goazabot"
+      />,
+    );
+
+    const deadlinesTab = screen.getByRole("tab", { name: /дедлайны 2026\/2027/i });
+    await userEvent.click(deadlinesTab);
+    expect(deadlinesTab).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText(/Никаких перепутанных дат/i)).toBeInTheDocument();
+
+    const faqBtn = screen.getByRole("button", { name: /Откуда берутся данные/i });
+    await userEvent.click(faqBtn);
+    expect(faqBtn).toHaveAttribute("aria-expanded", "true");
   });
 });

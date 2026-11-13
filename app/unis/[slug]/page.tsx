@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -51,6 +51,9 @@ export default async function PublicUniversityPage({ params }: Props) {
   const jar = await cookies();
   const session = await readSessionToken(jar.get(SESSION_COOKIE)?.value).catch(() => null);
   const full = Boolean(session?.subscribed);
+  if (u.slug !== slug) {
+    redirect(`/unis/${u.slug}`);
+  }
 
   const teaser = toTeaser(u);
   const related = await fetchRelatedUniversities(u.country, u.slug, 6).catch(() => []);

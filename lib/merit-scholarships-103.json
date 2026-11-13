@@ -1,0 +1,826 @@
+[
+  {
+    "state": "Alabama",
+    "school": "University of Alabama",
+    "scholarship": "Academic Elite",
+    "value": "Full Ride + iPad",
+    "requirements": "32+ ACT or 1400+ SAT (CR+M), 3.8+ GPA",
+    "slug": "university-of-alabama-usa"
+  },
+  {
+    "state": "Alabama",
+    "school": "University of Montevallo",
+    "scholarship": "MAPS (Montevallo Ambassador Program Scholarships)",
+    "value": "Full Ride + $2,000 annual book stipend",
+    "requirements": "30+ ACT or 1320+ SAT (CR+M), 3.5 GPA, plus resume",
+    "slug": null
+  },
+  {
+    "state": "Arkansas",
+    "school": "Hendrix College",
+    "scholarship": "Hays Memorial Scholarship",
+    "value": "Full Ride",
+    "requirements": "32+ ACT or 1410+ SAT (CR+M) , 3.6+ GPA",
+    "slug": "hendrix-college-usa"
+  },
+  {
+    "state": "California",
+    "school": "Loyola Marymount University",
+    "scholarship": "Trustee Scholars",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "loyola-marymount-university-usa"
+  },
+  {
+    "state": "California",
+    "school": "University of Southern California",
+    "scholarship": "Various",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-southern-california-usa"
+  },
+  {
+    "state": "Delaware",
+    "school": "University of Delaware",
+    "scholarship": "Eugene DuPont Memorial Scholarship",
+    "value": "Full Ride+",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-delaware-usa"
+  },
+  {
+    "state": "District of Columbia",
+    "school": "Catholic University of America",
+    "scholarship": "Archdiocesan Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "District of Columbia",
+    "school": "Howard University",
+    "scholarship": "Various",
+    "value": "Full Tuition to Full Ride",
+    "requirements": "26+ ACT or 1170+ SAT (CR+M), GPA 3.0+, Typicaly #1 or #2 in Class",
+    "slug": "howard-university-usa"
+  },
+  {
+    "state": "Florida",
+    "school": "Rollins College",
+    "scholarship": "Alfond Scholars Program",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "rollins-college-usa"
+  },
+  {
+    "state": "Florida",
+    "school": "University of Miami",
+    "scholarship": "Various",
+    "value": "Up to Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-miami-usa"
+  },
+  {
+    "state": "Georgia",
+    "school": "Agnes Scott College",
+    "scholarship": "Marvin B. Perry Presidential Scholarship",
+    "value": "Full Ride+",
+    "requirements": "Case by Case Basis",
+    "slug": "agnes-scott-college-usa"
+  },
+  {
+    "state": "Georgia",
+    "school": "Emory University",
+    "scholarship": "Robert W. Woodruff Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "emory-university-usa"
+  },
+  {
+    "state": "Georgia",
+    "school": "Georgia Institute of Technology",
+    "scholarship": "President's Scholarship and Stamps Scholarship",
+    "value": "Up to Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "georgia-institute-of-technology-usa"
+  },
+  {
+    "state": "Georgia",
+    "school": "Georgia Southern University",
+    "scholarship": "1906 Scholarship",
+    "value": "Full Tuition",
+    "requirements": "1300+ SAT (CR+M), 3.5+ GPA",
+    "slug": null
+  },
+  {
+    "state": "Georgia",
+    "school": "University of Georgia",
+    "scholarship": "Foundation Fellowship",
+    "value": "Full Ride",
+    "requirements": "31 ACT+, 2100+ SAT (CR+M+W), 3.8+ GPA (unweighted)",
+    "slug": "university-of-georgia-usa"
+  },
+  {
+    "state": "Georgia",
+    "school": "University of Georgia",
+    "scholarship": "Bernard Ramsey Honors Scholarship",
+    "value": "Full Tuition +",
+    "requirements": "Requirements 31 ACT+, 2100+ SAT (CR+M+W), 3.8+ GPA (unweighted)",
+    "slug": "university-of-georgia-usa"
+  },
+  {
+    "state": "Illinois",
+    "school": "Knox College",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "knox-college-usa"
+  },
+  {
+    "state": "Illinois",
+    "school": "Illinois Institute of Technology",
+    "scholarship": "Duchossois Leadership Scholars",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "illinois-institute-of-technology-usa"
+  },
+  {
+    "state": "Illinois",
+    "school": "Illinois Institute of Technology",
+    "scholarship": "Camras Scholars Program",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "illinois-institute-of-technology-usa"
+  },
+  {
+    "state": "Indiana",
+    "school": "Indiana University",
+    "scholarship": "Wells Scholars",
+    "value": "Full Ride",
+    "requirements": "In-state students must be nominated by HS (1 or 2 per school)",
+    "slug": "indiana-university-usa"
+  },
+  {
+    "state": "Indiana",
+    "school": "University of Notre Dame",
+    "scholarship": "Penelope W. and E. Roe Stamps IV Leadership Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-notre-dame-usa"
+  },
+  {
+    "state": "Iowa",
+    "school": "Drake University",
+    "scholarship": "National Alumni Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "drake-university-usa"
+  },
+  {
+    "state": "Iowa",
+    "school": "Drake University",
+    "scholarship": "George A. Carpenter Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "drake-university-usa"
+  },
+  {
+    "state": "Kentucky",
+    "school": "Centre College",
+    "scholarship": "Brown Fellowship",
+    "value": "Full Ride +",
+    "requirements": "Case by Case Basis",
+    "slug": "centre-college-usa"
+  },
+  {
+    "state": "Kentucky",
+    "school": "University of Louisville",
+    "scholarship": "Brown Fellowship",
+    "value": "Full Ride +",
+    "requirements": "31 ACT or 1360 SAT (CR+M) and 3.35 GPA",
+    "slug": "university-of-louisville-usa"
+  },
+  {
+    "state": "Kentucky",
+    "school": "University of Kentucky",
+    "scholarship": "Otis A. Singletary Scholarship",
+    "value": "Full Ride +$1,500/year + iPad + $2,000 exp",
+    "requirements": "31+ ACT or 1360 SAT+ (CR+M), 3.5+ GPA (unweighted)",
+    "slug": "university-of-kentucky-usa"
+  },
+  {
+    "state": "Kentucky",
+    "school": "University of Kentucky",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition",
+    "requirements": "31+ ACT or 1360 SAT+ (CR+M), 3.5+ GPA (unweighted)",
+    "slug": "university-of-kentucky-usa"
+  },
+  {
+    "state": "Louisiana",
+    "school": "Louisiana State University",
+    "scholarship": "Stamps Leadership Scholars",
+    "value": "Full Ride + $14,000 exp",
+    "requirements": "3.5 GPA, 33 ACT or 1440 SAT",
+    "slug": "louisiana-state-university-usa"
+  },
+  {
+    "state": "Louisiana",
+    "school": "Louisiana State University",
+    "scholarship": "Chancellor's Alumni Scholars",
+    "value": "Full Ride + $2,000 exp",
+    "requirements": "33+ ACT or 1440+ SAT, 3.5+ GPA",
+    "slug": "louisiana-state-university-usa"
+  },
+  {
+    "state": "Louisiana",
+    "school": "Tulane University",
+    "scholarship": "Dean's Honor Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "tulane-university-usa"
+  },
+  {
+    "state": "Louisiana",
+    "school": "Tulane University",
+    "scholarship": "Competitive Full Ride Scholarship Name Paul Tulane Scholarship",
+    "value": "Scholarships Value Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "tulane-university-usa"
+  },
+  {
+    "state": "Maryland",
+    "school": "Johns Hopkins University",
+    "scholarship": "Charles R. Westgate Scholarship in Engineering",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "johns-hopkins-university-usa"
+  },
+  {
+    "state": "Maryland",
+    "school": "Stevenson University",
+    "scholarship": "Presidential Fellowship",
+    "value": "Full Tuition + $3,000 exp",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "Maryland",
+    "school": "University of Maryland",
+    "scholarship": "Banneker/Key Scholarship",
+    "value": "Up to Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-maryland-usa"
+  },
+  {
+    "state": "Massachusetts",
+    "school": "Boston College",
+    "scholarship": "Presidential Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "boston-college-usa"
+  },
+  {
+    "state": "Massachusetts",
+    "school": "Boston University",
+    "scholarship": "Trustee Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "boston-university-usa"
+  },
+  {
+    "state": "Massachusetts",
+    "school": "Clark University",
+    "scholarship": "Presidential LEEP Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "clark-university-usa"
+  },
+  {
+    "state": "Massachusetts",
+    "school": "Northeastern University",
+    "scholarship": "University Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "northeastern-university-usa"
+  },
+  {
+    "state": "Massachusetts",
+    "school": "Worcester Polytechnic Institute",
+    "scholarship": "Foisie Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "worcester-polytechnic-institute-usa"
+  },
+  {
+    "state": "Michigan",
+    "school": "Michigan State University",
+    "scholarship": "Alumni Distinguished Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "michigan-state-university-usa"
+  },
+  {
+    "state": "Michigan",
+    "school": "Michigan State University",
+    "scholarship": "Distinguished Freshman Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "michigan-state-university-usa"
+  },
+  {
+    "state": "Mississippi",
+    "school": "Mississippi State University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Ride +",
+    "requirements": "30+ ACT or 1330+ SAT, 3.75+ GPA",
+    "slug": "mississippi-state-university-usa"
+  },
+  {
+    "state": "Mississippi",
+    "school": "University of Mississippi (Ole Miss)",
+    "scholarship": "Penelope W. and E. Roe Stamps IV Leadership Scholarship",
+    "value": "Up to Full Ride + $12,000 exp",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-mississippi-usa"
+  },
+  {
+    "state": "Missouri",
+    "school": "Missouri State University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition + Housing",
+    "requirements": "Top 10% of Class, 30+ ACT of or 1330+ SAT (CR+M) or 3.9+ GPA",
+    "slug": null
+  },
+  {
+    "state": "Missouri",
+    "school": "Saint Louis University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition",
+    "requirements": "30+ ACT or 1330+ SAT (CR+M), 3.85+ GPA (weighted or unweighted)",
+    "slug": "saint-louis-university-usa"
+  },
+  {
+    "state": "Missouri",
+    "school": "Washington University – Saint Louis",
+    "scholarship": "Various",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "washington-university-in-st-louis-usa"
+  },
+  {
+    "state": "Missouri",
+    "school": "Maryville University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Ride",
+    "requirements": "27+ ACT or 1220+ SAT (CR+M), 3.5+ GPA",
+    "slug": null
+  },
+  {
+    "state": "Missouri",
+    "school": "Maryville University",
+    "scholarship": "Trustee Scholarship",
+    "value": "Full Ride",
+    "requirements": "27+ ACT or 1220+ SAT (CR+M), 3.5+ GPA",
+    "slug": null
+  },
+  {
+    "state": "New Jersey",
+    "school": "Rutgers University",
+    "scholarship": "Presidential Scholarship",
+    "value": "$25,600/year",
+    "requirements": "35+ ACT or 2250+ SAT (CR+M+W), \"Competitive Academic Credentials\"",
+    "slug": "rutgers-the-state-university-of-new-jersey-usa"
+  },
+  {
+    "state": "New Jersey",
+    "school": "St. Peter's University",
+    "scholarship": "Presidential Academic Scholarship",
+    "value": "Full Tuition",
+    "requirements": "31+ ACT or 1300+ SAT, 3.5+ GPA,",
+    "slug": "saint-peters-university-usa"
+  },
+  {
+    "state": "New Jersey",
+    "school": "Stevens Institute of Technology",
+    "scholarship": "The Ann P. Neupauer Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "stevens-institute-of-technology-usa"
+  },
+  {
+    "state": "New Mexico",
+    "school": "University of New Mexico",
+    "scholarship": "Regents' Scholarship",
+    "value": "Full Tuition + exp",
+    "requirements": "31+ ACT or 3.9+ GPA or Valedictorian",
+    "slug": "university-of-new-mexico-usa"
+  },
+  {
+    "state": "New York",
+    "school": "University of Rochester",
+    "scholarship": "Renaissance & Global Scholarships",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-rochester-usa"
+  },
+  {
+    "state": "New York",
+    "school": "University of Buffalo",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Ride + books",
+    "requirements": "33+ ACT or 1470+ SAT (CR+M), Unweighted HS average of 95",
+    "slug": "suny-university-at-buffalo-usa"
+  },
+  {
+    "state": "New York",
+    "school": "Fordham University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition + room",
+    "requirements": "Case by Case Basis",
+    "slug": "fordham-university-usa"
+  },
+  {
+    "state": "New York",
+    "school": "Hofstra University",
+    "scholarship": "Trustee Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "hofstra-university-usa"
+  },
+  {
+    "state": "New York",
+    "school": "St. Lawrence University",
+    "scholarship": "Trustee Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "st-lawrence-university-usa"
+  },
+  {
+    "state": "New York",
+    "school": "Syracuse University",
+    "scholarship": "Coronat Scholars",
+    "value": "Full Tuition",
+    "requirements": "College of Arts and Sciences applicant",
+    "slug": "syracuse-university-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "Appalachian State University",
+    "scholarship": "Wilson Scholars Program",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "North Carolina",
+    "school": "Davidson College",
+    "scholarship": "John Montgomery Belk Scholarship",
+    "value": "Full Ride + $6K exp",
+    "requirements": "High School nomination (one candidate per school)",
+    "slug": "davidson-college-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "Duke University",
+    "scholarship": "Robertson Scholars",
+    "value": "Full Ride + laptop + summer exp",
+    "requirements": "Case by Case Basis",
+    "slug": "duke-university-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "University of North Carolina – Greensboro",
+    "scholarship": "Scholars Program",
+    "value": "Up to Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "North Carolina",
+    "school": "North Carolina State University",
+    "scholarship": "Park Scholarship",
+    "value": "Full Ride + books + laptop + travel",
+    "requirements": "Case by Case Basis",
+    "slug": "north-carolina-state-university-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "Salem College",
+    "scholarship": "Multiple",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "North Carolina",
+    "school": "Wake Forest University",
+    "scholarship": "Multiple",
+    "value": "Full Ride +",
+    "requirements": "Case by Case Basis",
+    "slug": "wake-forest-university-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "University of North Carolina",
+    "scholarship": "Morehead-Cain Scholars",
+    "value": "Full Ride + books + laptop + summer exp",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-north-carolina-at-chapel-hill-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "University of North Carolina",
+    "scholarship": "Robertson Scholars",
+    "value": "Full Ride + laptop + summer exp",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-north-carolina-at-chapel-hill-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "University of North Carolina",
+    "scholarship": "Pogue Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-north-carolina-at-chapel-hill-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "University of North Carolina – Charlotte",
+    "scholarship": "Levine Scholars Program",
+    "value": "Full Ride + books + exp + $8500 Grant",
+    "requirements": "Nomination from HS Counselor, 15 each Year, 5 Out of State",
+    "slug": "university-of-north-carolina-charlotte-usa"
+  },
+  {
+    "state": "North Carolina",
+    "school": "North Carolina A&T State University",
+    "scholarship": "National Alumni Association Scholarship",
+    "value": "Full Ride",
+    "requirements": "22+ ACT or 1000+ SAT (CR+M), 3.0+ GPA",
+    "slug": null
+  },
+  {
+    "state": "North Carolina",
+    "school": "North Carolina A&T State University",
+    "scholarship": "Lewis and Elizabeth Dowdy Scholarship",
+    "value": "Full Ride",
+    "requirements": "26+ ACT or 1200+ SAT (CR+M), 3.75+ GPA, 500 Word Essay",
+    "slug": null
+  },
+  {
+    "state": "Ohio",
+    "school": "Denison University",
+    "scholarship": "various",
+    "value": "Up to $45,000/year",
+    "requirements": "Case by Case Basis",
+    "slug": "denison-university-usa"
+  },
+  {
+    "state": "Ohio",
+    "school": "Hiram College",
+    "scholarship": "Trustee Scholarship",
+    "value": "Up to Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "Ohio",
+    "school": "Miami University",
+    "scholarship": "University Merit Scholarship",
+    "value": "Up to Full Tuition",
+    "requirements": "32+ ACT or 1400+ SAT (CR+M), 3.7+ GPA",
+    "slug": null
+  },
+  {
+    "state": "Ohio",
+    "school": "Ohio Northern University",
+    "scholarship": "Mathile Scholarship",
+    "value": "Full Tuition",
+    "requirements": "30+ ACT or 1330+ SAT (CR+M), 3.5+ GPA",
+    "slug": "ohio-northern-university-usa"
+  },
+  {
+    "state": "Ohio",
+    "school": "Ohio State University",
+    "scholarship": "Eminence Scholarship",
+    "value": "Full Ride + $3,000 exp",
+    "requirements": "34+ ACT or 1520+ SAT (CR+M), Typically Top 3% of Class",
+    "slug": "ohio-state-university-usa"
+  },
+  {
+    "state": "Ohio",
+    "school": "University of Toledo",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Ride + $3,000 exp",
+    "requirements": "30+ ACT or 1340+ SAT (CR+M), 3.8+ GPA,",
+    "slug": "university-of-toledo-usa"
+  },
+  {
+    "state": "Oregon",
+    "school": "Lewis and Clark College",
+    "scholarship": "Barbara Hirschi Neely Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "lewis-clark-college-usa"
+  },
+  {
+    "state": "Pennsylvania",
+    "school": "Arcadia University",
+    "scholarship": "President's Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "arcadia-university-usa"
+  },
+  {
+    "state": "Pennsylvania",
+    "school": "University of Pittsburgh",
+    "scholarship": "University Academic",
+    "value": "Up to Full Ride",
+    "requirements": "33+ ACT or 1450+ SAT (CR+M), Typically Top 5% of Class,",
+    "slug": "university-of-pittsburgh-usa"
+  },
+  {
+    "state": "Pennsylvania",
+    "school": "Villanova University",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "villanova-university-usa"
+  },
+  {
+    "state": "Rhode Island",
+    "school": "Providence College",
+    "scholarship": "Liberal Arts Honors Program",
+    "value": "Up to Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "providence-college-usa"
+  },
+  {
+    "state": "South Carolina",
+    "school": "Furman University",
+    "scholarship": "Herman W. Lay Scholarship",
+    "value": "Full Ride",
+    "requirements": "Typically 32+ ACT or 1400+ SAT (CR+M)",
+    "slug": "furman-university-usa"
+  },
+  {
+    "state": "South Carolina",
+    "school": "Furman University",
+    "scholarship": "James B. Duke Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Typically 32+ ACT or 1400+ SAT (CR+M)",
+    "slug": "furman-university-usa"
+  },
+  {
+    "state": "South Carolina",
+    "school": "Clemson University",
+    "scholarship": "National Scholars",
+    "value": "Full Ride +",
+    "requirements": "Case by Case Basis Top 10% of Class, 28+",
+    "slug": "clemson-university-usa"
+  },
+  {
+    "state": "South Carolina",
+    "school": "Wofford College",
+    "scholarship": "Wofford Scholars",
+    "value": "Full Ride",
+    "requirements": "ACT, 1250+ SAT (CR+M), Nominated by",
+    "slug": null
+  },
+  {
+    "state": "South Carolina",
+    "school": "University of South Carolina",
+    "scholarship": "McNair Scholars",
+    "value": "Full Tuition +",
+    "requirements": "HS Case by Case Basis",
+    "slug": "university-of-south-carolina-usa"
+  },
+  {
+    "state": "Tennessee",
+    "school": "Rhodes College",
+    "scholarship": "Bellingrath Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "rhodes-college-usa"
+  },
+  {
+    "state": "Tennessee",
+    "school": "Vanderbilt University",
+    "scholarship": "various",
+    "value": "Full Tuition + exp",
+    "requirements": "Case by Case Basis",
+    "slug": "vanderbilt-university-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "University of Texas at Dallas",
+    "scholarship": "McDermott Scholars",
+    "value": "Full Ride + books + $15,000 exp",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-texas-at-dallas-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "University of Texas at Dallas",
+    "scholarship": "Academic Excellence Scholarship",
+    "value": "Full Tuition +",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-texas-at-dallas-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "Trinity University",
+    "scholarship": "Murchison Scholarship",
+    "value": "Up to Full Tuition",
+    "requirements": "32+ ACT or 1400+ SAT (CR+M), 3.5+ GPA",
+    "slug": "trinity-university-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "University of Texas",
+    "scholarship": "40 Acres Scholarship",
+    "value": "Full Tuition+",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  },
+  {
+    "state": "Texas",
+    "school": "Southern Methodist University",
+    "scholarship": "President's Scholarship",
+    "value": "Full Ride + exp",
+    "requirements": "Case by Case Basis",
+    "slug": "southern-methodist-university-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "Southwestern University",
+    "scholarship": "Brown Scholars",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "southwestern-university-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "Texas Christian University",
+    "scholarship": "Chancellor's Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Typically 32+ ACT, 2130+ SAT (CR+M+W)",
+    "slug": "texas-christian-university-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "University of Houston",
+    "scholarship": "Tier One Scholarship",
+    "value": "Full Tuition+",
+    "requirements": "Typically Top 10 % of Class, 29+ ACT or 1300+ SAT (CR+M)",
+    "slug": "university-of-houston-usa"
+  },
+  {
+    "state": "Texas",
+    "school": "Texas A&M University",
+    "scholarship": "President's Endowed Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "texas-a-m-university-usa"
+  },
+  {
+    "state": "Utah",
+    "school": "University of Utah",
+    "scholarship": "Presidential Scholarship",
+    "value": "Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-utah-usa"
+  },
+  {
+    "state": "Virginia",
+    "school": "University of Richmond",
+    "scholarship": "Richmond Scholars",
+    "value": "Up to Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-richmond-usa"
+  },
+  {
+    "state": "Virginia",
+    "school": "University of Virginia",
+    "scholarship": "Jefferson Scholarship",
+    "value": "Full Ride + books",
+    "requirements": "Case by Case Basis",
+    "slug": "university-of-virginia-usa"
+  },
+  {
+    "state": "Virginia",
+    "school": "Washington and Lee University",
+    "scholarship": "Johnson Scholarship",
+    "value": "Full Ride",
+    "requirements": "Case by Case Basis",
+    "slug": "washington-and-lee-usa"
+  },
+  {
+    "state": "Wisconsin",
+    "school": "Carthage College",
+    "scholarship": "Presidential Scholarship",
+    "value": "at least Full Tuition",
+    "requirements": "Case by Case Basis",
+    "slug": null
+  }
+]

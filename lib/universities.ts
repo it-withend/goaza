@@ -1,6 +1,12 @@
 import { unstable_cache } from "next/cache";
-import { toCatalogUni, type CatalogUni } from "@/lib/catalog";
+import { parseAidMillions, parseCurrencyAmount, toCatalogUni, type CatalogUni } from "@/lib/catalog";
 import { hasLogo } from "@/lib/logos";
+import {
+  canonicalSlug,
+  cleanAndDeduplicateUniversities,
+  DUPLICATE_SLUG_MAP,
+  normalizeUniversityRow,
+} from "@/lib/university-clean";
 import { getSupabaseAnon } from "./supabase";
 import type { University } from "./types";
 
@@ -14,7 +20,7 @@ export type UniQuery = {
   rateMax?: number;
   inst?: string[];
   aidTypes?: string[];
-  sort?: "name" | "grant" | "rate" | "tuition" | "aid";
+  sort?: "name" | "grant" | "intl_aid" | "intl_avg" | "rate" | "tuition" | "aid";
   limit?: number;
 };
 
@@ -23,7 +29,13 @@ const PAGE = 1000;
 function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
   let q = sb.from("universities").select("*");
 
-  if (query.country) q = q.eq("country", query.country);
+  if (query.country) {
+    if (query.country === "South Korea" || query.country === "Korea") {
+      q = q.in("country", ["South Korea", "Korea"]);
+    } else {
+      q = q.eq("country", query.country);
+    }
+  }
   if (query.grantOnly) q = q.eq("full_grant", true);
   if (query.needBlind) q = q.eq("need_blind", true);
   if (query.tuitionMax != null && Number.isFinite(query.tuitionMax)) {
@@ -59,6 +71,8 @@ function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
       q = q.order("tuition_num", { ascending: true, nullsFirst: false }).order("name");
       break;
     case "aid":
+    case "intl_aid":
+    case "intl_avg":
       q = q.order("aid_num", { ascending: false, nullsFirst: false }).order("name");
       break;
     default:
@@ -84,7 +98,27 @@ export async function fetchUniversities(query: UniQuery = {}): Promise<Universit
     from += PAGE;
   }
 
-  return all;
+  const cleaned = cleanAndDeduplicateUniversities(all);
+  if (query.sort === "intl_aid" || query.sort === "intl_avg") {
+    const numDesc = (a: number | null, b: number | null) =>
+      a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : b - a;
+    cleaned.sort((a, b) => {
+      const aTotal = parseAidMillions(a.total_aid_millions);
+      const bTotal = parseAidMillions(b.total_aid_millions);
+      const aAvg = parseCurrencyAmount(a.avg_aid_award);
+      const bAvg = parseCurrencyAmount(b.avg_aid_award);
+      const primary = query.sort === "intl_aid" ? numDesc(aTotal, bTotal) : numDesc(aAvg, bAvg);
+      const secondary = query.sort === "intl_aid" ? numDesc(aAvg, bAvg) : numDesc(aTotal, bTotal);
+      return (
+        primary ||
+        secondary ||
+        numDesc(a.aid_num, b.aid_num) ||
+        Number(b.full_grant) - Number(a.full_grant) ||
+        a.name.localeCompare(b.name)
+      );
+    });
+  }
+  return cleaned;
 }
 
 export async function fetchBrowseUniversities(): Promise<University[]> {
@@ -100,7 +134,7 @@ export const fetchCatalog = unstable_cache(
     const rows = await fetchUniversities({ sort: "name", limit: 5000 });
     return rows.map((u) => toCatalogUni(u, hasLogo(u.slug)));
   },
-  ["dashboard-catalog-v1"],
+  ["dashboard-catalog-v3"],
   { revalidate: 600, tags: ["universities"] },
 );
 
@@ -109,10 +143,21 @@ export const SLUG_RE = /^[a-z0-9-]{1,160}$/;
 
 export async function fetchUniversityBySlug(slug: string): Promise<University | null> {
   if (typeof slug !== "string" || !SLUG_RE.test(slug)) return null;
+  const target = canonicalSlug(slug);
+  const aliases = [
+    target,
+    ...(target.endsWith("-usa") ? [target.replace(/-usa$/, "-partial-usa")] : []),
+    ...Object.entries(DUPLICATE_SLUG_MAP)
+      .filter(([, dst]) => dst === target)
+      .map(([src]) => src),
+  ];
   const sb = getSupabaseAnon();
-  const { data, error } = await sb.from("universities").select("*").eq("slug", slug).maybeSingle();
+  const { data, error } = await sb.from("universities").select("*").in("slug", aliases);
   if (error) throw new Error(error.message);
-  return (data as University | null) ?? null;
+  const rows = (data || []) as University[];
+  if (!rows.length) return null;
+  const merged = cleanAndDeduplicateUniversities(rows);
+  return merged[0] ?? normalizeUniversityRow(rows[0]);
 }
 
 export function groupByCountry(unis: University[]) {
@@ -180,7 +225,7 @@ export type UniDirectoryEntry = Pick<University, "slug" | "name" | "country" | "
 /** Lightweight public directory (names + links only) for SEO hub pages. */
 export async function fetchUniversityDirectory(): Promise<UniDirectoryEntry[]> {
   const sb = getSupabaseAnon();
-  const all: UniDirectoryEntry[] = [];
+  const all: University[] = [];
   for (let from = 0; from < 10000; from += PAGE) {
     const { data, error } = await sb
       .from("universities")
@@ -189,11 +234,17 @@ export async function fetchUniversityDirectory(): Promise<UniDirectoryEntry[]> {
       .order("name")
       .range(from, from + PAGE - 1);
     if (error) throw new Error(error.message);
-    const page = (data || []) as UniDirectoryEntry[];
+    const page = (data || []) as University[];
     all.push(...page);
     if (page.length < PAGE) break;
   }
-  return all;
+  return cleanAndDeduplicateUniversities(all).map((u) => ({
+    slug: u.slug,
+    name: u.name,
+    country: u.country,
+    city: u.city,
+    full_grant: Boolean(u.full_grant),
+  }));
 }
 
 /** A few other universities in the same country, for internal linking. */
@@ -203,16 +254,27 @@ export async function fetchRelatedUniversities(
   limit = 8,
 ): Promise<UniDirectoryEntry[]> {
   const sb = getSupabaseAnon();
+  const countries =
+    country === "South Korea" || country === "Korea" ? ["South Korea", "Korea"] : [country];
   const { data, error } = await sb
     .from("universities")
     .select("slug,name,country,city,full_grant")
-    .eq("country", country)
+    .in("country", countries)
     .neq("slug", excludeSlug)
     .order("full_grant", { ascending: false })
     .order("name")
-    .limit(limit);
+    .limit(limit * 3);
   if (error) throw new Error(error.message);
-  return (data || []) as UniDirectoryEntry[];
+  const cleaned = cleanAndDeduplicateUniversities((data || []) as University[]).filter(
+    (u) => u.slug !== canonicalSlug(excludeSlug),
+  );
+  return cleaned.slice(0, limit).map((u) => ({
+    slug: u.slug,
+    name: u.name,
+    country: u.country,
+    city: u.city,
+    full_grant: Boolean(u.full_grant),
+  }));
 }
 
 /** Rows for the shortlist builder (server-only, cached 10 min). */
@@ -235,6 +297,6 @@ export const fetchMatchRows = unstable_cache(
       logo: hasLogo(u.slug),
     }));
   },
-  ["match-rows-v1"],
+  ["match-rows-v2"],
   { revalidate: 600, tags: ["universities"] },
 );

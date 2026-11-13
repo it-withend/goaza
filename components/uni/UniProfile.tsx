@@ -3,7 +3,8 @@ import Link from "next/link";
 import { GateCta } from "@/components/gate/GateCta";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { campusPhotoUrl } from "@/lib/campus-photo";
-import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
+import { getCountryGuide } from "@/lib/country-guides";
+import { daysLeftLabel, describeDeadline, pickNearestDeadline } from "@/lib/deadline";
 import { hasLogo } from "@/lib/logos";
 import { countryRu, INST_LABEL, type University } from "@/lib/types";
 import type { UniDirectoryEntry } from "@/lib/universities";
@@ -73,17 +74,29 @@ export function UniProfile({
   ];
   const early = describeDeadline(u.early_deadline);
   const regular = describeDeadline(u.regular_deadline);
-  const deadlines = [
-    { label: "Ранний", d: early },
-    { label: "Основной", d: regular },
-  ].filter((x) => x.d);
+  const nearest = pickNearestDeadline(u.early_deadline, u.regular_deadline)?.info ?? null;
+  // Same date in both fields means there is only one round.
+  const deadlines =
+    early && regular && u.early_deadline?.trim() === u.regular_deadline?.trim()
+      ? [{ label: "Основной", d: regular }]
+      : [
+          { label: "Ранний", d: early },
+          { label: "Основной", d: regular },
+        ].filter((x) => x.d);
   const majors = splitList(u.majors);
   const aidTypes = (u.aid_types || []).filter(Boolean);
+  const countryGuide = getCountryGuide(u.country);
+  const fundLine = [
+    u.total_aid_millions ? `Фонд ${u.total_aid_millions}/год` : null,
+    u.intl_receiving_aid_pct ? `${u.intl_receiving_aid_pct} иностр.` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const finance: [string, Val][] = [
-    ["Средний грант", u.avg_aid_award],
-    ["Иностранцев с помощью", u.intl_receiving_aid_pct],
-    ["Стоимость после помощи", u.coa_after_aid_pct],
-    ["Общий бюджет помощи", u.total_aid_millions],
+    ["Бюджет помощи иностранцам (в год)", u.total_aid_millions],
+    ["Средний грант иностранцу", u.avg_aid_award],
+    ["Доля иностранцев с помощью", u.intl_receiving_aid_pct],
+    ["Покрытие цены средним грантом", u.coa_after_aid_pct],
     ["Стипендия за успеваемость", u.merit_scholarship_name],
     ["Какие анкеты подавать", u.aid_forms],
     ["Бесплатный CSS Profile", u.css_fee_waiver],
@@ -162,12 +175,13 @@ export function UniProfile({
             ) : null}
           </div>
           <div>
-            <small>Макс. помощь</small>
-            <strong>{u.aid_max || "—"}</strong>
+            <small>Помощь иностранцам</small>
+            <strong>{(full ? u.aid_max || u.avg_aid_award : u.aid_max) || "—"}</strong>
+            {full && fundLine ? <span className={styles.metricSub}>{fundLine}</span> : null}
           </div>
           <div>
             <small>Ближайший дедлайн</small>
-            <strong>{(early || regular)?.label || "—"}</strong>
+            <strong>{nearest?.label || "—"}</strong>
           </div>
         </section>
 
@@ -304,6 +318,26 @@ export function UniProfile({
                   </p>
                 ) : null}
                 {has(u.notes) ? <p className={styles.prose}>{u.notes}</p> : null}
+              </section>
+            ) : null}
+
+            {countryGuide ? (
+              <section className={styles.panel}>
+                <h2>Гранты и поступление в стране: {countryRu(u.country)}</h2>
+                <p className={styles.guideSub}>
+                  Общие условия поступления, госстипендий и расходов для иностранных абитуриентов в этой стране.
+                </p>
+                <dl className={styles.dl}>
+                  <Row label="Нац. гранты и фонды" value={countryGuide.scholarships} />
+                  <Row label="После 11 класса" value={countryGuide.after11Grade} />
+                  <Row label="Ориентир на жизнь" value={countryGuide.livingBudget} />
+                  <Row label="Работа во время учёбы" value={countryGuide.workRights} />
+                </dl>
+                <p className={styles.muted}>
+                  <Link href="/grants" className={styles.inlineLink}>
+                    Все стипендии и гранты
+                  </Link>
+                </p>
               </section>
             ) : null}
 

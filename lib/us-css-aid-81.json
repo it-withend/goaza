@@ -1,0 +1,812 @@
+[
+  {
+    "school": "Stanford University",
+    "location": "Stanford, California",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "stanford-university-usa"
+  },
+  {
+    "school": "Brown University",
+    "location": "Providence, Rhode Island",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind (from '29)",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "brown-university-usa"
+  },
+  {
+    "school": "Columbia University",
+    "location": "New York, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "columbia-university-usa"
+  },
+  {
+    "school": "Dartmouth College",
+    "location": "Hanover, New Hampshire",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "dartmouth-college-usa"
+  },
+  {
+    "school": "The University of Pennsylvania",
+    "location": "Philadelphia, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "the-university-of-pennsylvania-usa"
+  },
+  {
+    "school": "Princeton University",
+    "location": "Princeton, New Jersey",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "PFAA",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "princeton-university-usa"
+  },
+  {
+    "school": "Yale University",
+    "location": "New Haven, Connecticut",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Waiver request form",
+    "slug": "yale-university-usa"
+  },
+  {
+    "school": "Harvard University",
+    "location": "Cambridge, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS or Alternative form",
+    "cssWaiver": "Not provided",
+    "slug": "harvard-university-usa"
+  },
+  {
+    "school": "Massachusetts Institute of Technology",
+    "location": "Cambridge, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "massachusetts-institute-of-technology-usa"
+  },
+  {
+    "school": "The University of Chicago",
+    "location": "Chicago, Illinois",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "IFAW + supplements",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "the-university-of-chicago-usa"
+  },
+  {
+    "school": "California Institute of Technology",
+    "location": "Pasadena, California",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS/Must apply through RD",
+    "cssWaiver": "Not provided",
+    "slug": "california-institute-of-technology-usa"
+  },
+  {
+    "school": "Duke University",
+    "location": "Durham, North Carolina",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Waiver request form",
+    "slug": "duke-university-usa"
+  },
+  {
+    "school": "Johns Hopkins University",
+    "location": "Baltimore, Maryland",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or JHU ISFAA",
+    "cssWaiver": "Not provided",
+    "slug": "johns-hopkins-university-usa"
+  },
+  {
+    "school": "Northwestern University",
+    "location": "Evanston, Illinois",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISAFA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "northwestern-university-usa"
+  },
+  {
+    "school": "Vanderbilt University",
+    "location": "Nashville, Tenessee",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "vanderbilt-university-usa"
+  },
+  {
+    "school": "Washington University in St. Louis",
+    "location": "St. Louis County, Missouri",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Email/not guaranteed",
+    "slug": "washington-university-in-st-louis-usa"
+  },
+  {
+    "school": "Rice University",
+    "location": "Houston, Texas",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "75$ application fee/CSS",
+    "cssWaiver": "Not provided",
+    "slug": "rice-university-usa"
+  },
+  {
+    "school": "University of Notre Dame",
+    "location": "Notre Dame, Indiana",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "university-of-notre-dame-usa"
+  },
+  {
+    "school": "Emory University",
+    "location": "Atlanta, Georgia",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "emory-university-usa"
+  },
+  {
+    "school": "Georgetown University",
+    "location": "Washington, D.C.",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "Fin aid is very limited/CSS",
+    "cssWaiver": "Request via email",
+    "slug": "georgetown-university-usa"
+  },
+  {
+    "school": "New York University",
+    "location": "Abu Dhabi, UAE",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Waiver request form",
+    "slug": "new-york-university-usa"
+  },
+  {
+    "school": "Tufts University",
+    "location": "Medford, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "tufts-university-usa"
+  },
+  {
+    "school": "Wake Forest University",
+    "location": "Winston-Salem, North Carolina",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Submit by November 15",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "wake-forest-university-usa"
+  },
+  {
+    "school": "University of Rochester",
+    "location": "Rochester, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "university-of-rochester-usa"
+  },
+  {
+    "school": "Brandeis University",
+    "location": "Waltham, Massachusetts",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Limited/CSS + Scholarships",
+    "cssWaiver": "Not provided",
+    "slug": "brandeis-university-usa"
+  },
+  {
+    "school": "Case Western Reserve University",
+    "location": "Clevelend, Ohio",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS + CWRU Scholarships",
+    "cssWaiver": "Not provided",
+    "slug": "case-western-reserve-university-usa"
+  },
+  {
+    "school": "Lehigh University",
+    "location": "Bethlehem, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS + LUCF form",
+    "cssWaiver": "Request via email",
+    "slug": "lehigh-university-usa"
+  },
+  {
+    "school": "Villanova University",
+    "location": "Villanova, Pennsylvania",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS + Presidential scholarship",
+    "cssWaiver": "Request via email",
+    "slug": "villanova-university-usa"
+  },
+  {
+    "school": "Connecticut College",
+    "location": "New London, Connecticut",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "connecticut-college-usa"
+  },
+  {
+    "school": "Fordham University",
+    "location": "New York, New York",
+    "aidType": "merit-based",
+    "maxAid": "Meals and fees excluded",
+    "policy": "need-aware",
+    "howApply": "Maurice J. and Carolyn Dursi Cunniffe Presidential Scholarship",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "fordham-university-usa"
+  },
+  {
+    "school": "Florida Southern College",
+    "location": "Lakeland, Florida",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Hollingsworth Scholarship",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "florida-southern-college-usa"
+  },
+  {
+    "school": "Kenyon College",
+    "location": "Gambier, Ohio",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISAFA + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "kenyon-college-usa"
+  },
+  {
+    "school": "University of Miami",
+    "location": "Coral Gables, Florida",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS + Scholarships",
+    "cssWaiver": "Request via email",
+    "slug": "university-of-miami-usa"
+  },
+  {
+    "school": "Grinnell College",
+    "location": "Grinnel, Iowa",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "grinnell-college-usa"
+  },
+  {
+    "school": "Trinity College",
+    "location": "Hartford, Connecticut",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "trinity-college-usa"
+  },
+  {
+    "school": "University of Richmond",
+    "location": "Richmond, Virginia",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Apply by December 1 to be eligible for merit-based scholarships",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "university-of-richmond-usa"
+  },
+  {
+    "school": "Carleton College",
+    "location": "Northfield, Minnesota",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISAFA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "carleton-college-usa"
+  },
+  {
+    "school": "Bowdoin College",
+    "location": "Brunswick, Maine",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "bowdoin-college-usa"
+  },
+  {
+    "school": "Bates College",
+    "location": "Lewiston, Maine",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "bates-college-usa"
+  },
+  {
+    "school": "Colby College",
+    "location": "Waterville, Maine",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile",
+    "cssWaiver": "Request via email",
+    "slug": "colby-college-usa"
+  },
+  {
+    "school": "Swarthmore College",
+    "location": "Swarthmore, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS + ISAFA + supplements",
+    "cssWaiver": "Provided if admitted",
+    "slug": "swarthmore-college-usa"
+  },
+  {
+    "school": "Macalester College",
+    "location": "Saint Paul, Minnesota",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "macalester-college-usa"
+  },
+  {
+    "school": "Amherst College",
+    "location": "Amherst, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request for ISFAA",
+    "slug": "amherst-college-usa"
+  },
+  {
+    "school": "Davidson College",
+    "location": "Davidson, North Carolina",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "If your family makes less than 5000$, use alternative form on admission portal",
+    "cssWaiver": "Alternative form on admission portal",
+    "slug": "davidson-college-usa"
+  },
+  {
+    "school": "Skidmore College",
+    "location": "Saratoga Springs, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or SISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "skidmore-college-usa"
+  },
+  {
+    "school": "Barnard College",
+    "location": "New York, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "barnard-college-usa"
+  },
+  {
+    "school": "Haverford College",
+    "location": "Haverford, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or FISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "haverford-college-usa"
+  },
+  {
+    "school": "Franklin & Marshall College",
+    "location": "Lancaster, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or Alternative form",
+    "cssWaiver": "Not provided",
+    "slug": "franklin-marshall-college-usa"
+  },
+  {
+    "school": "Washington and Lee University",
+    "location": "Lexington, Virginia",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Johnson Scholarsip (apply by December 1)\nCSS Profile",
+    "cssWaiver": "Waiver request form",
+    "slug": "washington-and-lee-usa"
+  },
+  {
+    "school": "Wesleyan University",
+    "location": "Middletown, Connecticut",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Apply through Regular \ndecision, CSS or ISFAA",
+    "cssWaiver": "Not provided",
+    "slug": "wesleyan-university-usa"
+  },
+  {
+    "school": "Denison University",
+    "location": "Granville, Ohio",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Denison Certification \nof Finances",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "denison-university-usa"
+  },
+  {
+    "school": "Babson College",
+    "location": "Wellesley, Massachusetts",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Weissman Scholarship +\nCSS Profile (Global Scholarship)",
+    "cssWaiver": "Not provided",
+    "slug": "babson-college-usa"
+  },
+  {
+    "school": "Berea College",
+    "location": "Berea, Kentucky",
+    "aidType": "both",
+    "maxAid": "(1000$ deposit \nrequired) Full Ride",
+    "policy": "Tuition free for all \nstudents",
+    "howApply": "Questionnaire + 2250$ deposit",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "berea-college-usa"
+  },
+  {
+    "school": "Wellesley College",
+    "location": "Wellesley, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "FAIF + CSS (if needed)",
+    "cssWaiver": "Not provided",
+    "slug": "wellesley-college-usa"
+  },
+  {
+    "school": "College of the Holy Cross",
+    "location": "Worcester, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "HCCFF + supplements",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "college-of-the-holy-cross-usa"
+  },
+  {
+    "school": "Colgate University",
+    "location": "Hamilton, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "colgate-university-usa"
+  },
+  {
+    "school": "Oberlin College",
+    "location": "Oberlin, Ohio",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS or ISAFA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "oberlin-college-usa"
+  },
+  {
+    "school": "Mount Holyoke College",
+    "location": "South Hadley, Massachusetts",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "mount-holyoke-college-usa"
+  },
+  {
+    "school": "Smith College",
+    "location": "Northampton, Massachusetts",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "smith-college-usa"
+  },
+  {
+    "school": "Vassar College",
+    "location": "Poughkeepsie, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "vassar-college-usa"
+  },
+  {
+    "school": "Reed College",
+    "location": "Portland, Oregon",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile or Reed ISFAA",
+    "cssWaiver": "Request for ISFAA",
+    "slug": "reed-college-usa"
+  },
+  {
+    "school": "Bryn Mawr College",
+    "location": "Bryn Mawr, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Waiver request form",
+    "slug": "bryn-mawr-college-usa"
+  },
+  {
+    "school": "Agnes Scott College",
+    "location": "Decatur, Georgia",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Marvin B. Perry\nPresidential Scholarship",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "agnes-scott-college-usa"
+  },
+  {
+    "school": "Pomona College",
+    "location": "Claremont, California",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Pomona Access Pass",
+    "slug": "pomona-college-usa"
+  },
+  {
+    "school": "Pitzer College",
+    "location": "Claremont, California",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "PIFAA",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "pitzer-college-usa"
+  },
+  {
+    "school": "Claremont McKenna College",
+    "location": "Claremont, California",
+    "aidType": "both",
+    "maxAid": "",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "claremont-mckenna-college-usa"
+  },
+  {
+    "school": "Harvey Mudd College",
+    "location": "Claremont, California",
+    "aidType": "both",
+    "maxAid": "",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements\nSo scholarship",
+    "cssWaiver": "Not provided",
+    "slug": "harvey-mudd-college-usa"
+  },
+  {
+    "school": "Scripps College",
+    "location": "Claremont, California",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "scripps-college-usa"
+  },
+  {
+    "school": "Hamilton College",
+    "location": "Clinton, New york",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Request via email",
+    "slug": "hamilton-college-usa"
+  },
+  {
+    "school": "Union College",
+    "location": "Schenectady, New York",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Limited/CSS + Supplements",
+    "cssWaiver": "Not provided",
+    "slug": "union-college-usa"
+  },
+  {
+    "school": "Middlebury College",
+    "location": "Middlebury, Vermont",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "middlebury-college-usa"
+  },
+  {
+    "school": "Centre College",
+    "location": "Danville, Kentucky",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Lincoln Scholars Program",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "centre-college-usa"
+  },
+  {
+    "school": "Rhodes College",
+    "location": "Memphis, Tennessee",
+    "aidType": "both",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "RFIF + scholarships",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "rhodes-college-usa"
+  },
+  {
+    "school": "North Central College",
+    "location": "Naperville, Illinois",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Trustee Scholarship",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "north-central-college-usa"
+  },
+  {
+    "school": "Whitman College",
+    "location": "Walla Walla, Washington",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "WISFAA",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "whitman-college-usa"
+  },
+  {
+    "school": "Bennington College",
+    "location": "Bennington, Vermont",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Bennington ISFA",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "bennington-college-usa"
+  },
+  {
+    "school": "Lafayette College",
+    "location": "Easton, Pennsylvania",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "lafayette-college-usa"
+  },
+  {
+    "school": "St. Olaf College",
+    "location": "Northfiels, Minnesota",
+    "aidType": "both",
+    "maxAid": "",
+    "policy": "need-aware",
+    "howApply": "CSS or ISFAA + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "st-olaf-college-usa"
+  },
+  {
+    "school": "George Washington University",
+    "location": "Washington, D.C.",
+    "aidType": "",
+    "maxAid": "",
+    "policy": "need-aware",
+    "howApply": "CSS + Presidential scholarship",
+    "cssWaiver": "Not provided",
+    "slug": "the-george-washington-university-usa"
+  },
+  {
+    "school": "Minerva Schools at KGI",
+    "location": "San Francisco, California",
+    "aidType": "need-based",
+    "maxAid": "Full Ride",
+    "policy": "need-blind",
+    "howApply": "CSS Profile + supplements",
+    "cssWaiver": "Not provided",
+    "slug": "minerva-schools-at-kgi-usa"
+  },
+  {
+    "school": "Simmons University",
+    "location": "Boston, Massachusetts",
+    "aidType": "merit-based",
+    "maxAid": "Full Ride",
+    "policy": "need-aware",
+    "howApply": "Simmons Distinguished \nScholar Award",
+    "cssWaiver": "Уточнять в фин. офисе",
+    "slug": "simmons-university-usa"
+  }
+]

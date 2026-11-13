@@ -9,11 +9,13 @@ export function DashboardShell({
   children,
   onLogout,
   onOpenFilters,
+  activeSection = "catalog",
 }: {
   accountName: string;
   children: ReactNode;
   onLogout: () => void;
   onOpenFilters?: () => void;
+  activeSection?: "catalog" | "guide";
 }) {
   const displayAccount = accountName.startsWith("@") ? accountName : `@${accountName}`;
 
@@ -28,6 +30,21 @@ export function DashboardShell({
             <span className={styles.brandMeta}>Атлас вузов</span>
           </span>
         </Link>
+
+        <nav className={styles.topNav} aria-label="Навигация дашборда">
+          <Link
+            href="/dashboard"
+            className={`${styles.topNavLink} ${activeSection === "catalog" ? styles.topNavLinkActive : ""}`}
+          >
+            Каталог вузов
+          </Link>
+          <Link
+            href="/dashboard/guide"
+            className={`${styles.topNavLink} ${activeSection === "guide" ? styles.topNavLinkActive : ""}`}
+          >
+            Гайд абитуриента
+          </Link>
+        </nav>
 
         <div className={styles.accountBar}>
           {onOpenFilters ? (

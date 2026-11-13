@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { filterCatalog, toCatalogUni, type CatalogUni } from "@/lib/catalog";
+import { filterCatalog, parseAidMillions, parseCurrencyAmount, toCatalogUni, type CatalogUni } from "@/lib/catalog";
 import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
 import type { University } from "@/lib/types";
 
@@ -65,6 +65,64 @@ describe("filterCatalog", () => {
     const copy = [...all];
     filterCatalog(all, { sort: "rate" });
     expect(all).toEqual(copy);
+  });
+
+  it("parses and sorts by international student financial aid budget and average grant", () => {
+    expect(parseAidMillions("$7.7m")).toBe(7.7);
+    expect(parseAidMillions("$500k")).toBe(0.5);
+    expect(parseCurrencyAmount("$31,303")).toBe(31303);
+
+    const intlList = [
+      uni({
+        slug: "small-pool",
+        name: "Small Pool U",
+        total_aid_millions: "$1.2m",
+        avg_aid_award: "$45,000",
+        intl_receiving_aid_pct: "50%",
+      }),
+      uni({
+        slug: "big-pool",
+        name: "Big Pool U",
+        total_aid_millions: "$18.5m",
+        avg_aid_award: "$28,000",
+        intl_receiving_aid_pct: "80%",
+      }),
+      uni({ slug: "no-data", name: "No Data U" }),
+    ];
+
+    expect(filterCatalog(intlList, { sort: "intl_aid" }).map((u) => u.slug)).toEqual([
+      "big-pool",
+      "small-pool",
+      "no-data",
+    ]);
+    expect(filterCatalog(intlList, { sort: "intl_avg" }).map((u) => u.slug)).toEqual([
+      "small-pool",
+      "big-pool",
+      "no-data",
+    ]);
+  });
+
+  it("filters by hasIntlAid, urgentDeadline and favSlugs presets", () => {
+    const now = new Date(Date.UTC(2026, 10, 13));
+    const list = [
+      uni({
+        slug: "soon-intl",
+        name: "Soon Intl",
+        total_aid_millions: "$5.0m",
+        early_deadline: "2026-12-01",
+      }),
+      uni({
+        slug: "later-no-intl",
+        name: "Later No Intl",
+        regular_deadline: "2027-04-01",
+      }),
+    ];
+
+    expect(filterCatalog(list, { hasIntlAid: true }, now).map((u) => u.slug)).toEqual(["soon-intl"]);
+    expect(filterCatalog(list, { urgentDeadline: true }, now).map((u) => u.slug)).toEqual(["soon-intl"]);
+    expect(filterCatalog(list, { favSlugs: ["later-no-intl"] }, now).map((u) => u.slug)).toEqual([
+      "later-no-intl",
+    ]);
   });
 });
 

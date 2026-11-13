@@ -3,10 +3,36 @@
  * Avoids cold-start timeouts that cause Search Console "Couldn't fetch".
  */
 import { createClient } from "@supabase/supabase-js";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SITE = "https://goaza.xyz";
+
+function loadEnvLocal() {
+  const envFile = resolve(process.cwd(), ".env.local");
+  if (!existsSync(envFile)) return;
+  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+    const i = line.indexOf("=");
+    if (i > 0 && !line.startsWith("#")) {
+      const k = line.slice(0, i).trim();
+      const v = line.slice(i + 1).trim().replace(/^"|"$/g, "");
+      if (!process.env[k]) process.env[k] = v;
+    }
+  }
+}
+
+function loadDuplicateSlugSet() {
+  const cleanFile = resolve(process.cwd(), "lib", "university-clean.ts");
+  if (!existsSync(cleanFile)) return new Set();
+  const src = readFileSync(cleanFile, "utf8");
+  const m = src.match(/DUPLICATE_SLUG_MAP:\s*Record<string,\s*string>\s*=\s*\{([\s\S]*?)\};/);
+  if (!m) return new Set();
+  const set = new Set();
+  for (const pair of m[1].matchAll(/"([^"]+)":\s*"([^"]+)"/g)) {
+    set.add(pair[1]);
+  }
+  return set;
+}
 
 function escapeXml(s) {
   return s
@@ -28,6 +54,7 @@ function urlEntry(loc, priority, changefreq) {
 }
 
 async function fetchSlugs() {
+  loadEnvLocal();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
@@ -39,7 +66,8 @@ async function fetchSlugs() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const slugs = [];
+  const duplicateSlugs = loadDuplicateSlugSet();
+  const slugs = new Set();
   const page = 1000;
   let from = 0;
   for (;;) {
@@ -54,12 +82,15 @@ async function fetchSlugs() {
     }
     if (!data?.length) break;
     for (const row of data) {
-      if (row.slug) slugs.push(row.slug);
+      const s = row.slug;
+      if (!s) continue;
+      if (duplicateSlugs.has(s) || s.endsWith("-partial-usa")) continue;
+      slugs.add(s);
     }
     if (data.length < page) break;
     from += page;
   }
-  return slugs;
+  return [...slugs].sort();
 }
 
 /** Guide slugs are read from content/guides.ts (top-level `slug:` entries of GUIDES). */
