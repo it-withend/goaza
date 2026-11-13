@@ -101,6 +101,29 @@ describe("filterCatalog", () => {
       "no-data",
     ]);
   });
+
+  it("filters by hasIntlAid, urgentDeadline and favSlugs presets", () => {
+    const now = new Date(Date.UTC(2026, 10, 13));
+    const list = [
+      uni({
+        slug: "soon-intl",
+        name: "Soon Intl",
+        total_aid_millions: "$5.0m",
+        early_deadline: "2026-12-01",
+      }),
+      uni({
+        slug: "later-no-intl",
+        name: "Later No Intl",
+        regular_deadline: "2027-04-01",
+      }),
+    ];
+
+    expect(filterCatalog(list, { hasIntlAid: true }, now).map((u) => u.slug)).toEqual(["soon-intl"]);
+    expect(filterCatalog(list, { urgentDeadline: true }, now).map((u) => u.slug)).toEqual(["soon-intl"]);
+    expect(filterCatalog(list, { favSlugs: ["later-no-intl"] }, now).map((u) => u.slug)).toEqual([
+      "later-no-intl",
+    ]);
+  });
 });
 
 describe("describeDeadline", () => {

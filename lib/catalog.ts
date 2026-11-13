@@ -1,4 +1,4 @@
-import { pickNearestDeadline } from "@/lib/deadline";
+import { describeDeadline, pickNearestDeadline } from "@/lib/deadline";
 import type { University } from "@/lib/types";
 
 /**
@@ -38,6 +38,9 @@ export type CatalogFilters = {
   country?: string;
   grantOnly?: boolean;
   needBlind?: boolean;
+  hasIntlAid?: boolean;
+  urgentDeadline?: boolean;
+  favSlugs?: Set<string> | string[];
   tuitionMax?: number;
   aidMin?: number;
   rateMax?: number;
@@ -137,14 +140,25 @@ const nullsLast = (a: number | null, b: number | null, dir: 1 | -1) => {
 };
 
 /** Same semantics as the old PostgREST query in lib/universities.ts, but in memory. */
-export function filterCatalog(all: CatalogUni[], f: CatalogFilters): CatalogUni[] {
+export function filterCatalog(all: CatalogUni[], f: CatalogFilters, now = new Date()): CatalogUni[] {
   const terms = (f.q || "").toLowerCase().trim().split(/\s+/).filter(Boolean);
   const inst = f.inst || [];
   const aidTypes = f.aidTypes || [];
+  const favSet = f.favSlugs
+    ? f.favSlugs instanceof Set
+      ? f.favSlugs
+      : new Set(f.favSlugs)
+    : null;
   const out = all.filter((u) => {
     if (f.country && u.country !== f.country) return false;
     if (f.grantOnly && !u.full_grant) return false;
     if (f.needBlind && !u.need_blind) return false;
+    if (f.hasIntlAid && u.total_aid_num == null && u.avg_aid_num == null) return false;
+    if (f.urgentDeadline) {
+      const info = describeDeadline(u.deadline, now);
+      if (!info || info.daysLeft == null || info.daysLeft < 0 || info.daysLeft > 60) return false;
+    }
+    if (favSet && !favSet.has(u.slug)) return false;
     if (f.tuitionMax != null && Number.isFinite(f.tuitionMax)) {
       if (u.tuition_num == null || u.tuition_num > f.tuitionMax) return false;
     }
