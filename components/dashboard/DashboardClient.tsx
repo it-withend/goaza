@@ -8,6 +8,7 @@ import { locale, localizePath } from "@/lib/i18n";
 import { countryName, instLabel } from "@/lib/types";
 import type { computeMeta } from "@/lib/universities";
 import { UniversityCard } from "@/components/UniversityCard";
+import { CountryFlag, Icon } from "@/components/ui/Icon";
 import { useApplicant } from "@/lib/use-applicant";
 import { ToTop } from "@/components/ToTop";
 import { DashboardShell } from "./DashboardShell";
@@ -176,6 +177,19 @@ export function DashboardClient({
 
   const [visible, setVisible] = useState(FIRST_BATCH);
   useEffect(() => setVisible(FIRST_BATCH), [unis]);
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [filtersOpen]);
   const sentinel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const node = sentinel.current;
@@ -252,7 +266,7 @@ export function DashboardClient({
       clear: () => setUrgentDeadline(false),
     });
   }
-  if (favOnly) activeTokens.push({ key: "fav", label: tr("★ Избранное", "★ Tanlanganlar"), clear: () => setFavOnly(false) });
+  if (favOnly) activeTokens.push({ key: "fav", label: tr("Мой план", "Mening rejam"), clear: () => setFavOnly(false) });
   if (tuitionMax < meta.tuitionMax) {
     activeTokens.push({
       key: "tuition",
@@ -314,7 +328,9 @@ export function DashboardClient({
       </div>
 
       <div className={styles.searchWrap}>
-        <span aria-hidden>⌕</span>
+        <span className={styles.searchIcon} aria-hidden>
+          <Icon name="search" size={16} />
+        </span>
         <input
           type="search"
           placeholder={tr("Вуз, город, грант, направление…", "OTM, shahar, grant, yo'nalish…")}
@@ -374,24 +390,28 @@ export function DashboardClient({
         </label>
       </div>
 
+      <div className={styles.fBlock}>
+        <h4>{tr("Годовой бюджет", "Yillik byudjet")}</h4>
+        <div className={styles.rangeRow}>
+          <label htmlFor="f-tuition">
+            {tr("Стоимость до", "Narxi gacha")} <span>${money(tuitionMax)}</span>
+          </label>
+          <input
+            id="f-tuition"
+            type="range"
+            min={0}
+            max={meta.tuitionMax}
+            step={500}
+            value={tuitionMax}
+            onChange={(e) => setTuitionMax(Number(e.target.value))}
+          />
+        </div>
+      </div>
+
       <details className={styles.advanced}>
         <summary>{tr("Точные фильтры", "Aniq filtrlar")}</summary>
       <div className={styles.fBlock}>
-          <h4>{tr("Бюджет и шансы", "Byudjet va imkoniyatlar")}</h4>
-          <div className={styles.rangeRow}>
-            <label htmlFor="f-tuition">
-              {tr("Стоимость до", "Narxi gacha")} <span>${money(tuitionMax)}</span>
-            </label>
-            <input
-              id="f-tuition"
-              type="range"
-              min={0}
-              max={meta.tuitionMax}
-              step={500}
-              value={tuitionMax}
-              onChange={(e) => setTuitionMax(Number(e.target.value))}
-            />
-          </div>
+          <h4>{tr("Помощь и шансы", "Yordam va imkoniyatlar")}</h4>
           <div className={styles.rangeRow}>
             <label htmlFor="f-aid">
               {tr("Помощь от", "Yordam dan")} <span>${money(aidMin)}</span>
@@ -457,9 +477,15 @@ export function DashboardClient({
         </div>
       </details>
 
-      <button type="button" className={styles.resetBtn} onClick={resetFilters}>
-        {tr("Сбросить все фильтры", "Barcha filtrlarni tozalash")}
-      </button>
+      <div className={styles.drawerFooter}>
+        <button type="button" className={styles.resetBtn} onClick={resetFilters}>
+          <Icon name="x" size={14} />
+          <span>{tr("Сбросить фильтры", "Filtrlarni tozalash")}</span>
+        </button>
+        <button type="button" className={styles.drawerApply} onClick={() => setFiltersOpen(false)}>
+          {tr(`Показать ${unis.length}`, `Ko'rsatish: ${unis.length}`)}
+        </button>
+      </div>
     </aside>
   );
 
@@ -478,24 +504,62 @@ export function DashboardClient({
         />
         {filters}
         <section className={styles.results}>
+          <div className={styles.mobileBar}>
+            <button
+              type="button"
+              className={styles.mobileFilterBtn}
+              onClick={() => setFiltersOpen(true)}
+            >
+              <Icon name="sliders" size={15} />
+              <span>{tr("Фильтры", "Filtrlar")}</span>
+              {activeTokens.length > 0 ? <em className={styles.mobileFilterCount}>{activeTokens.length}</em> : null}
+            </button>
+            <select
+              className={styles.mobileSortSelect}
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              aria-label={tr("Сортировка", "Saralash")}
+            >
+              <option value="name">{tr("По алфавиту и странам", "Alifbo va davlatlar")}</option>
+              <option value="intl_aid">{tr("Бюджет помощи ↓", "Yordam byudjeti ↓")}</option>
+              <option value="intl_avg">{tr("Средний грант ↓", "O'rtacha grant ↓")}</option>
+              <option value="grant">{tr("Полные гранты", "To'liq grantlar")}</option>
+              <option value="rate">{tr("% поступления ↑", "Qabul % ↑")}</option>
+              <option value="tuition">{tr("Стоимость ↑", "Narxi ↑")}</option>
+              <option value="aid">{tr("Макс. помощь ↓", "Maks. yordam ↓")}</option>
+            </select>
+          </div>
+
           <div className={styles.kpiStrip}>
             <div className={styles.kpiTile}>
-              <small>{tr("В выдаче", "Natijada")}</small>
+              <small>
+                <Icon name="graduation-cap" size={13} />
+                <span>{tr("В выдаче", "Natijada")}</span>
+              </small>
               <strong aria-live="polite">
                 {loading ? "…" : unis.length} <span>/ {meta.total}</span>
               </strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>{tr("Полные гранты", "To'liq grantlar")}</small>
+              <small>
+                <Icon name="award" size={13} />
+                <span>{tr("Полные гранты", "To'liq grantlar")}</span>
+              </small>
               <strong>{filteredGrants}</strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>{tr("С фондом иностр.", "Xorijliklar fondi bilan")}</small>
+              <small>
+                <Icon name="globe" size={13} />
+                <span>{tr("С фондом иностр.", "Xorijliklar fondi bilan")}</span>
+              </small>
               <strong>{intlFundCount}</strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>{tr("Ваш шорт-лист", "Sizning ro'yxatingiz")}</small>
-              <strong>★ {favSet.size}</strong>
+              <small>
+                <Icon name="bookmark-check" size={13} />
+                <span>{tr("Ваш шорт-лист", "Sizning ro'yxatingiz")}</span>
+              </small>
+              <strong>{favSet.size}</strong>
             </div>
           </div>
 
@@ -523,7 +587,8 @@ export function DashboardClient({
                 className={`${styles.presetBtn}${favOnly ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={() => setFavOnly((v) => !v)}
               >
-                {tr("Мой план", "Mening rejam")} ({favSet.size})
+                <Icon name="bookmark-check" size={13} />
+                <span>{tr("Мой план", "Mening rejam")} ({favSet.size})</span>
               </button>
             </div>
 
@@ -533,14 +598,16 @@ export function DashboardClient({
                 aria-pressed={view === "grid"}
                 onClick={() => setView("grid")}
               >
-                {tr("Сетка", "Katak")}
+                <Icon name="layout-grid" size={14} />
+                <span>{tr("Сетка", "Katak")}</span>
               </button>
               <button
                 type="button"
                 aria-pressed={view === "list"}
                 onClick={() => setView("list")}
               >
-                {tr("Список", "Ro'yxat")}
+                <Icon name="list" size={14} />
+                <span>{tr("Список", "Ro'yxat")}</span>
               </button>
             </div>
           </div>
@@ -549,7 +616,8 @@ export function DashboardClient({
             <div className={styles.tokens} aria-label={tr("Активные фильтры", "Faol filtrlar")}>
               {activeTokens.map((token) => (
                 <button key={token.key} type="button" className={styles.token} onClick={token.clear}>
-                  {token.label} ×
+                  <span>{token.label}</span>
+                  <Icon name="x" size={12} />
                 </button>
               ))}
               {activeTokens.length > 1 ? (
@@ -562,11 +630,15 @@ export function DashboardClient({
 
           <nav className={styles.countryNav} aria-label={tr("Страны", "Davlatlar")}>
             <button type="button" aria-pressed={!country} onClick={() => setCountry("")}>
-              {tr("Все", "Hammasi")} <span className={styles.n}>{meta.total}</span>
+              <Icon name="globe" size={13} />
+              <span>{tr("Все", "Hammasi")}</span>
+              <span className={styles.n}>{meta.total}</span>
             </button>
             {meta.countries.map(([c, n]) => (
               <button type="button" key={c} aria-pressed={country === c} onClick={() => setCountry(c)}>
-                {countryName(c, lang)} <span className={styles.n}>{n}</span>
+                <CountryFlag country={c} size={14} />
+                <span>{countryName(c, lang)}</span>
+                <span className={styles.n}>{n}</span>
               </button>
             ))}
           </nav>
@@ -574,8 +646,8 @@ export function DashboardClient({
           <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
             {favOnly && favSet.size === 0
               ? tr(
-                  "В избранном пока пусто. Нажмите ★ на карточке любого вуза, чтобы собрать свой список.",
-                  "Tanlanganlar hozircha bo'sh. O'z ro'yxatingizni yig'ish uchun istalgan OTM kartasidagi tugmani bosing.",
+                  "В плане пока пусто. Нажмите «В план» на карточке любого вуза, чтобы собрать свой список.",
+                  "Rejada hozircha bo'sh. O'z ro'yxatingizni yig'ish uchun istalgan OTM kartasidagi tugmani bosing.",
                 )
               : tr(
                   "По текущим фильтрам ничего не найдено. Ослабьте один из фильтров.",
@@ -617,7 +689,10 @@ export function DashboardClient({
                 return (
                   <section className={styles.countrySection} key={c} id={`sec-${c}`}>
                     <div className={styles.sectionHeader}>
-                      <h2>{countryName(c, lang)}</h2>
+                      <h2 className={styles.sectionHeading}>
+                        <CountryFlag country={c} size={18} />
+                        <span>{countryName(c, lang)}</span>
+                      </h2>
                       <span>{list.length}</span>
                     </div>
                     <div className={cardsClass}>

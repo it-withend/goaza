@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "@/components/i18n/Link";
 import { GateCta } from "@/components/gate/GateCta";
 import { SitePage } from "@/components/site/SitePage";
+import { CountryFlag, Icon } from "@/components/ui/Icon";
 import styles from "@/components/gate/gate.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { langOf, localizePath, trFor } from "@/lib/i18n";
@@ -78,7 +79,9 @@ export default async function UnisIndexPage({ params }: { params: Promise<{ lang
             <nav className={styles.countryNav} aria-label={tr("Страны", "Davlatlar")}>
               {groups.map(([country, list]) => (
                 <a key={country} href={`#${countryAnchor(country)}`}>
-                  {countryName(country, lang)} <span>{list.length}</span>
+                  <CountryFlag country={country} size={15} />
+                  <span>{countryName(country, lang)}</span>
+                  <span className={styles.countryCount}>{list.length}</span>
                 </a>
               ))}
             </nav>
@@ -86,14 +89,20 @@ export default async function UnisIndexPage({ params }: { params: Promise<{ lang
 
           {groups.map(([country, list]) => (
             <section key={country} id={countryAnchor(country)} className={styles.countryBlock}>
-              <h2>
-                {countryName(country, lang)} <span>{list.length}</span>
+              <h2 className={styles.countryHeading}>
+                <CountryFlag country={country} size={20} />
+                <span>{countryName(country, lang)}</span>
+                <span className={styles.countryCount}>{list.length}</span>
               </h2>
               <ul className={styles.uniList}>
                 {list.map((u) => (
                   <li key={u.slug}>
                     <Link href={`/unis/${u.slug}`}>{u.name}</Link>
-                    {u.full_grant ? <span className={styles.dot} title={tr("Полный грант", "To'liq grant")} /> : null}
+                    {u.full_grant ? (
+                      <span className={styles.grantBadge} title={tr("Полный грант", "To'liq grant")}>
+                        <Icon name="award" size={14} />
+                      </span>
+                    ) : null}
                   </li>
                 ))}
               </ul>

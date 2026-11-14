@@ -5,6 +5,7 @@ import type { CatalogUni } from "@/lib/catalog";
 import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
 import { countryName, instLabel } from "@/lib/types";
 import { UniversityLogo } from "@/components/UniversityLogo";
+import { CountryFlag, Icon } from "@/components/ui/Icon";
 import styles from "./dashboard/Dashboard.module.css";
 
 function formatAidPolicy(raw: string | null): string | null {
@@ -44,68 +45,94 @@ function UniversityCardImpl({
     .filter(Boolean)
     .join(" · ");
 
+  // Keep badges to at most 2 scannable signals so cards stay crisp.
+  const badges: { label: string; cls: string }[] = [];
+  if (u.full_grant) badges.push({ label: tr("Полный грант", "To'liq grant"), cls: styles.tagGrant });
+  if (u.need_blind && badges.length < 2) badges.push({ label: "Need-blind", cls: styles.tagMoss });
+  else if (aidPolicy && badges.length < 2) badges.push({ label: aidPolicy, cls: styles.tagWarn });
+  if (badges.length < 2 && u.inst_tags.length) {
+    badges.push({ label: instLabel(u.inst_tags[0], lang), cls: "" });
+  }
+
   return (
     <article
       className={styles.card}
       style={staggerIndex < 12 ? { animationDelay: `${staggerIndex * 20}ms` } : { animation: "none" }}
     >
-      {onToggleFavorite ? (
-        <button
-          type="button"
-          className={`${styles.favBtn}${isFavorite ? ` ${styles.favBtnActive}` : ""}`}
-          aria-pressed={isFavorite}
-          aria-label={isFavorite ? tr(`Убрать ${u.name} из моего плана`, `${u.name} ni rejamdan olib tashlash`) : tr(`Добавить ${u.name} в мой план`, `${u.name} ni rejamga qo'shish`)}
-          onClick={() => onToggleFavorite(u.slug)}
-        >
-          {isFavorite ? tr("В плане", "Rejada") : tr("+ В план", "+ Rejaga")}
-        </button>
-      ) : null}
+      <div className={styles.cardHead}>
+        <Link href={href} className={styles.cardTitleBlock} prefetch={false}>
+          <UniversityLogo name={u.name} slug={u.slug} logo={u.logo} size={46} priority={staggerIndex < 6} />
+          <div className={styles.cardHeadingText}>
+            <h3 className={styles.cardName}>{u.name}</h3>
+            <p className={styles.cardMeta}>
+              <CountryFlag country={u.country} size={14} />
+              <span>{cName}</span>
+              {u.city ? (
+                <>
+                  <span className={styles.metaDot}>·</span>
+                  <span>{u.city}</span>
+                </>
+              ) : null}
+            </p>
+          </div>
+        </Link>
+
+        {onToggleFavorite ? (
+          <button
+            type="button"
+            className={`${styles.favBtn}${isFavorite ? ` ${styles.favBtnActive}` : ""}`}
+            aria-pressed={isFavorite}
+            aria-label={
+              isFavorite
+                ? tr(`Убрать ${u.name} из моего плана`, `${u.name} ni rejamdan olib tashlash`)
+                : tr(`Добавить ${u.name} в мой план`, `${u.name} ni rejamga qo'shish`)
+            }
+            onClick={() => onToggleFavorite(u.slug)}
+          >
+            <Icon name={isFavorite ? "bookmark-check" : "bookmark"} size={14} />
+            <span>{isFavorite ? tr("В плане", "Rejada") : tr("В план", "Rejaga")}</span>
+          </button>
+        ) : null}
+      </div>
 
       <Link href={href} className={styles.cardLink} prefetch={false}>
-        <header className={styles.cardHead}>
-          <div className={styles.cardTitleBlock}>
-            <UniversityLogo name={u.name} slug={u.slug} logo={u.logo} size={48} priority={staggerIndex < 6} />
-            <div className={styles.cardHeadingText}>
-              <h3 className={styles.cardName}>{u.name}</h3>
-              <p className={styles.cardMeta}>
-                <span>{cName}</span>
-                {u.city ? (
-                  <>
-                    <span className={styles.metaDot}>·</span>
-                    <span>{u.city}</span>
-                  </>
-                ) : null}
-              </p>
-            </div>
+        {badges.length ? (
+          <div className={styles.tags}>
+            {badges.map((b) => (
+              <span className={`${styles.tag}${b.cls ? ` ${b.cls}` : ""}`} key={b.label}>
+                {b.label}
+              </span>
+            ))}
           </div>
-        </header>
-
-        <div className={styles.tags}>
-          {u.full_grant ? <span className={`${styles.tag} ${styles.tagGrant}`}>{tr("Полный грант", "To'liq grant")}</span> : null}
-          {u.need_blind ? <span className={`${styles.tag} ${styles.tagMoss}`}>Need-blind</span> : null}
-          {aidPolicy ? <span className={`${styles.tag} ${styles.tagWarn}`}>{aidPolicy}</span> : null}
-          {u.inst_tags.slice(0, 2).map((t) => (
-            <span className={styles.tag} key={t}>
-              {instLabel(t, lang)}
-            </span>
-          ))}
-        </div>
+        ) : null}
 
         <div className={styles.metricsGrid}>
           <div className={styles.metricCell}>
-            <span>{tr("Стоимость", "Narx")}</span>
+            <span className={styles.metricLabel}>
+              <Icon name="wallet" size={12} />
+              <span>{tr("Стоимость", "Narx")}</span>
+            </span>
             <strong>{u.tuition_display || "—"}</strong>
           </div>
           <div className={styles.metricCell}>
-            <span>{tr("Поступление", "Qabul")}</span>
+            <span className={styles.metricLabel}>
+              <Icon name="trending-up" size={12} />
+              <span>{tr("Поступление", "Qabul")}</span>
+            </span>
             <strong>{u.acceptance_rate || "—"}</strong>
           </div>
           <div className={styles.metricCell}>
-            <span>{tr("Макс. помощь", "Maks. yordam")}</span>
+            <span className={styles.metricLabel}>
+              <Icon name="sparkles" size={12} />
+              <span>{tr("Макс. помощь", "Maks. yordam")}</span>
+            </span>
             <strong>{u.aid_max || u.avg_aid_award || "—"}</strong>
           </div>
           <div className={styles.metricCell}>
-            <span>{tr("Дедлайн", "Dedlayn")}</span>
+            <span className={styles.metricLabel}>
+              <Icon name={deadlineUrgent ? "alert-triangle" : "calendar"} size={12} />
+              <span>{tr("Дедлайн", "Dedlayn")}</span>
+            </span>
             <strong className={deadlineUrgent ? styles.deadlineUrgent : undefined}>
               {deadlineInfo?.label || "—"}
             </strong>
@@ -117,14 +144,23 @@ function UniversityCardImpl({
 
         {intlAidSummary ? (
           <div className={styles.intlFundStrip}>
-            <span>{tr("Фонд для иностранцев", "Xorijliklar fondi")}</span>
+            <span className={styles.intlFundLabel}>
+              <Icon name="award" size={13} />
+              <span>{tr("Фонд для иностранцев", "Xorijliklar fondi")}</span>
+            </span>
             <strong>{intlAidSummary}</strong>
           </div>
         ) : null}
 
         <div className={styles.cardFoot}>
-          <span className={styles.langNote}>{u.lang || tr("Язык уточняется", "Til aniqlanmoqda")}</span>
-          <span className={styles.cardCta}>{tr("Профиль →", "Profil →")}</span>
+          <span className={styles.langNote}>
+            <Icon name="languages" size={13} />
+            <span>{u.lang || tr("Язык уточняется", "Til aniqlanmoqda")}</span>
+          </span>
+          <span className={styles.cardCta}>
+            <span>{tr("Профиль", "Profil")}</span>
+            <Icon name="arrow-right" size={13} />
+          </span>
         </div>
       </Link>
     </article>

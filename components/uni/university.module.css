@@ -45,24 +45,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.back {
+.back,
+.heroPlanBtn {
   min-height: var(--touch, 44px);
   display: inline-flex;
   align-items: center;
-  padding: 0 14px;
+  gap: 7px;
+  padding: 0 15px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   color: #fff;
   text-decoration: none;
-  font-weight: 600;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
   backdrop-filter: blur(10px);
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
-.back:hover {
+.back:hover,
+.heroPlanBtn:hover {
   background: rgba(255, 255, 255, 0.26);
+}
+
+.heroPlanBtnActive {
+  background: var(--sc-gold, #f2c230);
+  border-color: var(--sc-gold, #f2c230);
+  color: #14161b;
+}
+
+.heroPlanBtnActive:hover {
+  background: #ffd34d;
+  color: #14161b;
 }
 
 .heroBrand {
@@ -98,11 +118,15 @@
 
 .place {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
 .tags {
@@ -146,18 +170,20 @@
 }
 
 .metrics > div {
-  background: var(--porcelain, #fff);
+  background: var(--porcelain, var(--sc-surface));
   border: 1px solid var(--hairline);
   border-radius: 18px;
   padding: 16px 18px;
-  box-shadow: 0 14px 36px rgba(26, 26, 26, 0.08);
+  box-shadow: var(--sc-sheen), 0 14px 36px rgba(0, 0, 0, 0.12);
   min-width: 0;
 }
 
 .metrics small,
 .stat small,
 .deadlines small {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 6px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -220,17 +246,26 @@
 }
 
 .panel {
-  background: var(--porcelain, #fff);
+  background: var(--porcelain, var(--sc-surface));
   border: 1px solid var(--hairline);
   border-radius: 20px;
   padding: 20px 20px 12px;
+  box-shadow: var(--sc-sheen);
 }
 
 .panel h2 {
   margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--font-serif), "Source Serif 4", Georgia, serif;
   font-size: 1.2rem;
   letter-spacing: -0.01em;
+}
+
+.headingIcon {
+  color: var(--sc-gold-text);
+  flex-shrink: 0;
 }
 
 .dl {
@@ -366,6 +401,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 8px;
   min-height: 46px;
   margin: 6px 0 8px;
   border-radius: 14px;
@@ -398,21 +434,30 @@
   line-height: 1.3;
 }
 
-.related a:hover span {
+.related a:hover .relatedName span:first-child {
   color: var(--sc-gold-text);
 }
 
-.grantDot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-left: 6px;
-  border-radius: 50%;
-  background: #d4a017;
-  vertical-align: middle;
+.relatedName {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.grantBadge {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sc-gold-text);
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }
@@ -440,7 +485,7 @@
   }
 
   .metrics {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: -28px;
   }
 
@@ -448,12 +493,18 @@
     grid-template-columns: 1fr;
     gap: 4px;
   }
+
+  .sectionNav {
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 22px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 22px), transparent 100%);
+  }
 }
 
 .siteLinkQuiet {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 8px;
   min-height: 46px;
   margin: 0 0 8px;
   border-radius: 14px;
@@ -465,6 +516,9 @@
 }
 
 .inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   color: var(--sc-gold-text);
   font-weight: 700;
 }
@@ -507,8 +561,10 @@
   top: 62px;
   z-index: 5;
   display: flex;
+  align-items: center;
   gap: 6px;
   overflow-x: auto;
+  scrollbar-width: none;
   margin: 16px 0 0;
   padding: 8px;
   border-radius: 999px;
@@ -519,7 +575,10 @@
 
 .sectionNav a {
   flex-shrink: 0;
-  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
   border-radius: 999px;
   color: var(--sc-text);
   font-weight: 700;

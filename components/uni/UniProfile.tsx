@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "@/components/i18n/Link";
 import { GateCta } from "@/components/gate/GateCta";
 import { MyChance } from "@/components/uni/MyChance";
+import { UniPlanButton } from "@/components/uni/UniPlanButton";
+import { CountryFlag, Icon } from "@/components/ui/Icon";
 import { INCOME_BANDS, INCOME_BANDS_UZ, SCORECARD_META, scorecardFor } from "@/lib/scorecard";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { campusPhotoUrl } from "@/lib/campus-photo";
@@ -176,8 +178,10 @@ export function UniProfile({
         <div className={styles.heroInner}>
           <nav className={styles.heroNav}>
             <Link href={backHref} className={styles.back}>
-              ← {backLabel}
+              <Icon name="arrow-left" size={15} />
+              <span>{backLabel}</span>
             </Link>
+            <UniPlanButton slug={u.slug} name={u.name} />
           </nav>
           <div className={styles.heroBrand}>
             <div className={styles.logoTile}>
@@ -185,9 +189,12 @@ export function UniProfile({
             </div>
             <div className={styles.heroText}>
               <p className={styles.place}>
-                {country}
-                {u.city ? `, ${u.city}` : ""}
-                {instType ? ` · ${instType}` : ""}
+                <CountryFlag country={u.country} size={15} />
+                <span>
+                  {country}
+                  {u.city ? `, ${u.city}` : ""}
+                  {instType ? ` · ${instType}` : ""}
+                </span>
               </p>
               <h1>{u.name}</h1>
               <div className={styles.tags}>
@@ -204,14 +211,20 @@ export function UniProfile({
       <div className={styles.body}>
         <section className={styles.metrics} aria-label={tr("Ключевые цифры", "Asosiy raqamlar")}>
           <div>
-            <small>{tr("Стоимость учёбы", "O'qish narxi")}</small>
+            <small>
+              <Icon name="wallet" size={13} />
+              <span>{tr("Стоимость учёбы", "O'qish narxi")}</span>
+            </small>
             <strong>{money(u.tuition_display, lang) || tr("Нет данных", "Ma'lumot yo'q")}</strong>
             {!u.tuition_display ? (
               <span className={styles.metricSub}>{tr("смотрите на сайте вуза", "universitet saytidan qarang")}</span>
             ) : null}
           </div>
           <div>
-            <small>{tr("Поступление", "Qabul")}</small>
+            <small>
+              <Icon name="trending-up" size={13} />
+              <span>{tr("Поступление", "Qabul")}</span>
+            </small>
             <strong>{u.acceptance_rate || "—"}</strong>
             {u.rate_num != null ? (
               <span className={styles.meter} aria-hidden>
@@ -220,12 +233,18 @@ export function UniProfile({
             ) : null}
           </div>
           <div>
-            <small>{tr("Помощь иностранцам", "Chet elliklarga yordam")}</small>
+            <small>
+              <Icon name="award" size={13} />
+              <span>{tr("Помощь иностранцам", "Chet elliklarga yordam")}</span>
+            </small>
             <strong>{aid?.short || tr("Нет данных", "Ma'lumot yo'q")}</strong>
             {full && fundLine ? <span className={styles.metricSub}>{fundLine}</span> : null}
           </div>
           <div>
-            <small>{tr("Ближайший дедлайн", "Eng yaqin muddat")}</small>
+            <small>
+              <Icon name="calendar" size={13} />
+              <span>{tr("Ближайший дедлайн", "Eng yaqin muddat")}</span>
+            </small>
             <strong>{nearest?.label || "—"}</strong>
             {nearest?.academicYear ? (
               <span className={styles.metricSub}>
@@ -237,17 +256,32 @@ export function UniProfile({
         </section>
 
         <nav className={styles.sectionNav} aria-label={tr("Разделы страницы", "Sahifa bo'limlari")}>
-          <a href="#money">{tr("Деньги", "Pul")}</a>
-          <a href="#admission">{tr("Поступление", "Qabul")}</a>
-          <a href="#requirements">{tr("Документы", "Hujjatlar")}</a>
-          <a href="#deadlines">{tr("Сроки", "Muddatlar")}</a>
+          <a href="#money">
+            <Icon name="wallet" size={14} />
+            <span>{tr("Деньги", "Pul")}</span>
+          </a>
+          <a href="#admission">
+            <Icon name="target" size={14} />
+            <span>{tr("Поступление", "Qabul")}</span>
+          </a>
+          <a href="#requirements">
+            <Icon name="file-text" size={14} />
+            <span>{tr("Документы", "Hujjatlar")}</span>
+          </a>
+          <a href="#deadlines">
+            <Icon name="calendar" size={14} />
+            <span>{tr("Сроки", "Muddatlar")}</span>
+          </a>
         </nav>
 
         <div className={styles.layout}>
           <div className={styles.main}>
             {hasFinance ? (
               <section className={styles.panel} id="money">
-                <h2>{tr("Финансы и гранты", "Moliya va grantlar")}</h2>
+                <h2>
+                  <Icon name="wallet" size={18} className={styles.headingIcon} />
+                  <span>{tr("Финансы и гранты", "Moliya va grantlar")}</span>
+                </h2>
                 {policy ? (
                   <p className={styles.prose}>
                     <b>{tr("Как вуз смотрит на доход семьи:", "Universitet oila daromadiga qanday qaraydi:")}</b> {policy}
@@ -280,7 +314,8 @@ export function UniProfile({
                     {u.finaid_url ? (
                       <p className={styles.prose}>
                         <a href={u.finaid_url} target="_blank" rel="noopener noreferrer" className={styles.inlineLink}>
-                          {tr("Страница финансовой помощи вуза ↗", "Universitetning moliyaviy yordam sahifasi ↗")}
+                          <span>{tr("Страница финансовой помощи вуза", "Universitetning moliyaviy yordam sahifasi")}</span>
+                          <Icon name="external-link" size={13} />
                         </a>
                       </p>
                     ) : null}
@@ -301,7 +336,10 @@ export function UniProfile({
 
             {sc && sc.netPrice.some((x) => x != null) ? (
               <section className={styles.panel} id="net-price">
-                <h2>{tr("Сколько платят семьи после помощи", "Yordamdan keyin oilalar qancha to'laydi")}</h2>
+                <h2>
+                  <Icon name="sparkles" size={18} className={styles.headingIcon} />
+                  <span>{tr("Сколько платят семьи после помощи", "Yordamdan keyin oilalar qancha to'laydi")}</span>
+                </h2>
                 <p className={styles.muted}>
                   {tr(
                     "Средняя цена года (учёба, жильё, питание) после грантов — по доходу семьи в год.",
@@ -339,7 +377,10 @@ export function UniProfile({
 
             {hasChances ? (
               <section className={styles.panel} id="admission">
-                <h2>{tr("Шансы поступить", "Qabul imkoniyati")}</h2>
+                <h2>
+                  <Icon name="target" size={18} className={styles.headingIcon} />
+                  <span>{tr("Шансы поступить", "Qabul imkoniyati")}</span>
+                </h2>
                 <dl className={styles.dl}>
                   {chances.map(([label, value]) => (
                     <Row key={label} label={label} value={value} lang={lang} />
@@ -361,7 +402,10 @@ export function UniProfile({
 
             {factorGroups.length ? (
               <section className={styles.panel}>
-                <h2>{tr("Что важно этому вузу при приёме", "Bu universitet qabulda nimaga e'tibor beradi")}</h2>
+                <h2>
+                  <Icon name="sliders" size={18} className={styles.headingIcon} />
+                  <span>{tr("Что важно этому вузу при приёме", "Bu universitet qabulda nimaga e'tibor beradi")}</span>
+                </h2>
                 <div className={styles.factors}>
                   {factorGroups.map((g) => (
                     <div key={g.lvl}>
@@ -379,7 +423,10 @@ export function UniProfile({
 
             {hasReq ? (
               <section className={styles.panel} id="requirements">
-                <h2>{tr("Требования и документы", "Talablar va hujjatlar")}</h2>
+                <h2>
+                  <Icon name="file-text" size={18} className={styles.headingIcon} />
+                  <span>{tr("Требования и документы", "Talablar va hujjatlar")}</span>
+                </h2>
                 <dl className={styles.dl}>
                   <Row label={tr("Английский", "Ingliz tili")} value={req.lang} lang={lang} />
                   <Row label="SAT / ACT" value={req.sat} lang={lang} />
@@ -400,7 +447,10 @@ export function UniProfile({
 
             {hasStudents ? (
               <section className={styles.panel}>
-                <h2>{tr("Студенты", "Talabalar")}</h2>
+                <h2>
+                  <Icon name="graduation-cap" size={18} className={styles.headingIcon} />
+                  <span>{tr("Студенты", "Talabalar")}</span>
+                </h2>
                 <div className={styles.stats}>
                   {students.map(([label, value]) => (
                     <Stat key={label} label={label} value={value} lang={lang} />
@@ -411,7 +461,10 @@ export function UniProfile({
 
             {majors.length ? (
               <section className={styles.panel}>
-                <h2>{tr("Сильные направления", "Kuchli yo'nalishlar")}</h2>
+                <h2>
+                  <Icon name="compass" size={18} className={styles.headingIcon} />
+                  <span>{tr("Сильные направления", "Kuchli yo'nalishlar")}</span>
+                </h2>
                 <div className={styles.chips}>
                   {majors.map((m) => (
                     <span key={m}>{m}</span>
@@ -422,7 +475,10 @@ export function UniProfile({
 
             {living || note ? (
               <section className={styles.panel}>
-                <h2>{tr("Полезно знать", "Bilish foydali")}</h2>
+                <h2>
+                  <Icon name="info" size={18} className={styles.headingIcon} />
+                  <span>{tr("Полезно знать", "Bilish foydali")}</span>
+                </h2>
                 {living ? (
                   <p className={styles.prose}>
                     <b>{tr("Проживание.", "Yashash.")}</b> {living}
@@ -434,7 +490,10 @@ export function UniProfile({
 
             {countryGuide ? (
               <section className={styles.panel}>
-                <h2>{tr(`Гранты и поступление в стране: ${country}`, `${country}: grantlar va qabul`)}</h2>
+                <h2>
+                  <CountryFlag country={u.country} size={18} />
+                  <span>{tr(`Гранты и поступление в стране: ${country}`, `${country}: grantlar va qabul`)}</span>
+                </h2>
                 <p className={styles.guideSub}>
                   {tr(
                     "Общие условия поступления, госстипендий и расходов для иностранных абитуриентов в этой стране.",
@@ -468,7 +527,10 @@ export function UniProfile({
           <aside className={styles.side}>
             <MyChance slug={u.slug} name={u.name} />
             <section className={styles.panel} id="deadlines">
-              <h2>{tr("Сроки", "Muddatlar")}</h2>
+              <h2>
+                <Icon name="calendar" size={18} className={styles.headingIcon} />
+                <span>{tr("Сроки", "Muddatlar")}</span>
+              </h2>
               {deadlineWindow ? <p className={styles.deadlineWindow}>{deadlineWindow}</p> : null}
               {deadlines.length ? (
                 <ul className={styles.deadlines}>
@@ -496,7 +558,8 @@ export function UniProfile({
               )}
               {u.apply_url ? (
                 <a className={styles.siteLink} href={u.apply_url} target="_blank" rel="noopener noreferrer">
-                  {tr("Подать заявку ↗", "Ariza topshirish ↗")}
+                  <span>{tr("Подать заявку", "Ariza topshirish")}</span>
+                  <Icon name="external-link" size={15} />
                 </a>
               ) : null}
               {site ? (
@@ -506,22 +569,30 @@ export function UniProfile({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {tr("Официальный сайт ↗", "Rasmiy sayt ↗")}
+                  <span>{tr("Официальный сайт", "Rasmiy sayt")}</span>
+                  <Icon name="external-link" size={15} />
                 </a>
               ) : null}
             </section>
 
             {related.length ? (
               <section className={styles.panel}>
-                <h2>{tr(`Ещё в стране: ${country}`, `${country}dagi boshqa universitetlar`)}</h2>
+                <h2>
+                  <CountryFlag country={u.country} size={18} />
+                  <span>{tr(`Ещё в стране: ${country}`, `${country}dagi boshqa universitetlar`)}</span>
+                </h2>
                 <ul className={styles.related}>
                   {related.map((r) => (
                     <li key={r.slug}>
                       <Link href={`${relatedBase}/${r.slug}`} prefetch={false}>
                         <UniversityLogo name={r.name} slug={r.slug} logo={hasLogo(r.slug)} size={32} />
-                        <span>
-                          {r.name}
-                          {r.full_grant ? <i className={styles.grantDot} title={tr("Полный грант", "To'liq grant")} /> : null}
+                        <span className={styles.relatedName}>
+                          <span>{r.name}</span>
+                          {r.full_grant ? (
+                            <span className={styles.grantBadge} title={tr("Полный грант", "To'liq grant")}>
+                              <Icon name="award" size={13} />
+                            </span>
+                          ) : null}
                         </span>
                       </Link>
                     </li>

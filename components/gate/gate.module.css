@@ -269,11 +269,18 @@
 .related ul,
 .uniList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 6px 18px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 8px 18px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.uniList li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .related a,
@@ -289,14 +296,22 @@
   text-decoration: underline;
 }
 
-.dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-left: 6px;
-  border-radius: 50%;
-  background: var(--sc-gold);
-  vertical-align: middle;
+.grantBadge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--sc-gold-text);
+}
+
+.countryHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.countryCount {
+  color: var(--sc-muted);
+  font-weight: 600;
 }
 
 .hero h1 {
@@ -325,11 +340,13 @@
 .countryNav a {
   display: inline-flex;
   align-items: center;
+  gap: 7px;
   min-height: 44px;
   padding: 0 14px;
   border-radius: 999px;
   border: 1px solid var(--sc-line);
   background: var(--sc-surface);
+  box-shadow: var(--sc-sheen);
   color: var(--sc-text);
   text-decoration: none;
   font-weight: 600;

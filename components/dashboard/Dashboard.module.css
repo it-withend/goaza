@@ -71,7 +71,7 @@
 /* ---------- Sidebar ---------- */
 .filtersPanel {
   border-right: 1px solid var(--sc-line);
-  background: var(--sc-surface);
+  background: var(--sc-well);
   padding: 18px 16px 32px;
   overflow: auto;
   max-height: calc(100svh - 62px);
@@ -112,13 +112,15 @@
   margin-bottom: 14px;
 }
 
-.searchWrap span {
+.searchIcon {
   position: absolute;
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--muted);
   pointer-events: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .searchWrap input,
@@ -264,19 +266,87 @@
   font-weight: 600;
 }
 
+.drawerFooter {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .resetBtn {
   width: 100%;
   min-height: 44px;
-  margin-top: 18px;
+  gap: 6px;
   border: 1px solid var(--sc-line);
-  background: var(--sc-elev);
+  background: var(--sc-surface);
   color: var(--sc-text);
   border-radius: 12px;
+}
+
+.drawerApply {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--sc-pill-active-bg);
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .resetBtn:hover {
   background: var(--sc-elev-2);
   border-color: var(--sc-line-strong);
+}
+
+/* ---------- Mobile Filter Bar ---------- */
+.mobileBar {
+  display: none;
+}
+
+.mobileFilterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px;
+  border-radius: 10px;
+  border: 1px solid var(--sc-pill-active-bg);
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mobileFilterCount {
+  font-style: normal;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.mobileSortSelect {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 /* ---------- Results Area ---------- */
@@ -298,10 +368,13 @@
   background: var(--sc-surface);
   color: var(--sc-text);
   border: 1px solid var(--sc-line);
+  box-shadow: var(--sc-sheen);
 }
 
 .kpiTile small {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -343,6 +416,9 @@
 }
 
 .presetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 36px;
   padding: 0 12px;
   border-radius: 999px;
@@ -376,6 +452,9 @@
 }
 
 .viewToggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   min-height: 30px;
   padding: 0 12px;
   border: 0;
@@ -441,6 +520,9 @@
 
 .countryNav button {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 34px;
   border: 1px solid var(--sc-line);
   background: var(--sc-surface);
@@ -479,8 +561,12 @@
   border-bottom: 2px solid var(--gold);
 }
 
-.sectionHeader h2 {
+.sectionHeader h2,
+.sectionHeading {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--font-serif), "Source Serif 4", Georgia, serif;
   font-size: 1.35rem;
   color: var(--ink);
@@ -529,6 +615,7 @@
   background: var(--sc-surface);
   border: 1px solid var(--sc-line);
   border-radius: 18px;
+  box-shadow: var(--sc-sheen);
   transition: border-color 160ms ease, transform 160ms ease;
   animation: cardIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
   overflow: hidden;
@@ -541,19 +628,36 @@
   transform: translateY(-2px);
 }
 
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 16px 0;
+}
+
+.cardTitleBlock {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
 .favBtn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 3;
-  min-height: 34px;
-  padding: 0 12px;
+  position: static;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 11px;
+  gap: 5px;
   border-radius: 999px;
   border: 1px solid var(--sc-line);
   background: var(--sc-elev);
   color: var(--sc-text);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   line-height: 1;
   display: inline-flex;
@@ -579,18 +683,7 @@
   flex: 1;
   text-decoration: none;
   color: inherit;
-  padding: 16px;
-}
-
-.cardHead {
-  padding-right: 100px;
-}
-
-.cardTitleBlock {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  min-width: 0;
+  padding: 10px 16px 16px;
 }
 
 .cardHeadingText {
@@ -660,16 +753,24 @@
 .metricsGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 1px;
   margin-top: 12px;
-  padding: 10px;
   border-radius: 12px;
-  background: var(--sc-elev);
+  background: var(--sc-line);
   border: 1px solid var(--sc-line);
+  overflow: hidden;
 }
 
-.metricCell span {
-  display: block;
+.metricCell {
+  padding: 9px 11px;
+  background: var(--sc-well);
+  min-width: 0;
+}
+
+.metricLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -679,7 +780,7 @@
 
 .metricCell strong {
   display: block;
-  margin-top: 1px;
+  margin-top: 2px;
   font-size: 0.9rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -711,7 +812,10 @@
   gap: 2px;
 }
 
-.intlFundStrip span {
+.intlFundLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -736,18 +840,39 @@
 }
 
 .langNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
   font-size: 0.78rem;
   color: var(--muted);
+}
+
+.langNote span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   flex-shrink: 0;
   font-size: 0.84rem;
   font-weight: 800;
   color: var(--gold-deep);
+}
+
+.cardsList .metricsGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cardsList .intlFundStrip {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 @keyframes cardIn {
@@ -791,7 +916,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .brandMeta,
   .channelChip {
     display: none;
@@ -806,6 +931,21 @@
     display: inline-flex;
   }
 
+  .mobileBar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 58px;
+    z-index: 20;
+    margin: 0 0 12px;
+    padding: 8px 10px;
+    background: var(--sc-header-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--sc-line);
+    border-radius: 14px;
+  }
+
   .workspace {
     grid-template-columns: 1fr;
   }
@@ -815,21 +955,39 @@
   }
 
   .filtersDrawerOpen .filtersPanel {
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     top: auto;
-    max-height: min(84vh, 700px);
+    max-height: min(86vh, 720px);
     z-index: 70;
     border-right: 0;
     border-top: 1px solid var(--sc-line);
-    border-radius: 18px 18px 0 0;
+    border-radius: 20px 20px 0 0;
     box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
     background: var(--sc-surface);
     overflow: auto;
-    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    padding: 18px 16px 0;
+  }
+
+  .filtersDrawerOpen .drawerFooter {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin: 16px -16px 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--sc-well);
+    border-top: 1px solid var(--sc-line);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .filtersDrawerOpen .drawerApply {
+    display: inline-flex;
   }
 
   .filtersDrawerOpen .filtersDrawerBackdrop {
@@ -843,6 +1001,27 @@
 
   .kpiStrip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .cardsList .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cardsList .intlFundStrip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardHead {
+    padding: 14px 14px 0;
+  }
+
+  .cardLink {
+    padding: 10px 14px 14px;
   }
 }
 
