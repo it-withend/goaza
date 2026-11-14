@@ -1,71 +1,94 @@
 import Link from "next/link";
 import { GRANTS } from "@/content/grants";
-import { STAGES } from "@/content/guides";
-import { US_ROUNDS } from "@/content/timeline";
+import { GUIDES } from "@/content/guides";
 import type { LandingStats } from "@/lib/landing-stats";
 import { countryRu } from "@/lib/types";
+import { CabinetPreview } from "./CabinetPreview";
 import h from "./home.module.css";
 
 function fmt(n: number) {
   return new Intl.NumberFormat("ru-RU").format(n).replace(/[  ]/g, " ");
 }
 
+const STEPS = [
+  { title: "Ответьте на 6 вопросов", text: "Класс, бюджет семьи, английский, SAT, страны и специальность. Две минуты, без регистрации." },
+  { title: "Получите список по корзинам", text: "Мечта, реальные и запасные — только вузы, которые семья потянет по деньгам, с шансом для каждого." },
+  { title: "Идите по плану", text: "Дедлайны с обратным отсчётом, дела на неделю и гайды к каждому шагу: эссе, рекомендации, CSS Profile." },
+];
+
 export function HomeHub({ stats }: { stats: LandingStats }) {
-  const govGrants = GRANTS.filter((g) => g.kind === "government").length;
-  const countries = stats.byCountry.slice(0, 14);
+  const gov = GRANTS.filter((g) => g.kind === "government").length;
+  const countries = stats.byCountry.slice(0, 12);
 
   return (
     <>
       <section className={h.hero}>
-        <h1>Поступить за границу можно без агентства и без денег на учёбу</h1>
-        <p>
-          Пошагово и бесплатно: какие вузы вам подходят, какие нужны документы, где взять грант и как
-          подать заявки вовремя.
-        </p>
-        <div className={h.heroActions}>
-          <Link href="/start" className={h.ctaMain}>
-            Начать с первого шага
-          </Link>
-          <Link href="/podbor" className={h.ctaSecond}>
-            Подобрать вузы под себя
-          </Link>
+        <div className={h.heroText}>
+          <h1>Личный план поступления за границу — даже если денег на учёбу нет</h1>
+          <p>
+            Подберём вузы под бюджет вашей семьи, посчитаем шансы и разложим поступление по неделям: что
+            сдать, что написать и когда подать.
+          </p>
+          <div className={h.heroActions}>
+            <Link href="/plan/start" className={h.ctaMain}>
+              Составить мой план
+            </Link>
+            <Link href="/unis" className={h.ctaSecond}>
+              Смотреть вузы
+            </Link>
+          </div>
+          <ul className={h.facts}>
+            <li>
+              <b>{fmt(stats.total)}</b> вузов
+            </li>
+            <li>
+              <b>{stats.countries}</b> стран
+            </li>
+            <li>
+              <b>{fmt(stats.grants)}</b> с полным грантом
+            </li>
+            <li>
+              <b>0 ₽</b> за всё
+            </li>
+          </ul>
         </div>
+        <CabinetPreview />
       </section>
 
-      <section className={h.route} aria-labelledby="route-title">
-        <h2 id="route-title" className={h.srOnly}>
-          Пять шагов поступления
-        </h2>
-        <ol>
-          {STAGES.map((s) => (
-            <li key={s.n}>
-              <Link href={`/guides/${s.guide}`}>
-                <span className={h.station}>{s.n}</span>
-                <strong>{s.title}</strong>
-                <span className={h.stationText}>{s.text}</span>
-              </Link>
+      <section className={h.block} aria-labelledby="how">
+        <h2 id="how">Как это работает</h2>
+        <ol className={h.steps}>
+          {STEPS.map((s, i) => (
+            <li key={s.title}>
+              <span className={h.stepNum}>{i + 1}</span>
+              <b>{s.title}</b>
+              <p>{s.text}</p>
             </li>
           ))}
         </ol>
+        <Link href="/plan/start" className={h.ctaMain}>
+          Составить мой план
+        </Link>
       </section>
 
-      <section className={h.block} aria-labelledby="money-title">
-        <h2 id="money-title">Если денег на учёбу нет</h2>
-        <div className={h.ways}>
-          <Link href="/unis" className={h.way}>
-            <b>{fmt(stats.grants)}</b>
-            <span>вузов дают иностранцам полный грант</span>
-            <em>В основном США: обучение, жильё и питание за счёт вуза</em>
+      <section className={h.block} aria-labelledby="inside">
+        <h2 id="inside">Что внутри</h2>
+        <div className={h.inside}>
+          <Link href="/unis" className={h.insideCard}>
+            <b>{fmt(stats.total)}</b>
+            <span>вузов с ценами, шансами, требованиями и сроками</span>
           </Link>
-          <Link href="/grants" className={h.way}>
-            <b>{govGrants}</b>
-            <span>государственных программ</span>
-            <em>Венгрия, Турция, Корея, Япония, Китай — с ежемесячной стипендией</em>
+          <Link href="/grants" className={h.insideCardGreen}>
+            <b>{gov}</b>
+            <span>государственных программ: Венгрия, Турция, Корея, Япония, Китай</span>
           </Link>
-          <Link href="/guides/besplatnoe-obuchenie" className={h.way}>
-            <b>0 €</b>
-            <span>за обучение в Германии и Чехии</span>
-            <em>Платите только за жизнь и семестровый взнос</em>
+          <Link href="/guides" className={h.insideCardBlue}>
+            <b>{GUIDES.length}</b>
+            <span>гайдов: список вузов, документы, экзамены, финпомощь, эссе</span>
+          </Link>
+          <Link href="/deadlines" className={h.insideCardPink}>
+            <b>ED · EA · RD</b>
+            <span>все сроки подачи в одном месте</span>
           </Link>
         </div>
       </section>
@@ -73,9 +96,7 @@ export function HomeHub({ stats }: { stats: LandingStats }) {
       <section className={h.block} aria-labelledby="countries-title">
         <div className={h.blockHead}>
           <h2 id="countries-title">Вузы по странам</h2>
-          <Link href="/unis">
-            Все {fmt(stats.total)} вузов в {stats.countries} странах
-          </Link>
+          <Link href="/unis">Все страны</Link>
         </div>
         <div className={h.countries}>
           {countries.map((c) => (
@@ -87,25 +108,10 @@ export function HomeHub({ stats }: { stats: LandingStats }) {
         </div>
       </section>
 
-      <section className={h.block} aria-labelledby="dates-title">
-        <div className={h.blockHead}>
-          <h2 id="dates-title">Главные сроки</h2>
-          <Link href="/deadlines">Все сроки</Link>
-        </div>
-        <ul className={h.dates}>
-          {US_ROUNDS.slice(0, 3).map((r) => (
-            <li key={r.what}>
-              <b>{r.when}</b>
-              <span>{r.what}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className={h.channel}>
         <div>
           <h2>Разборы, новые гранты и дедлайны — в Telegram</h2>
-          <p>Подписчики канала получают атлас с фильтрами и подбор списка вузов.</p>
+          <p>Подписчики канала открывают полный каталог с фильтрами и весь список вузов в плане.</p>
         </div>
         <a href="https://t.me/studyaza" target="_blank" rel="noopener noreferrer">
           Открыть @studyaza
