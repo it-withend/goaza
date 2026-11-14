@@ -5,6 +5,7 @@ import type { LandingStats } from "@/lib/landing-stats";
 import { locale, trFor, type Lang } from "@/lib/i18n";
 import { countryName } from "@/lib/types";
 import { PlanCta } from "@/components/site/PlanCta";
+import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "@/components/site/TelegramIcon";
 import { WorldGlobe } from "@/components/landing/WorldGlobe";
 import { CabinetPreview } from "./CabinetPreview";
 import h from "./home.module.css";
@@ -162,8 +163,14 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
             )}
           </p>
         </div>
-        <a href="https://t.me/studyaza" target="_blank" rel="noopener noreferrer">
-          {tr("Открыть @studyaza", "@studyaza'ni ochish")}
+        <a
+          href={TELEGRAM_CHANNEL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={tr("Открыть Telegram-канал", "Telegram kanalini ochish")}
+        >
+          <TelegramIcon size={20} />
+          <span>Telegram</span>
         </a>
       </section>
     </>

@@ -11,6 +11,7 @@ vi.mock("next/headers", () => ({
 }));
 
 import { POST } from "@/app/api/plan/route";
+import { POST as podborPost } from "@/app/api/podbor/route";
 import { createSessionToken } from "@/lib/telegram-auth";
 
 async function subscribe() {
@@ -84,5 +85,35 @@ describe("POST /api/plan", () => {
     await subscribe();
     const sub = await (await POST(req({ profile: { ...profile, budget: 5000 }, slugs: ["aided"] }))).json();
     expect(sub.matches[0].money).toBe("partial");
+  });
+});
+
+describe("POST /api/podbor", () => {
+  beforeEach(() => {
+    rows.length = 0;
+    cookieValue.current = undefined;
+  });
+
+  it("never exposes gated aid_num matches to guests", async () => {
+    rows.push(uni("aided", { full_grant: false, tuition_num: 30000, aid_num: 28000 }));
+    const podborReq = (body: unknown) =>
+      new Request("https://goaza.xyz/api/podbor", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: { "content-type": "application/json" },
+      });
+
+    const guest = await (
+      await podborPost(podborReq({ budget: 5000, countries: [], englishTest: "ielts", englishScore: 7, grades: "good" }))
+    ).json();
+    expect(guest.full).toBe(false);
+    expect(guest.counts.dream + guest.counts.target + guest.counts.safety).toBe(0);
+
+    await subscribe();
+    const sub = await (
+      await podborPost(podborReq({ budget: 5000, countries: [], englishTest: "ielts", englishScore: 7, grades: "good" }))
+    ).json();
+    expect(sub.full).toBe(true);
+    expect(sub.counts.dream + sub.counts.target + sub.counts.safety).toBe(1);
   });
 });

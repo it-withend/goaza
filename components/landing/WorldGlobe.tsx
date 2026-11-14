@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { countryName } from "@/lib/types";
@@ -17,17 +17,23 @@ type GlobePoint = {
   size: number;
 };
 
+type GlobeControls = { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
+type GlobeScene = { children?: Array<{ isAmbientLight?: boolean; intensity?: number }> };
+type GlobeHandle = {
+  controls?: (() => GlobeControls | null) | GlobeControls;
+  scene?: () => GlobeScene | null;
+  pointOfView?: (p: object, ms?: number) => void;
+};
+
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
 
 export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
   const lang = useLang();
   const tr = useTr();
-  const globeRef = useRef<{
-    controls?: { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
-    pointOfView: (p: object, ms?: number) => void;
-  } | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const globeRef = useRef<GlobeHandle | null>(null);
   const [hover, setHover] = useState<GlobePoint | null>(null);
-  const [size, setSize] = useState({ w: 480, h: 420 });
+  const [size, setSize] = useState({ w: 340, h: 340 });
 
   const points = useMemo(
     () =>
@@ -48,11 +54,12 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
   );
 
   useEffect(() => {
-    const node = document.getElementById("studyaza-globe");
+    const node = wrapRef.current;
     if (!node) return;
     const sync = () => {
       const rect = node.getBoundingClientRect();
-      const side = Math.min(Math.max(260, Math.floor(rect.width)), Math.floor(rect.height) || 480);
+      if (!rect.width) return;
+      const side = Math.max(200, Math.min(440, Math.floor(rect.width)));
       setSize({ w: side, h: side });
     };
     sync();
@@ -61,21 +68,40 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => {
+  const configureGlobe = useCallback(() => {
     const g = globeRef.current;
-    if (!g?.controls) return;
-    g.controls.autoRotate = true;
-    g.controls.autoRotateSpeed = 0.45;
-    g.controls.enableZoom = false;
-    g.pointOfView({ lat: 25, lng: 15, altitude: 1.85 }, 0);
-  }, [size.w]);
+    if (!g) return;
+    const ctrl = typeof g.controls === "function" ? g.controls() : g.controls;
+    if (ctrl) {
+      ctrl.autoRotate = true;
+      ctrl.autoRotateSpeed = 0.45;
+      ctrl.enableZoom = false;
+    }
+    const scene = typeof g.scene === "function" ? g.scene() : null;
+    for (const child of scene?.children ?? []) {
+      if (child.isAmbientLight && typeof child.intensity === "number") {
+        child.intensity = Math.max(child.intensity, 1.85);
+      }
+    }
+    g.pointOfView?.({ lat: 25, lng: 15, altitude: 1.95 }, 0);
+  }, []);
+
+  useEffect(() => {
+    configureGlobe();
+  }, [configureGlobe, size.w]);
 
   return (
-    <div className={styles.globeWrap} id="studyaza-globe" aria-label={tr("Глобус университетов", "Universitetlar globusi")}>
+    <div
+      ref={wrapRef}
+      className={styles.globeWrap}
+      id="studyaza-globe"
+      aria-label={tr("Глобус университетов", "Universitetlar globusi")}
+    >
       <div className={styles.globeGlow} aria-hidden="true" />
       <Globe
         // @ts-expect-error globe ref typing from react-globe.gl
         ref={globeRef}
+        onGlobeReady={configureGlobe}
         width={size.w}
         height={size.h}
         backgroundColor="rgba(0,0,0,0)"

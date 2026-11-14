@@ -11,17 +11,20 @@ vi.mock("next/link", () => ({
   default: ({
     children,
     href,
-    prefetch: _prefetch,
+    prefetch,
     ...props
   }: {
     children: React.ReactNode;
     href: string;
     prefetch?: boolean;
-  }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
+  }) => {
+    void prefetch;
+    return (
+      <a href={href} {...props}>
+        {children}
+      </a>
+    );
+  },
 }));
 
 const uni: CatalogUni = {
@@ -61,4 +64,30 @@ it("adds to the same capped plan list the cabinet uses", async () => {
   render(<DashboardClient initial={[uni]} meta={computeMeta([uni])} accountName="student" />);
   await userEvent.click(await screen.findByRole("button", { name: /добавить bilkent university в мой план/i }));
   expect(JSON.parse(window.localStorage.getItem(LIST_KEY) || "[]")).toHaveLength(30);
+});
+
+it("accepts grant and tuition aliases from admissions guide links", () => {
+  const affordable: CatalogUni = {
+    ...uni,
+    tuition_num: 6000,
+  };
+  const expensive: CatalogUni = {
+    ...uni,
+    slug: "expensive-uni",
+    name: "Expensive Uni",
+    full_grant: false,
+    tuition_num: 45000,
+    s: "expensive uni turkey",
+  };
+  const catalog = [affordable, expensive];
+  render(
+    <DashboardClient
+      initial={catalog}
+      meta={computeMeta(catalog)}
+      accountName="student"
+      initialQuery="grant=1&tuition=8000"
+    />,
+  );
+  expect(screen.getByText("Bilkent University")).toBeInTheDocument();
+  expect(screen.queryByText("Expensive Uni")).not.toBeInTheDocument();
 });

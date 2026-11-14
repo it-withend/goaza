@@ -293,26 +293,24 @@ export function PlanClient() {
             <h2 id="tasks">{tr("Дела", "Vazifalar")}</h2>
             <ul className={s.tasks}>
               {tasks.slice(0, 8).map((t) => (
-                <li key={t.id}>
+                <li key={t.id} className={s.taskRow}>
                   <label>
                     <input type="checkbox" checked={done.includes(t.id)} onChange={() => toggleTask(t.id)} />
-                    <span className={done.includes(t.id) ? s.taskDone : undefined}>
-                      {t.title}
-                      <small className={t.daysLeft != null && t.daysLeft <= 14 ? s.soon : undefined}>
-                        {t.due
-                          ? t.daysLeft != null && t.daysLeft < 0
-                            ? tr("срок прошёл", "muddati o'tgan")
-                            : daysLeftLabel(t.daysLeft ?? 0, lang)
-                          : tr("без даты", "sanasiz")}
-                        {t.guide ? (
-                          <>
-                            {" · "}
-                            <Link href={`/guides/${t.guide}`}>{tr("гайд", "qo'llanma")}</Link>
-                          </>
-                        ) : null}
-                      </small>
-                    </span>
+                    <span className={done.includes(t.id) ? s.taskDone : undefined}>{t.title}</span>
                   </label>
+                  <small className={t.daysLeft != null && t.daysLeft <= 14 ? s.soon : undefined}>
+                    {t.due
+                      ? t.daysLeft != null && t.daysLeft < 0
+                        ? tr("срок прошёл", "muddati o'tgan")
+                        : daysLeftLabel(t.daysLeft ?? 0, lang)
+                      : tr("без даты", "sanasiz")}
+                    {t.guide ? (
+                      <>
+                        {" · "}
+                        <Link href={`/guides/${t.guide}`}>{tr("гайд", "qo'llanma")}</Link>
+                      </>
+                    ) : null}
+                  </small>
                 </li>
               ))}
             </ul>

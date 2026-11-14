@@ -5,6 +5,7 @@ import Link from "@/components/i18n/Link";
 import type { LandingStats } from "@/lib/landing-stats";
 import { countryRu } from "@/lib/types";
 import { TelegramGateModal } from "./TelegramGateModal";
+import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "@/components/site/TelegramIcon";
 import { WorldGlobe } from "./WorldGlobe";
 import styles from "./LandingPage.module.css";
 
@@ -122,11 +123,13 @@ export function LandingPage({
         <div className={styles.headerActions}>
           <a
             className={styles.channelHeader}
-            href="https://t.me/studyaza"
+            href={TELEGRAM_CHANNEL_URL}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Telegram"
+            title="Telegram"
           >
-            @studyaza
+            <TelegramIcon size={18} />
           </a>
           <button
             type="button"
@@ -563,8 +566,9 @@ export function LandingPage({
         </div>
         <div className={styles.footerLinks}>
           <Link href="/unis">Справочник вузов</Link>
-          <a href="https://t.me/studyaza" target="_blank" rel="noopener noreferrer">
-            Telegram @studyaza
+          <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <TelegramIcon size={16} />
+            <span>Telegram</span>
           </a>
           <button type="button" onClick={() => setGateOpen(true)}>
             Войти в каталог

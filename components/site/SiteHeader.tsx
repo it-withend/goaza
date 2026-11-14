@@ -7,6 +7,7 @@ import Link from "@/components/i18n/Link";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { localizePath, splitLang, type Tr } from "@/lib/i18n";
 import { PlanCta } from "./PlanCta";
+import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "./TelegramIcon";
 import styles from "./site.module.css";
 
 type NavItem = { href: string; label: string; active: (path: string) => boolean };
@@ -71,7 +72,12 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
 
   useEffect(() => setOpen(false), [path]);
 
-  const handle = username ? (username.startsWith("@") ? username : `@${username}`) : null;
+  const cleanName = username?.trim() || null;
+  const handle = cleanName
+    ? cleanName.startsWith("@") || /\s/.test(cleanName)
+      ? cleanName
+      : `@${cleanName}`
+    : null;
   const other = lang === "uz" ? "ru" : "uz";
 
   async function handleLogout() {
@@ -103,6 +109,16 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
         </nav>
 
         <div className={styles.headerActions}>
+          <a
+            href={TELEGRAM_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.tgBtn}
+            aria-label={tr("Telegram-канал", "Telegram kanali")}
+            title={tr("Telegram-канал", "Telegram kanali")}
+          >
+            <TelegramIcon size={20} />
+          </a>
           <NextLink
             href={localizePath(other, path)}
             className={styles.langSwitch}

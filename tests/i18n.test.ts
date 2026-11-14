@@ -29,6 +29,8 @@ describe("splitLang", () => {
     expect(splitLang("/uz/unis")).toEqual({ lang: "uz", path: "/unis" });
     expect(splitLang("/uz")).toEqual({ lang: "uz", path: "/" });
     expect(splitLang("/unis")).toEqual({ lang: "ru", path: "/unis" });
+    expect(splitLang("/ru")).toEqual({ lang: "ru", path: "/" });
+    expect(splitLang("/ru/unis")).toEqual({ lang: "ru", path: "/unis" });
     expect(splitLang("/uzbekistan")).toEqual({ lang: "ru", path: "/uzbekistan" });
   });
 });

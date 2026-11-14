@@ -56,7 +56,7 @@ export function DashboardClient({
 
   const [q, setQ] = useState(() => readParam(boot, "q"));
   const [country, setCountry] = useState(() => readParam(boot, "country"));
-  const [grantOnly, setGrantOnly] = useState(() => boot.get("grantOnly") === "1");
+  const [grantOnly, setGrantOnly] = useState(() => boot.get("grantOnly") === "1" || boot.get("grant") === "1");
   const [needBlind, setNeedBlind] = useState(() => boot.get("needBlind") === "1");
   const [hasIntlAid, setHasIntlAid] = useState(() => boot.get("intlAid") === "1");
   const [urgentDeadline, setUrgentDeadline] = useState(() => boot.get("urgent") === "1");
@@ -66,9 +66,11 @@ export function DashboardClient({
   );
   const togglePreset = (id: PresetId) =>
     setPresets((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  const [tuitionMax, setTuitionMax] = useState(() =>
-    boot.has("tuitionMax") ? Number(boot.get("tuitionMax")) : meta.tuitionMax,
-  );
+  const [tuitionMax, setTuitionMax] = useState(() => {
+    const raw = boot.get("tuitionMax") ?? boot.get("tuition");
+    const parsed = raw != null ? Number(raw) : NaN;
+    return Number.isFinite(parsed) ? parsed : meta.tuitionMax;
+  });
   const [aidMin, setAidMin] = useState(() => (boot.has("aidMin") ? Number(boot.get("aidMin")) : 0));
   const [rateMax, setRateMax] = useState(() => (boot.has("rateMax") ? Number(boot.get("rateMax")) : 100));
   const [sort, setSort] = useState(() => readParam(boot, "sort", "name"));
@@ -79,11 +81,7 @@ export function DashboardClient({
   // "My plan" list shared with the cabinet: same storage, slug validation and 30-item cap.
   const { list: favList, toggle: toggleFavorite } = useApplicant();
   const favSet = useMemo(() => new Set(favList), [favList]);
-
-  const intlFundCount = useMemo(
-    () => initial.filter((u) => u.total_aid_num != null || u.avg_aid_num != null).length,
-    [initial],
-  );
+  const activeFavSet = favOnly ? favSet : null;
 
   const catalogQuery = useMemo(() => {
     const sp = new URLSearchParams();
@@ -141,7 +139,7 @@ export function DashboardClient({
         needBlind,
         hasIntlAid,
         urgentDeadline,
-        favSlugs: favOnly ? favSet : undefined,
+        favSlugs: activeFavSet ?? undefined,
         tuitionMax: tuitionMax < meta.tuitionMax ? tuitionMax : undefined,
         aidMin,
         rateMax,
@@ -158,8 +156,7 @@ export function DashboardClient({
       needBlind,
       hasIntlAid,
       urgentDeadline,
-      favOnly,
-      favSet,
+      activeFavSet,
       tuitionMax,
       meta.tuitionMax,
       aidMin,
@@ -172,6 +169,10 @@ export function DashboardClient({
   const loading = deferredQ !== q;
 
   const filteredGrants = useMemo(() => unis.filter((u) => u.full_grant).length, [unis]);
+  const intlFundCount = useMemo(
+    () => unis.filter((u) => u.total_aid_num != null || u.avg_aid_num != null).length,
+    [unis],
+  );
 
   const [visible, setVisible] = useState(FIRST_BATCH);
   useEffect(() => setVisible(FIRST_BATCH), [unis]);
@@ -378,10 +379,11 @@ export function DashboardClient({
       <div className={styles.fBlock}>
           <h4>{tr("Бюджет и шансы", "Byudjet va imkoniyatlar")}</h4>
           <div className={styles.rangeRow}>
-            <label>
+            <label htmlFor="f-tuition">
               {tr("Стоимость до", "Narxi gacha")} <span>${money(tuitionMax)}</span>
             </label>
             <input
+              id="f-tuition"
               type="range"
               min={0}
               max={meta.tuitionMax}
@@ -391,10 +393,11 @@ export function DashboardClient({
             />
           </div>
           <div className={styles.rangeRow}>
-            <label>
+            <label htmlFor="f-aid">
               {tr("Помощь от", "Yordam dan")} <span>${money(aidMin)}</span>
             </label>
             <input
+              id="f-aid"
               type="range"
               min={0}
               max={meta.aidMax}
@@ -404,10 +407,11 @@ export function DashboardClient({
             />
           </div>
           <div className={styles.rangeRow}>
-            <label>
+            <label htmlFor="f-rate">
               {tr("Поступление до", "Qabul foizi gacha")} <span>{rateMax}%</span>
             </label>
             <input
+              id="f-rate"
               type="range"
               min={1}
               max={100}
@@ -473,11 +477,11 @@ export function DashboardClient({
           onClick={() => setFiltersOpen(false)}
         />
         {filters}
-        <section className={styles.results} aria-live="polite">
+        <section className={styles.results}>
           <div className={styles.kpiStrip}>
             <div className={styles.kpiTile}>
               <small>{tr("В выдаче", "Natijada")}</small>
-              <strong>
+              <strong aria-live="polite">
                 {loading ? "…" : unis.length} <span>/ {meta.total}</span>
               </strong>
             </div>

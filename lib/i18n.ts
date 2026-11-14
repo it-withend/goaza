@@ -25,10 +25,12 @@ export function localizePath(lang: Lang, href: string): string {
   return `/uz${href}`;
 }
 
-/** "/uz/unis" → { lang: "uz", path: "/unis" }; unprefixed paths are Russian. */
+/** "/uz/unis" → { lang: "uz", path: "/unis" }; "/ru/unis" or unprefixed paths are Russian. */
 export function splitLang(pathname: string): { lang: Lang; path: string } {
   if (pathname === "/uz") return { lang: "uz", path: "/" };
   if (pathname.startsWith("/uz/")) return { lang: "uz", path: pathname.slice(3) };
+  if (pathname === "/ru") return { lang: "ru", path: "/" };
+  if (pathname.startsWith("/ru/")) return { lang: "ru", path: pathname.slice(3) };
   return { lang: "ru", path: pathname };
 }
 

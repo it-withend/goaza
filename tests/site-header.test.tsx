@@ -100,3 +100,19 @@ it("offers the Uzbek version of the current page", () => {
   render(<SiteHeader />);
   expect(screen.getByRole("link", { name: /o'zbek/i })).toHaveAttribute("href", "/uz/grants");
 });
+
+it("avoids /uz/ru when Next pathname includes rewritten /ru prefix", () => {
+  status({ subscribed: false, username: null });
+  pathname.current = "/ru";
+  render(<SiteHeader />);
+  expect(screen.getByRole("link", { name: /o'zbek/i })).toHaveAttribute("href", "/uz");
+});
+
+it("renders a Telegram logo link without showing @studyaza and avoids @ on display names", () => {
+  status({ subscribed: true, username: "Telegram user" });
+  render(<SiteHeader account={{ name: "Telegram user", onLogout: vi.fn() }} />);
+  expect(screen.getByText("Telegram user")).toBeInTheDocument();
+  expect(screen.queryByText("@Telegram user")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: /telegram-канал/i })).toHaveAttribute("href", "https://t.me/studyaza");
+  expect(screen.queryByText(/@studyaza/i)).not.toBeInTheDocument();
+});

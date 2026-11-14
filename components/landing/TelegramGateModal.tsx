@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { localizePath } from "@/lib/i18n";
 import { TelegramLogin } from "@/components/TelegramLogin";
+import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "@/components/site/TelegramIcon";
 import styles from "./LandingPage.module.css";
 
 export function TelegramGateModal({
@@ -46,7 +47,7 @@ export function TelegramGateModal({
         <h2 id="telegram-title">{tr("Открой атлас", "Atlasni oching")}</h2>
         <ol className={styles.steps}>
           <li>
-            {tr("Подпишись на Telegram-канал", "Telegram-kanalga obuna bo'ling")} <strong>@studyaza</strong>
+            {tr("Подпишись на наш Telegram-канал", "Telegram kanalimizga obuna bo'ling")}
           </li>
           <li>
             {tr("Войди через кнопку Telegram ниже (домен ", "Quyidagi Telegram tugmasi orqali kiring (domen ")}<strong>goaza.xyz</strong>)
@@ -54,11 +55,13 @@ export function TelegramGateModal({
         </ol>
         <a
           className={styles.channelLink}
-          href="https://t.me/studyaza"
+          href={TELEGRAM_CHANNEL_URL}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={tr("Открыть канал в Telegram", "Telegram kanalini ochish")}
         >
-          {tr("Открыть канал @studyaza", "@studyaza kanalini ochish")}
+          <TelegramIcon size={18} />
+          <span>{tr("Открыть канал в Telegram", "Telegram kanalini ochish")}</span>
         </a>
         <TelegramLogin
           botUsername={botUsername || "goazabot"}

@@ -53,3 +53,12 @@ it("renders Uzbek copy and globe when lang='uz'", () => {
   expect(ctas[0]).toHaveAttribute("href", "/uz/plan/start");
   expect(screen.getByTestId("world-globe")).toBeInTheDocument();
 });
+
+it("uses a Telegram logo CTA instead of @studyaza text button", () => {
+  render(<HomeHub stats={stats} />);
+  expect(screen.queryByRole("link", { name: /@studyaza/i })).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: /открыть telegram-канал/i })).toHaveAttribute(
+    "href",
+    "https://t.me/studyaza",
+  );
+});

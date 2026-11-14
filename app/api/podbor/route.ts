@@ -46,7 +46,8 @@ export async function POST(req: Request) {
   const full = Boolean(session?.subscribed);
 
   try {
-    const rows = await fetchMatchRows();
+    const rawRows = await fetchMatchRows();
+    const rows = full ? rawRows : rawRows.map((r) => ({ ...r, aid_num: null }));
     const res = shortlist(matchUniversities(rows, profile, lang), full ? 10 : 2);
     return NextResponse.json({ full, ...res }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (e) {

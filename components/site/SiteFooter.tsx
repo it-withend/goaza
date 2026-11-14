@@ -2,6 +2,7 @@
 
 import Link from "@/components/i18n/Link";
 import { useTr } from "@/components/i18n/LangProvider";
+import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "./TelegramIcon";
 import styles from "./site.module.css";
 
 export function SiteFooter() {
@@ -27,13 +28,19 @@ export function SiteFooter() {
         </nav>
         <p className={styles.footerNote}>
           {tr(
-            "Цифры собраны из официальных источников и обновляются раз в год. Перед подачей проверяйте условия на сайте вуза или программы. Новости и разборы — в канале",
-            "Raqamlar rasmiy manbalardan olingan va yiliga bir marta yangilanadi. Ariza topshirishdan oldin shartlarni universitet yoki dastur saytida tekshiring. Yangiliklar va tahlillar — kanalda",
+            "Цифры собраны из официальных источников и обновляются раз в год. Перед подачей проверяйте условия на сайте вуза или программы. Новости и разборы — в",
+            "Raqamlar rasmiy manbalardan olingan va yiliga bir marta yangilanadi. Ariza topshirishdan oldin shartlarni universitet yoki dastur saytida tekshiring. Yangiliklar va tahlillar —",
           )}{" "}
-          <a href="https://t.me/studyaza" target="_blank" rel="noopener noreferrer">
-            @studyaza
+          <a
+            href={TELEGRAM_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.footerTgLink}
+            aria-label={tr("Открыть Telegram-канал", "Telegram kanalini ochish")}
+          >
+            <TelegramIcon size={16} />
+            <span>Telegram</span>
           </a>
-          .
         </p>
       </div>
     </footer>
