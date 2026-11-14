@@ -46,8 +46,8 @@ describe("parseList", () => {
     expect(parseList('{"a":1}')).toEqual([]);
   });
 
-  it("caps the list at 60", () => {
+  it("caps the list at 30, the same limit the plan API uses", () => {
     const many = JSON.stringify(Array.from({ length: 80 }, (_, i) => `uni-${i}`));
-    expect(parseList(many)).toHaveLength(60);
+    expect(parseList(many)).toHaveLength(30);
   });
 });

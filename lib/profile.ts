@@ -19,7 +19,8 @@ const COUNTRY_RE = /^[A-Za-z .()-]{2,60}$/;
 const GRADES: Grade[] = ["9", "10", "11", "12", "gap"];
 const TESTS: EnglishTest[] = ["ielts", "toefl", "duolingo", "none"];
 const SCHOOL: Grades[] = ["excellent", "good", "average"];
-const MAX_LIST = 60;
+/** Same as the plan API limit for subscribers, so nothing in the list is silently ignored. */
+export const MAX_LIST = 30;
 
 function safeJson(raw: string | null): unknown {
   if (!raw) return null;

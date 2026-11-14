@@ -43,9 +43,10 @@ function plural(n: number, one: string, few: string, many: string) {
 }
 
 export function PlanClient() {
-  const { ready, profile, list, toggle, done, toggleTask } = useApplicant();
+  const { ready, profile, list, toggle, removeMany, done, toggleTask } = useApplicant();
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState(false);
+  const [limit, setLimit] = useState<number | null>(null);
 
   useEffect(() => {
     if (!ready || !profile) return;
@@ -60,12 +61,22 @@ export function PlanClient() {
       body: JSON.stringify({ profile, slugs: list }),
     })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((j: { matches: Row[] }) => alive && setRows(j.matches))
+      .then((j: { matches: Row[]; limit?: number }) => {
+        if (!alive) return;
+        setError(false);
+        setRows(j.matches);
+        const cap = typeof j.limit === "number" ? j.limit : list.length;
+        setLimit(cap);
+        // Universities the server checked but no longer knows (deleted or renamed) leave the list.
+        const returned = new Set(j.matches.map((m) => m.slug));
+        const gone = list.slice(0, cap).filter((slug) => !returned.has(slug));
+        if (gone.length) removeMany(gone);
+      })
       .catch(() => alive && setError(true));
     return () => {
       alive = false;
     };
-  }, [ready, profile, list]);
+  }, [ready, profile, list, removeMany]);
 
   const matches = useMemo(() => (rows || []).filter(isMatch), [rows]);
   const excluded = useMemo(() => (rows || []).filter((r): r is Excluded => !isMatch(r)), [rows]);
@@ -98,11 +109,14 @@ export function PlanClient() {
   }
 
   const name = profile.name || "Ваш план";
+  const anyDated = matches.some((m) => describeDeadline(m.deadline, now)?.daysLeft != null);
   const headline = next
     ? `${name}, до первого дедлайна ${next.daysLeft} ${plural(next.daysLeft, "день", "дня", "дней")}`
-    : matches.length
-      ? `${name}, сроки этого цикла прошли — готовимся к следующему`
-      : `${name}, добавьте вузы в план`;
+    : !matches.length
+      ? `${name}, добавьте вузы в план`
+      : anyDated
+        ? `${name}, сроки этого цикла прошли — готовимся к следующему`
+        : `${name}, сроки подачи уточняйте на сайтах вузов`;
   const nextTask = tasks.find((t) => !done.includes(t.id));
   const progress = tasks.length ? Math.round((tasks.filter((t) => done.includes(t.id)).length / tasks.length) * 100) : 0;
 
@@ -167,8 +181,13 @@ export function PlanClient() {
         <section className={s.list} aria-labelledby="mylist">
           <div className={s.listHead}>
             <h2 id="mylist">Мой список</h2>
-            <Link href="/dashboard">Найти ещё вузы</Link>
+            <Link href="/unis">Найти ещё вузы</Link>
           </div>
+          {limit != null && list.length > limit ? (
+            <p className={s.hint}>
+              Показаны {limit} из {list.length} вузов списка — подписчикам видно до 30.
+            </p>
+          ) : null}
           {rows && !matches.length && !excluded.length ? (
             <p className={s.hint}>
               Пока пусто. <Link href="/plan/start">Подберите вузы по профилю</Link> или добавляйте их из каталога кнопкой

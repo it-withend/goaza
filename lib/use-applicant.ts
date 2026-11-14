@@ -28,7 +28,10 @@ function write(key: string, value: string) {
   }
 }
 
-/** Profile, "my list" and finished tasks, persisted in localStorage and synced across tabs. */
+/**
+ * Profile, "my list" and finished tasks, persisted in localStorage and synced across tabs.
+ * List updates are functional so rapid toggles (or calls after an await) never lose items.
+ */
 export function useApplicant() {
   const [ready, setReady] = useState(false);
   const [profile, setProfileState] = useState<ApplicantProfile | null>(null);
@@ -55,29 +58,35 @@ export function useApplicant() {
     write(PROFILE_KEY, serializeProfile(p));
   }, []);
 
-  const saveList = useCallback((next: string[]) => {
-    const clean = parseList(JSON.stringify(next));
-    setList(clean);
-    write(LIST_KEY, JSON.stringify(clean));
+  const updateList = useCallback((fn: (prev: string[]) => string[]) => {
+    setList((prev) => {
+      const next = parseList(JSON.stringify(fn(prev)));
+      write(LIST_KEY, JSON.stringify(next));
+      return next;
+    });
   }, []);
 
   const toggle = useCallback(
-    (slug: string) => saveList(list.includes(slug) ? list.filter((s) => s !== slug) : [...list, slug]),
-    [list, saveList],
+    (slug: string) => updateList((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug])),
+    [updateList],
   );
 
-  const addMany = useCallback((slugs: string[]) => saveList([...list, ...slugs]), [list, saveList]);
+  const addMany = useCallback((slugs: string[]) => updateList((prev) => [...prev, ...slugs]), [updateList]);
 
-  const toggleTask = useCallback(
-    (id: string) => {
-      const next = done.includes(id) ? done.filter((x) => x !== id) : [...done, id];
-      setDone(next);
+  const removeMany = useCallback(
+    (slugs: string[]) => updateList((prev) => prev.filter((s) => !slugs.includes(s))),
+    [updateList],
+  );
+
+  const toggleTask = useCallback((id: string) => {
+    setDone((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
       write(TASKS_KEY, JSON.stringify(next));
-    },
-    [done],
-  );
+      return next;
+    });
+  }, []);
 
   const has = useCallback((slug: string) => list.includes(slug), [list]);
 
-  return { ready, profile, setProfile, list, toggle, addMany, has, done, toggleTask };
+  return { ready, profile, setProfile, list, toggle, addMany, removeMany, has, done, toggleTask };
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { filterCatalog, PRESETS, type CatalogUni, type PresetId } from "@/lib/catalog";
 import { INST_LABEL, countryRu } from "@/lib/types";
 import type { computeMeta } from "@/lib/universities";
 import { UniversityCard } from "@/components/UniversityCard";
+import { useApplicant } from "@/lib/use-applicant";
 import { ToTop } from "@/components/ToTop";
 import { DashboardShell } from "./DashboardShell";
 import styles from "./Dashboard.module.css";
@@ -14,7 +15,6 @@ type Meta = ReturnType<typeof computeMeta>;
 
 const FIRST_BATCH = 24;
 const BATCH = 36;
-const FAV_STORAGE_KEY = "goaza_favs_v1";
 
 const SORT_LABELS: Record<string, string> = {
   grant: "Сначала полные гранты",
@@ -69,34 +69,9 @@ export function DashboardClient({
   const [aidTypes, setAidTypes] = useState(() => boot.get("aidTypes")?.split(",").filter(Boolean) || []);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
-  const [favList, setFavList] = useState<string[]>([]);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(FAV_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setFavList(parsed.map(String));
-      }
-    } catch {
-      /* ignore localStorage errors */
-    }
-  }, []);
-
+  // "My plan" list shared with the cabinet: same storage, slug validation and 30-item cap.
+  const { list: favList, toggle: toggleFavorite } = useApplicant();
   const favSet = useMemo(() => new Set(favList), [favList]);
-
-  const toggleFavorite = useCallback((slug: string) => {
-    setFavList((prev) => {
-      const exists = prev.includes(slug);
-      const next = exists ? prev.filter((s) => s !== slug) : [...prev, slug];
-      try {
-        window.localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
-  }, []);
 
   const intlFundCount = useMemo(
     () => initial.filter((u) => u.total_aid_num != null || u.avg_aid_num != null).length,
