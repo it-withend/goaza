@@ -3,7 +3,10 @@ import type { NextRequest } from "next/server";
 
 const CANONICAL_HOST = "goaza.xyz";
 
-/** Force one host so Telegram Login Widget origin always matches BotFather /setdomain. */
+/**
+ * 1. Force one host so Telegram Login Widget origin always matches BotFather /setdomain.
+ * 2. Languages: Russian lives at the unprefixed URLs (internally /ru/...), Uzbek at /uz/....
+ */
 export async function middleware(req: NextRequest) {
   const host = req.headers.get("host")?.split(":")[0]?.toLowerCase();
   const url = req.nextUrl.clone();
@@ -22,11 +25,22 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const path = url.pathname;
+  if (path === "/api" || path.startsWith("/api/") || path.startsWith("/_next/")) return NextResponse.next();
+  if (path === "/uz" || path.startsWith("/uz/")) return NextResponse.next();
+
+  // /ru/... is an internal path; the public Russian URL has no prefix.
+  if (path === "/ru" || path.startsWith("/ru/")) {
+    url.pathname = path.slice(3) || "/";
+    return NextResponse.redirect(url, 308);
+  }
+
+  url.pathname = path === "/" ? "/ru" : `/ru${path}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|google[^/]+\\.html|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|opengraph-image|google[^/]+\\.html|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|txt|xml)$).*)",
   ],
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { useApplicant } from "@/lib/use-applicant";
 
 /** "Build my plan" for newcomers, "Open my plan" once a profile is saved — never re-runs the survey. */

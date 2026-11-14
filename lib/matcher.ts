@@ -111,14 +111,15 @@ function englishGap(u: MatchUni, userIelts: number | null): number | null {
 }
 
 /** Why the matcher drops a university for this profile (Russian, user-facing), or null. */
-export function exclusionReason(u: MatchUni, p: Profile): string | null {
-  if (!moneyFor(u, p)) return "Не проходит по бюджету";
+export function exclusionReason(u: MatchUni, p: Profile, lang: "ru" | "uz" = "ru"): string | null {
+  if (!moneyFor(u, p)) return lang === "uz" ? "Byudjetga to'g'ri kelmaydi" : "Не проходит по бюджету";
   const gap = englishGap(u, ieltsEquivalent(p.english.test, p.english.score));
-  if (gap != null) return `Нужен английский выше: IELTS ${gap}`;
+  if (gap != null) return lang === "uz" ? `Ingliz tili yuqoriroq kerak: IELTS ${gap}` : `Нужен английский выше: IELTS ${gap}`;
   return null;
 }
 
-export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
+export function matchUniversities(all: MatchUni[], p: Profile, lang: "ru" | "uz" = "ru"): Match[] {
+  const tr = (ru: string, uz: string) => (lang === "uz" ? uz : ru);
   const userIelts = ieltsEquivalent(p.english.test, p.english.score);
   const majorTerms = p.major
     .toLowerCase()
@@ -136,9 +137,9 @@ export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
     const money = moneyFor(u, p);
     if (!money) continue;
     const cost = u.tuition_num;
-    if (money === "grant") reasons.push("Полный грант для иностранцев");
-    if (money === "pay") reasons.push(cost === 0 ? "Бесплатное обучение" : "Укладывается в ваш бюджет");
-    if (money === "partial") reasons.push("С частичной помощью укладывается в бюджет");
+    if (money === "grant") reasons.push(tr("Полный грант для иностранцев", "Chet elliklar uchun to'liq grant"));
+    if (money === "pay") reasons.push(cost === 0 ? tr("Бесплатное обучение", "Bepul ta'lim") : tr("Укладывается в ваш бюджет", "Byudjetingizga mos keladi"));
+    if (money === "partial") reasons.push(tr("С частичной помощью укладывается в бюджет", "Qisman yordam bilan byudjetga mos keladi"));
 
     // 2) English requirement is a hard filter when both sides are known.
     if (englishGap(u, userIelts) != null) continue;
@@ -146,23 +147,23 @@ export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
     // 3) Chance estimate (%), starting from the published acceptance rate.
     // Unknown rate: assume a selective school rather than an easy one.
     let chance = u.rate_num ?? (u.country === "USA" ? 25 : 35);
-    if (u.rate_num == null) reasons.push("Процент приёма неизвестен — оценка осторожная");
+    if (u.rate_num == null) reasons.push(tr("Процент приёма неизвестен — оценка осторожная", "Qabul foizi noma'lum — baho ehtiyotkor"));
     const needsAid = money === "grant" && p.budget < 20000;
     if (needsAid && u.country === "USA" && !u.need_blind) {
       // US need-aware colleges admit far fewer internationals who ask for full aid.
       chance *= 0.5;
-      reasons.push("Need-aware: просьба о помощи снижает шансы");
+      reasons.push(tr("Need-aware: просьба о помощи снижает шансы", "Need-aware: yordam so'rash imkoniyatni pasaytiradi"));
     } else if (needsAid && u.country !== "USA") {
       // Outside the US a full grant is a separate merit/government contest with few places:
       // being admitted is not the same as getting the money.
       chance *= 0.35;
-      reasons.push("Грант конкурсный: получить его сложнее, чем поступить");
+      reasons.push(tr("Грант конкурсный: получить его сложнее, чем поступить", "Grant tanlov asosida: uni olish o'qishga kirishdan qiyinroq"));
     }
     const range = satRange(u.sat);
     if (range && p.sat != null) {
       if (p.sat >= range.high) chance *= 1.4;
       else if (p.sat < range.low) chance *= 0.6;
-      if (p.sat >= range.low) reasons.push(`SAT ${p.sat} в диапазоне поступивших`);
+      if (p.sat >= range.low) reasons.push(tr(`SAT ${p.sat} в диапазоне поступивших`, `SAT ${p.sat} qabul qilinganlar oralig'ida`));
     }
     chance *= GRADE_FACTOR[p.grades];
     chance = Math.max(1, Math.min(95, Math.round(chance)));
@@ -172,7 +173,7 @@ export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
       const m = u.majors.toLowerCase();
       if (majorTerms.some((t) => m.includes(t))) {
         fit = 1;
-        reasons.push("Сильное направление по вашей специальности");
+        reasons.push(tr("Сильное направление по вашей специальности", "Mutaxassisligingiz bo'yicha kuchli yo'nalish"));
       }
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { useEffect, useState } from "react";
 import type { Match } from "@/lib/matcher";
 import { useApplicant } from "@/lib/use-applicant";

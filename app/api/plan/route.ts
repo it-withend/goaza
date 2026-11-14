@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { exclusionReason, matchUniversities } from "@/lib/matcher";
+import { langOf } from "@/lib/i18n";
 import { toMatchProfile } from "@/lib/profile";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { fetchMatchRows } from "@/lib/universities";
@@ -16,7 +17,8 @@ const GUEST_MAX = 12;
  * otherwise bisecting the budget would reveal it.
  */
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => null)) as { profile?: unknown; slugs?: unknown } | null;
+  const body = (await req.json().catch(() => null)) as { profile?: unknown; slugs?: unknown; lang?: unknown } | null;
+  const lang = langOf(body?.lang);
   const profile = toMatchProfile(body?.profile);
   if (!profile || !Array.isArray(body?.slugs)) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
@@ -34,13 +36,13 @@ export async function POST(req: Request) {
     const wanted = rows
       .filter((r) => slugs.includes(r.slug))
       .map((r) => (full ? r : { ...r, aid_num: null }));
-    const matched = new Map(matchUniversities(wanted, { ...profile, countries: [] }).map((m) => [m.slug, m]));
+    const matched = new Map(matchUniversities(wanted, { ...profile, countries: [] }, lang).map((m) => [m.slug, m]));
     const matches = slugs
       .map((slug) => {
         const row = wanted.find((r) => r.slug === slug);
         if (!row) return null;
         return (
-          matched.get(slug) ?? { slug, name: row.name, excluded: exclusionReason(row, profile) ?? "Не подходит профилю" }
+          matched.get(slug) ?? { slug, name: row.name, excluded: exclusionReason(row, profile, lang) ?? (lang === "uz" ? "Profilga mos emas" : "Не подходит профилю") }
         );
       })
       .filter(Boolean);

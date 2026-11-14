@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import type { LandingStats } from "@/lib/landing-stats";
 import { countryRu } from "@/lib/types";
 import { TelegramGateModal } from "./TelegramGateModal";

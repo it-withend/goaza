@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { GateCta } from "@/components/gate/GateCta";
 import { MyChance } from "@/components/uni/MyChance";
 import { INCOME_BANDS, SCORECARD_META, scorecardFor } from "@/lib/scorecard";

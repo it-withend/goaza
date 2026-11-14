@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { useEffect, useMemo, useState } from "react";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { GRANTS } from "@/content/grants";

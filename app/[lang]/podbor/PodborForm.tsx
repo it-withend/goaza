@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { useState } from "react";
 import { GateCta } from "@/components/gate/GateCta";
 import { UniversityLogo } from "@/components/UniversityLogo";

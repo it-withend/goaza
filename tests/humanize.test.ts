@@ -103,3 +103,16 @@ describe("money", () => {
     expect(money("$17,380 / год")).toBe("$17 380 / год");
   });
 });
+
+describe("Uzbek output", () => {
+  it("speaks Uzbek and hides Russian free text", () => {
+    expect(langRu("6.0", "uz")).toBe("IELTS kamida 6.0 (≈ B2) yoki muqobili: TOEFL, Duolingo");
+    expect(satRu("Обязательно", "uz")).toBe("Majburiy");
+    expect(satRu("1470", "uz")).toBe("Mo'ljal — 1600 dan taxminan 1470");
+    expect(essayRu("1 ps, 2 supp essay", "uz")).toBe("Shaxsiy esse + 2 ta qo'shimcha esse");
+    expect(essayRu("мотивационное; отдельно эссе для выбр. Факультета", "uz")).toBeNull();
+    expect(instTypeRu("Public / Research", "uz")).toBe("Davlat tadqiqot universiteti");
+    expect(aidSummary("Full Ride", "uz")).toEqual({ short: "To'liq grant (o'qish va yashash)", names: [] });
+    expect(money("$17,380 / год", "uz")).toBe("$17 380 / yil");
+  });
+});

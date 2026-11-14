@@ -98,6 +98,58 @@ export const INST_LABEL: Record<string, string> = {
   womens: "Женский колледж",
 };
 
+export const COUNTRY_UZ: Record<string, string> = {
+  Australia: "Avstraliya",
+  Austria: "Avstriya",
+  Belgium: "Belgiya",
+  Canada: "Kanada",
+  China: "Xitoy",
+  "Czech Republic": "Chexiya",
+  Denmark: "Daniya",
+  Finland: "Finlandiya",
+  France: "Fransiya",
+  Germany: "Germaniya",
+  "Hong Kong": "Gonkong",
+  Hungary: "Vengriya",
+  Italy: "Italiya",
+  Japan: "Yaponiya",
+  Korea: "Koreya",
+  Latvia: "Latviya",
+  Netherlands: "Niderlandiya",
+  Poland: "Polsha",
+  Portugal: "Portugaliya",
+  Qatar: "Qatar",
+  Singapore: "Singapur",
+  "South Korea": "Janubiy Koreya",
+  Spain: "Ispaniya",
+  Sweden: "Shvetsiya",
+  Switzerland: "Shveytsariya",
+  Turkey: "Turkiya",
+  "Turkish Republic of Northern Cyprus": "Shimoliy Kipr",
+  UK: "Buyuk Britaniya",
+  USA: "AQSH",
+  UAE: "BAA",
+};
+
+export const INST_LABEL_UZ: Record<string, string> = {
+  ivy: "Ayvi Liga",
+  liberal_arts: "Liberal arts kolleji",
+  research: "Tadqiqot universiteti",
+  public: "Davlat",
+  private: "Xususiy",
+  tech: "Texnika",
+  womens: "Ayollar kolleji",
+};
+
 export function countryRu(c: string) {
   return COUNTRY_RU[c] || c;
+}
+
+/** Country name in the visitor's language. */
+export function countryName(c: string, lang: "ru" | "uz" = "ru") {
+  return (lang === "uz" ? COUNTRY_UZ[c] : COUNTRY_RU[c]) || c;
+}
+
+export function instLabel(t: string, lang: "ru" | "uz" = "ru") {
+  return (lang === "uz" ? INST_LABEL_UZ[t] : INST_LABEL[t]) || t;
 }

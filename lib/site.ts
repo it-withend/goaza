@@ -19,3 +19,18 @@ export const SITE_KEYWORDS = [
   "стоимость обучения за рубежом",
   "need-blind университеты",
 ];
+
+export const SITE_TAGLINE_UZ = "Xalqaro talabalar uchun universitetlar va grantlar katalogi";
+
+export const SITE_DESCRIPTION_UZ =
+  "Chet eldagi universitetni toping: o'qish narxi, to'liq grantlar, qabul imkoniyati va muddatlar — Studyaza katalogida 30 dan ortiq davlat: AQSH, Buyuk Britaniya, Yevropa, Osiyo.";
+
+export const SITE_KEYWORDS_UZ = [
+  "chet elda o'qish",
+  "chet el universitetlari",
+  "to'liq grant",
+  "xorijda o'qish uchun grant",
+  "AQSH universitetlari",
+  "talabalar uchun stipendiya",
+  "Studyaza",
+];

@@ -68,30 +68,36 @@ const GOV_COUNTRIES: Record<string, string> = {
  * Concrete next steps derived from the profile and the list. Dates are counted back from the
  * nearest upcoming deadline: recommendations −42 days, personal statement −30, transcripts −21.
  */
-export function planTasks(profile: ApplicantProfile, matches: Match[], now: Date = new Date()): PlanTask[] {
+export function planTasks(
+  profile: ApplicantProfile,
+  matches: Match[],
+  now: Date = new Date(),
+  lang: "ru" | "uz" = "ru",
+): PlanTask[] {
+  const tr = (ru: string, uz: string) => (lang === "uz" ? uz : ru);
   const tasks: PlanTask[] = [];
   const dated = upcoming(matches, now);
   const first = dated[0];
   const at = (id: string, title: string, iso: string | null, guide?: string) =>
     tasks.push({ id, title, due: iso, daysLeft: iso ? daysUntil(iso, now) : null, ...(guide ? { guide } : {}) });
 
-  if (profile.english.test === "none") at("english", "Сдать IELTS, TOEFL или Duolingo", first ? shift(first.iso, 60) : null, "testy");
+  if (profile.english.test === "none") at("english", tr("Сдать IELTS, TOEFL или Duolingo", "IELTS, TOEFL yoki Duolingo topshirish"), first ? shift(first.iso, 60) : null, "testy");
   if (profile.sat == null && matches.some((m) => m.country === "USA")) {
-    at("sat", "Сдать SAT — он помогает в вузах США", first ? shift(first.iso, 50) : null, "testy");
+    at("sat", tr("Сдать SAT — он помогает в вузах США", "SAT topshirish — AQSH universitetlarida yordam beradi"), first ? shift(first.iso, 50) : null, "testy");
   }
   if (first) {
-    at("recommendations", "Попросить 2 рекомендации у учителей", shift(first.iso, 42), "rekomendacii");
-    at("statement", "Черновик personal statement", shift(first.iso, 30), "esse");
-    at("transcripts", "Перевести оценки 9–11 классов", shift(first.iso, 21), "dokumenty");
+    at("recommendations", tr("Попросить 2 рекомендации у учителей", "O'qituvchilardan 2 ta tavsiyanoma so'rash"), shift(first.iso, 42), "rekomendacii");
+    at("statement", tr("Черновик personal statement", "Personal statement qoralamasi"), shift(first.iso, 30), "esse");
+    at("transcripts", tr("Перевести оценки 9–11 классов", "9–11-sinf baholarini tarjima qilish"), shift(first.iso, 21), "dokumenty");
   }
   for (const d of dated) {
     const m = matches.find((x) => x.slug === d.slug);
-    if (m?.country === "USA" && m.money === "grant") at(`css-${m.slug}`, `CSS Profile для ${m.name}`, d.iso, "finansovaya-pomoshch");
+    if (m?.country === "USA" && m.money === "grant") at(`css-${m.slug}`, tr(`CSS Profile для ${m.name}`, `${m.name} uchun CSS Profile`), d.iso, "finansovaya-pomoshch");
   }
-  for (const d of dated) at(`apply-${d.slug}`, `Подать заявку в ${d.name}`, d.iso);
+  for (const d of dated) at(`apply-${d.slug}`, tr(`Подать заявку в ${d.name}`, `${d.name} ga ariza topshirish`), d.iso);
 
   const programs = new Set(matches.map((m) => GOV_COUNTRIES[m.country]).filter(Boolean));
-  for (const p of programs) at(`gov-${p}`, `Подать на ${p}`, null, "besplatnoe-obuchenie");
+  for (const p of programs) at(`gov-${p}`, tr(`Подать на ${p}`, `${p} ga ariza topshirish`), null, "besplatnoe-obuchenie");
 
   return tasks.sort((a, b) => {
     if (a.due && b.due) return a.due.localeCompare(b.due);

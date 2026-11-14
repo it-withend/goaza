@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { matchUniversities, shortlist, type EnglishTest, type Grades, type Profile } from "@/lib/matcher";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { fetchMatchRows } from "@/lib/universities";
+import { langOf } from "@/lib/i18n";
 
 const TESTS: EnglishTest[] = ["ielts", "toefl", "duolingo", "none"];
 const GRADES: Grades[] = ["excellent", "good", "average"];
@@ -35,7 +36,9 @@ function parseProfile(body: unknown): Profile | null {
  * subscribed session (option A: knowledge public, tools for subscribers).
  */
 export async function POST(req: Request) {
-  const profile = parseProfile(await req.json().catch(() => null));
+  const raw: unknown = await req.json().catch(() => null);
+  const profile = parseProfile(raw);
+  const lang = langOf((raw as { lang?: unknown } | null)?.lang);
   if (!profile) return NextResponse.json({ error: "bad_request" }, { status: 400 });
 
   const jar = await cookies();
@@ -44,7 +47,7 @@ export async function POST(req: Request) {
 
   try {
     const rows = await fetchMatchRows();
-    const res = shortlist(matchUniversities(rows, profile), full ? 10 : 2);
+    const res = shortlist(matchUniversities(rows, profile, lang), full ? 10 : 2);
     return NextResponse.json({ full, ...res }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (e) {
     console.error("[api/podbor]", e);

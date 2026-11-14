@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { SitePage } from "@/components/site/SitePage";
 import styles from "@/components/site/site.module.css";
 import { PROGRAM_WINDOWS, US_ROUNDS, type Window } from "@/content/timeline";

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { EnglishTest, Grades } from "@/lib/matcher";

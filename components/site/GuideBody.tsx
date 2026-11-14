@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import type { Block, GuideSection } from "@/content/guide-types";
 import styles from "./site.module.css";
 

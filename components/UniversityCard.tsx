@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { memo } from "react";
 import type { CatalogUni } from "@/lib/catalog";
 import { daysLeftLabel, describeDeadline } from "@/lib/deadline";

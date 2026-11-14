@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/i18n/Link";
 import { GateCta } from "@/components/gate/GateCta";
 import { SitePage } from "@/components/site/SitePage";
 import styles from "@/components/gate/gate.module.css";
