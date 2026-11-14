@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import styles from "./site.module.css";
 
 const NAV = [
-  { href: "/start", label: "С чего начать" },
+  { href: "/plan", label: "Мой план" },
   { href: "/unis", label: "Вузы" },
   { href: "/grants", label: "Гранты" },
   { href: "/guides", label: "Гайды" },
@@ -53,8 +53,8 @@ export function SiteHeader() {
         </nav>
 
         <div className={styles.headerActions}>
-          <Link href={signedIn ? "/dashboard" : "/podbor"} className={styles.headerCta}>
-            {signedIn ? "Мой атлас" : "Подобрать вузы"}
+          <Link href={signedIn ? "/dashboard" : "/plan/start"} className={styles.headerCta}>
+            {signedIn ? "Каталог" : "Составить план"}
           </Link>
           <button
             type="button"

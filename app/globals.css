@@ -1,5 +1,20 @@
 :root {
   color-scheme: light;
+  /* Applicant cabinet (2026-11 redesign) */
+  --sz-base: #fffaf2;
+  --sz-surface: #ffffff;
+  --sz-ink: #1d2433;
+  --sz-muted: #5a6275;
+  --sz-line: #ece3d3;
+  --sz-accent: #f2c230;
+  --sz-dream: #7a2a63;
+  --sz-dream-bg: #f6e3f0;
+  --sz-target: #9a4b07;
+  --sz-target-bg: #ffe7cf;
+  --sz-safety: #1f6b4a;
+  --sz-safety-bg: #dff3ea;
+  --sz-info: #1f4f8b;
+  --sz-info-bg: #e3ecfb;
   /* Academic Night */
   --ink: #1a1a1a;
   --muted: #5c5c5c;
