@@ -13,11 +13,12 @@ export type PlanTask = {
 
 const DAY = 86_400_000;
 
-/** Probability of at least one admission, assuming independent decisions (rounded %). */
+/** Probability of at least one admission, assuming independent decisions (rounded %, capped at 95). */
 export function chanceAtLeastOne(matches: Pick<Match, "chance">[]): number {
   if (!matches.length) return 0;
   const none = matches.reduce((acc, m) => acc * (1 - Math.max(0, Math.min(100, m.chance)) / 100), 1);
-  return Math.round(100 * (1 - none));
+  // Decisions are not truly independent (same profile everywhere) — never promise near-certainty.
+  return Math.min(95, Math.round(100 * (1 - none)));
 }
 
 export function basketCounts(matches: Pick<Match, "basket">[]): Record<Basket, number> {

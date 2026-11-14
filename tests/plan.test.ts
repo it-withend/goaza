@@ -37,6 +37,9 @@ describe("chanceAtLeastOne", () => {
   it("is zero for an empty list", () => {
     expect(chanceAtLeastOne([])).toBe(0);
   });
+  it("never promises more than 95%", () => {
+    expect(chanceAtLeastOne(Array.from({ length: 10 }, () => ({ chance: 60 })))).toBe(95);
+  });
 });
 
 describe("nextDeadline", () => {
