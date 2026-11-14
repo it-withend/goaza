@@ -1,6 +1,6 @@
 .page {
   min-height: 100svh;
-  background: var(--paper);
+  background: var(--sz-base);
   color: var(--ink);
   overflow-x: clip;
 }
@@ -487,4 +487,37 @@
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.5;
+}
+
+.sectionNav {
+  position: sticky;
+  top: 62px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 16px 0 0;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255, 250, 242, 0.94);
+  border: 1px solid var(--sz-line, #ece3d3);
+  backdrop-filter: blur(8px);
+}
+
+.sectionNav a {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  color: var(--sz-ink, #1d2433);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sectionNav a:hover {
+  background: var(--sz-ink, #1d2433);
+  color: #fff;
+}
+
+.panel[id] {
+  scroll-margin-top: 130px;
 }

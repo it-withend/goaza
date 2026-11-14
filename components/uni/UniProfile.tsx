@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GateCta } from "@/components/gate/GateCta";
+import { MyChance } from "@/components/uni/MyChance";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { campusPhotoUrl } from "@/lib/campus-photo";
 import { getCountryGuide } from "@/lib/country-guides";
@@ -185,10 +186,17 @@ export function UniProfile({
           </div>
         </section>
 
+        <nav className={styles.sectionNav} aria-label="Разделы страницы">
+          <a href="#money">Деньги</a>
+          <a href="#admission">Поступление</a>
+          <a href="#requirements">Документы</a>
+          <a href="#deadlines">Сроки</a>
+        </nav>
+
         <div className={styles.layout}>
           <div className={styles.main}>
             {hasFinance ? (
-              <section className={styles.panel}>
+              <section className={styles.panel} id="money">
                 <h2>Финансы и гранты</h2>
                 {has(u.intl_aid_policy) ? (
                   <p className={styles.prose}>
@@ -230,7 +238,7 @@ export function UniProfile({
             ) : null}
 
             {hasChances ? (
-              <section className={styles.panel}>
+              <section className={styles.panel} id="admission">
                 <h2>Шансы поступить</h2>
                 <dl className={styles.dl}>
                   {chances.map(([label, value]) => (
@@ -267,7 +275,7 @@ export function UniProfile({
             ) : null}
 
             {hasReq ? (
-              <section className={styles.panel}>
+              <section className={styles.panel} id="requirements">
                 <h2>Требования и документы</h2>
                 <dl className={styles.dl}>
                   <Row label="Язык" value={u.lang} />
@@ -349,7 +357,8 @@ export function UniProfile({
           </div>
 
           <aside className={styles.side}>
-            <section className={styles.panel}>
+            <MyChance slug={u.slug} name={u.name} />
+            <section className={styles.panel} id="deadlines">
               <h2>Сроки</h2>
               {deadlines.length ? (
                 <ul className={styles.deadlines}>

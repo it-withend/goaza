@@ -1,0 +1,68 @@
+.box {
+  display: grid;
+  gap: 8px;
+  min-height: 120px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--sz-base, #fffaf2);
+  border: 2px solid var(--sz-line, #ece3d3);
+}
+
+.box small {
+  font-weight: 800;
+  color: var(--sz-muted, #5a6275);
+}
+
+.box strong {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.box p {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--sz-ink, #1d2433);
+}
+
+.dream {
+  color: var(--sz-dream, #7a2a63);
+}
+
+.target {
+  color: var(--sz-target, #9a4b07);
+}
+
+.safety {
+  color: var(--sz-safety, #1f6b4a);
+}
+
+.no {
+  color: #8b3a2a;
+}
+
+.add,
+.inPlan {
+  min-height: 46px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.add {
+  border: 0;
+  background: var(--sz-accent, #f2c230);
+  color: var(--sz-ink, #1d2433);
+}
+
+.inPlan {
+  border: 2px solid var(--sz-line, #ece3d3);
+  background: #fff;
+  color: var(--sz-ink, #1d2433);
+}
+
+.link {
+  color: var(--sz-info, #1f4f8b);
+  font-weight: 700;
+}
