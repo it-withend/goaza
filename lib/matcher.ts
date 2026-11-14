@@ -1,3 +1,5 @@
+import { pickNearestDeadline } from "@/lib/deadline";
+
 /**
  * Shortlist builder: sorts universities into dream / target / safety for one applicant.
  * Pure and deterministic — heuristics are documented inline so they can be tuned.
@@ -30,6 +32,8 @@ export type MatchUni = {
   sat: string | null;
   majors: string | null;
   logo?: boolean;
+  early_deadline?: string | null;
+  regular_deadline?: string | null;
 };
 
 export type Basket = "dream" | "target" | "safety";
@@ -43,6 +47,8 @@ export type Match = {
   logo: boolean;
   basket: Basket;
   money: Money;
+  /** Nearest upcoming deadline (ISO or free text), null when unknown. */
+  deadline: string | null;
   chance: number;
   reasons: string[];
 };
@@ -90,6 +96,28 @@ export function satRange(sat: string | null): { low: number; high: number } | nu
 
 const GRADE_FACTOR: Record<Grades, number> = { excellent: 1.15, good: 1, average: 0.7 };
 
+function moneyFor(u: MatchUni, p: Profile): Money | null {
+  const cost = u.tuition_num;
+  if (u.full_grant) return "grant";
+  if (cost != null && cost <= p.budget) return "pay";
+  if (cost != null && u.aid_num != null && cost - u.aid_num <= p.budget) return "partial";
+  return null;
+}
+
+/** Required IELTS band when the applicant's score is below it, else null. */
+function englishGap(u: MatchUni, userIelts: number | null): number | null {
+  const req = requiredIelts(u.lang);
+  return req != null && userIelts != null && userIelts + 0.001 < req ? req : null;
+}
+
+/** Why the matcher drops a university for this profile (Russian, user-facing), or null. */
+export function exclusionReason(u: MatchUni, p: Profile): string | null {
+  if (!moneyFor(u, p)) return "Не проходит по бюджету";
+  const gap = englishGap(u, ieltsEquivalent(p.english.test, p.english.score));
+  if (gap != null) return `Нужен английский выше: IELTS ${gap}`;
+  return null;
+}
+
 export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
   const userIelts = ieltsEquivalent(p.english.test, p.english.score);
   const majorTerms = p.major
@@ -105,19 +133,15 @@ export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
     const reasons: string[] = [];
 
     // 1) Money first: a school the family cannot pay for is not an option.
-    let money: Money | null = null;
-    const cost = u.tuition_num;
-    if (u.full_grant) money = "grant";
-    else if (cost != null && cost <= p.budget) money = "pay";
-    else if (cost != null && u.aid_num != null && cost - u.aid_num <= p.budget) money = "partial";
+    const money = moneyFor(u, p);
     if (!money) continue;
+    const cost = u.tuition_num;
     if (money === "grant") reasons.push("Полный грант для иностранцев");
     if (money === "pay") reasons.push(cost === 0 ? "Бесплатное обучение" : "Укладывается в ваш бюджет");
     if (money === "partial") reasons.push("С частичной помощью укладывается в бюджет");
 
     // 2) English requirement is a hard filter when both sides are known.
-    const req = requiredIelts(u.lang);
-    if (req != null && userIelts != null && userIelts + 0.001 < req) continue;
+    if (englishGap(u, userIelts) != null) continue;
 
     // 3) Chance estimate (%), starting from the published acceptance rate.
     // Unknown rate: assume a selective school rather than an easy one.
@@ -162,6 +186,7 @@ export function matchUniversities(all: MatchUni[], p: Profile): Match[] {
       basket,
       money,
       chance,
+      deadline: pickNearestDeadline(u.early_deadline, u.regular_deadline)?.raw ?? null,
       reasons: reasons.slice(0, 3),
     });
     fitBySlug.set(u.slug, fit);

@@ -295,8 +295,10 @@ export const fetchMatchRows = unstable_cache(
       sat: u.sat,
       majors: u.majors,
       logo: hasLogo(u.slug),
+      early_deadline: u.early_deadline,
+      regular_deadline: u.regular_deadline,
     }));
   },
-  ["match-rows-v2"],
+  ["match-rows-v3"],
   { revalidate: 600, tags: ["universities"] },
 );

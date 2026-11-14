@@ -77,3 +77,12 @@ export function parseDoneTasks(raw: string | null): string[] {
   const o = safeJson(raw);
   return Array.isArray(o) ? o.filter((x): x is string => typeof x === "string").slice(0, 200) : [];
 }
+
+/** Matcher profile from an untrusted request body (grade not required). */
+export function toMatchProfile(o: unknown): Profile | null {
+  if (!o || typeof o !== "object" || Array.isArray(o)) return null;
+  const p = parseProfile(JSON.stringify({ grade: "11", ...(o as object) }));
+  if (!p) return null;
+  const { budget, countries, english, sat, grades, major } = p;
+  return { budget, countries, english, sat, grades, major };
+}

@@ -81,3 +81,21 @@ describe("matchUniversities", () => {
     expect(res.safety[0].slug).toBe("cheap");
   });
 });
+
+describe("match deadline", () => {
+  it("reports the nearest upcoming deadline of each university", () => {
+    const rows = [
+      u({
+        slug: "dl",
+        full_grant: true,
+        early_deadline: "2000-11-01",
+        regular_deadline: "2099-01-01",
+      }),
+    ];
+    expect(matchUniversities(rows, base)[0].deadline).toBe("2099-01-01");
+  });
+
+  it("is null when the university has no deadlines", () => {
+    expect(matchUniversities([u({ slug: "nodl", full_grant: true })], base)[0].deadline).toBeNull();
+  });
+});
