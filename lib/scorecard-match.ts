@@ -66,24 +66,29 @@ export function matchScorecard(
   rows: ScorecardRow[],
   unis: { slug: string; name: string; website_domain: string | null }[],
 ): Record<string, ScorecardEntry> {
-  const byHost = new Map<string, ScorecardRow>();
+  const byHost = new Map<string, ScorecardRow[]>();
   const byDomain = new Map<string, ScorecardRow[]>();
   const byName = new Map<string, ScorecardRow>();
+  const push = (m: Map<string, ScorecardRow[]>, k: string | null, r: ScorecardRow) => {
+    if (k) m.set(k, [...(m.get(k) || []), r]);
+  };
   for (const r of rows) {
-    const h = fullHost(r.url);
-    if (h && !byHost.has(h)) byHost.set(h, r);
-    const d = normalizeHost(r.url);
-    if (d) byDomain.set(d, [...(byDomain.get(d) || []), r]);
+    push(byHost, fullHost(r.url), r);
+    push(byDomain, normalizeHost(r.url), r);
     byName.set(fold(r.name), r);
   }
-  const uniqueDomain = (d: string | null) => {
-    const list = d ? byDomain.get(d) : undefined;
+  const unique = (m: Map<string, ScorecardRow[]>, k: string | null) => {
+    const list = k ? m.get(k) : undefined;
     return list && list.length === 1 ? list[0] : undefined;
   };
   const out: Record<string, ScorecardEntry> = {};
   for (const u of unis) {
     const h = fullHost(u.website_domain);
-    const r = (h && byHost.get(h)) || uniqueDomain(normalizeHost(u.website_domain)) || byName.get(fold(u.name));
+    const d = normalizeHost(u.website_domain);
+    // The shared-domain fallback is only for a university listed on the bare domain itself;
+    // a sub-campus (oxford.emory.edu) must not inherit the parent's numbers.
+    const r =
+      unique(byHost, h) || (h && h === d ? unique(byDomain, d) : undefined) || byName.get(fold(u.name));
     if (!r) continue;
     const { id, netPrice, sat, grad, earnings, coa } = r;
     out[u.slug] = { id, netPrice, sat, grad, earnings, coa };

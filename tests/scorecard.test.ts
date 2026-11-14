@@ -70,4 +70,19 @@ describe("matchScorecard with shared domains", () => {
     expect(out["embry-riddle-aeronautical-u-prescott-usa"]).toBeUndefined();
     expect(out["lonely-college-usa"].id).toBe(3);
   });
+
+  it("falls back to the name when two Scorecard rows share one host", () => {
+    const rows = [
+      row({ id: 10, name: "St John's College", url: "www.sjc.edu" }),
+      row({ id: 11, name: "St John's College-Santa Fe", url: "www.sjc.edu" }),
+    ];
+    const unis = [{ slug: "sjc-santa-fe", name: "St John's College-Santa Fe", website_domain: "sjc.edu" }];
+    expect(matchScorecard(rows, unis)["sjc-santa-fe"].id).toBe(11);
+  });
+
+  it("does not hand a sub-campus the parent university's numbers", () => {
+    const rows = [row({ id: 20, name: "Emory University", url: "www.emory.edu" })];
+    const unis = [{ slug: "emory-oxford", name: "Emory University Oxford College", website_domain: "oxford.emory.edu" }];
+    expect(matchScorecard(rows, unis)["emory-oxford"]).toBeUndefined();
+  });
 });
