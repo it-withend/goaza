@@ -1,3 +1,5 @@
+import { COUNTRY_GUIDES_UZ } from "./country-guides.uz";
+
 export type CountryGuide = {
   scholarships: string;
   after11Grade: string;
@@ -188,6 +190,6 @@ export const COUNTRY_GUIDES: Record<string, CountryGuide> = {
   },
 };
 
-export function getCountryGuide(country: string): CountryGuide | null {
-  return COUNTRY_GUIDES[country] ?? null;
+export function getCountryGuide(country: string, lang: "ru" | "uz" = "ru"): CountryGuide | null {
+  return (lang === "uz" ? COUNTRY_GUIDES_UZ : COUNTRY_GUIDES)[country] ?? null;
 }

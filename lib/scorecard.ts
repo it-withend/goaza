@@ -6,6 +6,7 @@ const TABLE = data as unknown as Record<string, ScorecardEntry> & { _meta: { sou
 export const SCORECARD_META = TABLE._meta;
 
 export const INCOME_BANDS = ["до $30 000", "$30–48 тыс.", "$48–75 тыс.", "$75–110 тыс.", "больше $110 тыс."];
+export const INCOME_BANDS_UZ = ["$30 000 gacha", "$30–48 ming", "$48–75 ming", "$75–110 ming", "$110 mingdan ortiq"];
 
 /** College Scorecard numbers for one of our US universities, or null. */
 export function scorecardFor(slug: string): ScorecardEntry | null {

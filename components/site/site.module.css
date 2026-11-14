@@ -109,6 +109,28 @@
   color: var(--sz-ink);
 }
 
+.langSwitch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: #fff;
+  color: var(--sz-ink);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.langSwitch:hover {
+  background: rgba(26, 26, 26, 0.05);
+  color: var(--sz-ink);
+}
+
 .accountChip {
   display: inline-flex;
   align-items: center;

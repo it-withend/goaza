@@ -1,8 +1,11 @@
 "use client";
 
-import Link from "@/components/i18n/Link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "@/components/i18n/Link";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { localizePath, splitLang, type Tr } from "@/lib/i18n";
 import { PlanCta } from "./PlanCta";
 import styles from "./site.module.css";
 
@@ -10,30 +13,29 @@ type NavItem = { href: string; label: string; active: (path: string) => boolean 
 
 const under = (base: string) => (p: string) => p === base || p.startsWith(`${base}/`);
 
-const PLAN: NavItem = { href: "/plan", label: "Мой план", active: under("/plan") };
-const TAIL: NavItem[] = [
-  { href: "/grants", label: "Гранты", active: under("/grants") },
-  { href: "/deadlines", label: "Сроки", active: under("/deadlines") },
-];
-
 /** Guests: public catalog and guides. Subscribers: the full catalog and the applicant guide. */
-function navFor(subscribed: boolean): NavItem[] {
+function navFor(subscribed: boolean, tr: Tr): NavItem[] {
+  const plan: NavItem = { href: "/plan", label: tr("Мой план", "Mening rejam"), active: under("/plan") };
+  const tail: NavItem[] = [
+    { href: "/grants", label: tr("Гранты", "Grantlar"), active: under("/grants") },
+    { href: "/deadlines", label: tr("Сроки", "Muddatlar"), active: under("/deadlines") },
+  ];
   return subscribed
     ? [
-        PLAN,
+        plan,
         {
           href: "/dashboard",
-          label: "Каталог вузов",
-          active: (p) => (p === "/dashboard" || p.startsWith("/dashboard/u") || under("/unis")(p)),
+          label: tr("Каталог вузов", "Universitetlar katalogi"),
+          active: (p) => p === "/dashboard" || p.startsWith("/dashboard/u") || under("/unis")(p),
         },
-        { href: "/dashboard/guide", label: "Гайд абитуриента", active: under("/dashboard/guide") },
-        ...TAIL,
+        { href: "/dashboard/guide", label: tr("Гайд абитуриента", "Abituriyent qo'llanmasi"), active: under("/dashboard/guide") },
+        ...tail,
       ]
     : [
-        PLAN,
-        { href: "/unis", label: "Вузы", active: under("/unis") },
-        { href: "/guides", label: "Гайды", active: under("/guides") },
-        ...TAIL,
+        plan,
+        { href: "/unis", label: tr("Вузы", "Universitetlar"), active: under("/unis") },
+        { href: "/guides", label: tr("Гайды", "Qo'llanmalar"), active: under("/guides") },
+        ...tail,
       ];
 }
 
@@ -44,7 +46,9 @@ export type HeaderAccount = { name: string; onLogout: () => void; onOpenFilters?
  * Auth state is fetched client-side so public pages stay static.
  */
 export function SiteHeader({ account }: { account?: HeaderAccount }) {
-  const pathname = usePathname() || "/";
+  const lang = useLang();
+  const tr = useTr();
+  const { path } = splitLang(usePathname() || "/");
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(Boolean(account));
   const [username, setUsername] = useState<string | null>(account?.name ?? null);
@@ -65,50 +69,64 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
     };
   }, [account]);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => setOpen(false), [path]);
 
   const handle = username ? (username.startsWith("@") ? username : `@${username}`) : null;
+  const other = lang === "uz" ? "ru" : "uz";
 
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        <Link href="/" className={styles.brand} aria-label="Studyaza — на главную">
+        <Link href="/" className={styles.brand} aria-label={tr("Studyaza — на главную", "Studyaza — bosh sahifa")}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" width={32} height={32} alt="" />
           <span>Studyaza</span>
         </Link>
 
-        <nav className={`${styles.nav}${open ? ` ${styles.navOpen}` : ""}`} aria-label="Основная навигация">
-          {navFor(subscribed).map((item) => (
-            <Link key={item.href} href={item.href} aria-current={item.active(pathname) ? "page" : undefined}>
+        <nav className={`${styles.nav}${open ? ` ${styles.navOpen}` : ""}`} aria-label={tr("Основная навигация", "Asosiy navigatsiya")}>
+          {navFor(subscribed, tr).map((item) => (
+            <Link key={item.href} href={item.href} aria-current={item.active(path) ? "page" : undefined}>
               {item.label}
             </Link>
           ))}
         </nav>
 
         <div className={styles.headerActions}>
+          <NextLink
+            href={localizePath(other, path)}
+            className={styles.langSwitch}
+            hrefLang={other}
+            lang={other}
+            aria-label={other === "uz" ? "O'zbek tiliga o'tish" : "Перейти на русский"}
+          >
+            {other === "uz" ? "UZ" : "RU"}
+          </NextLink>
           {account?.onOpenFilters ? (
             <button type="button" className={styles.headerGhost} onClick={account.onOpenFilters}>
-              Фильтры
+              {tr("Фильтры", "Filtrlar")}
             </button>
           ) : null}
           {subscribed && handle ? (
-            <span className={styles.accountChip} title="Вы вошли через Telegram">
+            <span className={styles.accountChip} title={tr("Вы вошли через Telegram", "Telegram orqali kirdingiz")}>
               {handle}
             </span>
           ) : (
-            <PlanCta className={styles.headerCta} start="Составить план" open="Открыть план" />
+            <PlanCta
+              className={styles.headerCta}
+              start={tr("Составить план", "Reja tuzish")}
+              open={tr("Открыть план", "Rejani ochish")}
+            />
           )}
           {account ? (
             <button type="button" className={styles.headerGhost} onClick={account.onLogout}>
-              Выйти
+              {tr("Выйти", "Chiqish")}
             </button>
           ) : null}
           <button
             type="button"
             className={styles.menuBtn}
             aria-expanded={open}
-            aria-label={open ? "Закрыть меню" : "Открыть меню"}
+            aria-label={open ? tr("Закрыть меню", "Menyuni yopish") : tr("Открыть меню", "Menyuni ochish")}
             onClick={() => setOpen((v) => !v)}
           >
             <span />
