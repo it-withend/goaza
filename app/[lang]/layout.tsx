@@ -118,7 +118,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default async function RootLayout({ children, params }: LayoutProps) {
   const lang = langOf((await params).lang);
   return (
-    <html lang={lang} className={`${manrope.variable} ${sourceSerif.variable} ${unbounded.variable}`}>
+    <html lang={lang} data-theme="dark" suppressHydrationWarning className={`${manrope.variable} ${sourceSerif.variable} ${unbounded.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("sz_theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={manrope.className}>
         <LangProvider lang={lang}>{children}</LangProvider>
         <Analytics />

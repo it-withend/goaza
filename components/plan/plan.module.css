@@ -46,9 +46,10 @@
   align-items: flex-start;
   gap: 18px;
   padding: 26px 28px;
-  border-radius: 28px;
-  background: var(--sz-ink);
-  color: #fffaf2;
+  border-radius: 22px;
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line);
+  color: var(--sc-text);
 }
 
 .hero > div {
@@ -67,12 +68,12 @@
 
 .meta {
   margin: 10px 0 0;
-  color: #c9cfdb;
+  color: var(--sc-muted);
 }
 
 .next {
   margin: 14px 0 0;
-  color: #fffaf2;
+  color: var(--sc-text);
 }
 
 .next b {
@@ -81,9 +82,9 @@
 
 .progress {
   margin-top: 14px;
-  height: 10px;
-  border-radius: 10px;
-  background: #3a4357;
+  height: 9px;
+  border-radius: 9px;
+  background: var(--sc-elev-2);
   overflow: hidden;
 }
 
@@ -98,11 +99,12 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 42px;
   padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid #3a4357;
-  color: #fffaf2;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   font-weight: 700;
   text-decoration: none;
 }
@@ -115,11 +117,12 @@
 }
 
 .tiles > div {
-  border-radius: 22px;
+  border-radius: 18px;
   padding: 16px 18px;
   display: grid;
   gap: 4px;
   min-width: 0;
+  border: 1px solid var(--sc-line);
 }
 
 .tiles small {
@@ -131,7 +134,7 @@
   font-family: var(--font-display), var(--font-sans), sans-serif;
   font-size: 1.9rem;
   line-height: 1.1;
-  color: var(--sz-ink);
+  color: var(--sc-text);
 }
 
 .tiles span {
@@ -232,7 +235,7 @@
   margin: 0;
   font-family: var(--font-display), var(--font-sans), sans-serif;
   font-size: 1rem;
-  color: var(--sz-ink);
+  color: var(--sc-text);
 }
 
 .basket header span {
@@ -258,8 +261,9 @@
   gap: 10px;
   padding: 12px;
   border-radius: 16px;
-  background: #fbf6ee;
-  color: var(--sz-ink);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
+  color: var(--sc-text);
 }
 
 .uniLink {
@@ -329,7 +333,8 @@
 }
 
 .badgeChance {
-  background: var(--sz-surface);
+  background: var(--sc-surface);
+  color: var(--sc-text);
 }
 
 .badgeMoney {
@@ -379,7 +384,7 @@
 .excluded h3 {
   margin: 0 0 6px;
   font-size: 0.95rem;
-  color: var(--sz-ink);
+  color: var(--sc-text);
 }
 
 .excluded ul {
@@ -436,7 +441,7 @@
   height: 20px;
   margin-top: 1px;
   flex-shrink: 0;
-  accent-color: var(--sz-ink);
+  accent-color: var(--sc-gold);
 }
 
 .tasks span {

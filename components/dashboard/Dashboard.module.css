@@ -1,21 +1,19 @@
 .shell {
-  --ink: #17191f;
-  --muted: #5d6370;
-  --paper: #f3f2ee;
-  --porcelain: #ffffff;
-  --gold: #d4a017;
-  --gold-deep: #9c7208;
-  --moss: #2e7045;
-  --obsidian: #111318;
-  --hairline: rgba(23, 25, 31, 0.1);
+  --ink: var(--sc-text);
+  --muted: var(--sc-muted);
+  --paper: var(--sc-bg);
+  --porcelain: var(--sc-surface);
+  --gold: var(--sc-gold);
+  --gold-deep: var(--sc-gold-text);
+  --moss: var(--sc-emerald);
+  --obsidian: var(--sc-elev);
+  --hairline: var(--sc-line);
 
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(900px 380px at 8% 0%, rgba(212, 160, 23, 0.08), transparent 55%),
-    linear-gradient(180deg, #f7f6f2 0%, var(--paper) 100%);
-  color: var(--ink);
+  background: var(--sc-bg);
+  color: var(--sc-text);
   overflow-x: clip;
 }
 
@@ -72,9 +70,8 @@
 
 /* ---------- Sidebar ---------- */
 .filtersPanel {
-  border-right: 1px solid var(--hairline);
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
+  border-right: 1px solid var(--sc-line);
+  background: var(--sc-surface);
   padding: 18px 16px 32px;
   overflow: auto;
   max-height: calc(100svh - 62px);
@@ -128,13 +125,13 @@
 .selectWrap select {
   width: 100%;
   min-height: 42px;
-  border: 1px solid var(--hairline);
-  background: #fff;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
   border-radius: 12px;
   padding: 9px 12px;
   font: inherit;
   font-size: 0.9rem;
-  color: var(--ink);
+  color: var(--sc-text);
   outline: none;
 }
 
@@ -243,22 +240,23 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--sc-line);
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  background: #fff;
+  background: var(--sc-elev);
+  color: var(--sc-text);
   transition: border-color 140ms ease, background 140ms ease;
 }
 
 .chip:hover {
-  border-color: rgba(212, 160, 23, 0.5);
+  border-color: rgba(242, 194, 48, 0.5);
 }
 
 .chip input {
-  accent-color: var(--gold-deep);
+  accent-color: var(--sc-gold);
 }
 
 .n {
@@ -270,15 +268,15 @@
   width: 100%;
   min-height: 44px;
   margin-top: 18px;
-  border: 1px solid var(--hairline);
-  background: #fff;
-  color: var(--ink);
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   border-radius: 12px;
 }
 
 .resetBtn:hover {
-  background: #f9f8f5;
-  border-color: rgba(23, 25, 31, 0.25);
+  background: var(--sc-elev-2);
+  border-color: var(--sc-line-strong);
 }
 
 /* ---------- Results Area ---------- */
@@ -295,11 +293,11 @@
 }
 
 .kpiTile {
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--obsidian);
-  color: #f4f2ec;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  border: 1px solid var(--sc-line);
 }
 
 .kpiTile small {
@@ -308,16 +306,16 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: rgba(244, 242, 236, 0.58);
+  color: var(--sc-muted);
 }
 
 .kpiTile strong {
   display: block;
   margin-top: 3px;
-  font-family: var(--font-serif), "Source Serif 4", Georgia, serif;
-  font-size: 1.3rem;
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-size: 1.35rem;
   line-height: 1.1;
-  color: #f3c85b;
+  color: var(--sc-gold-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -325,7 +323,7 @@
   font-family: var(--font-sans), Manrope, sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(244, 242, 236, 0.56);
+  color: var(--sc-muted);
 }
 
 /* ---------- Presets & View Toggle ---------- */
@@ -348,9 +346,9 @@
   min-height: 36px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid var(--hairline);
-  background: #fff;
-  color: var(--ink);
+  border: 1px solid var(--sc-line);
+  background: var(--sc-surface);
+  color: var(--sc-text);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
@@ -360,21 +358,21 @@
 
 .presetBtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(212, 160, 23, 0.55);
+  border-color: var(--sc-line-strong);
 }
 
 .presetBtnActive {
-  background: var(--obsidian);
-  color: #f4c85b;
-  border-color: var(--obsidian);
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  border-color: var(--sc-pill-active-bg);
 }
 
 .viewToggle {
   display: inline-flex;
   padding: 3px;
   border-radius: 10px;
-  background: rgba(23, 25, 31, 0.06);
-  border: 1px solid var(--hairline);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
 }
 
 .viewToggle button {
@@ -383,7 +381,7 @@
   border: 0;
   border-radius: 7px;
   background: transparent;
-  color: var(--muted);
+  color: var(--sc-muted);
   font: inherit;
   font-size: 0.8rem;
   font-weight: 700;
@@ -391,9 +389,9 @@
 }
 
 .viewToggle button[aria-pressed="true"] {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
 }
 
 .tokens {
@@ -427,9 +425,9 @@
 }
 
 .tokenClearAll {
-  border: 1px solid var(--hairline);
-  background: #fff;
-  color: var(--muted);
+  border: 1px solid var(--sc-line);
+  background: var(--sc-surface);
+  color: var(--sc-muted);
 }
 
 .countryNav {
@@ -444,8 +442,8 @@
 .countryNav button {
   flex: 0 0 auto;
   min-height: 34px;
-  border: 1px solid var(--hairline);
-  background: #fff;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-surface);
   border-radius: 999px;
   padding: 0 12px;
   font: inherit;
@@ -453,17 +451,17 @@
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  color: var(--ink);
+  color: var(--sc-text);
 }
 
 .countryNav button:hover {
-  border-color: rgba(212, 160, 23, 0.5);
+  border-color: var(--sc-line-strong);
 }
 
 .countryNav button[aria-pressed="true"] {
-  background: var(--obsidian);
-  color: #f4f2ec;
-  border-color: var(--obsidian);
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  border-color: var(--sc-pill-active-bg);
 }
 
 /* ---------- Country Sections & Cards Grid ---------- */
@@ -512,9 +510,9 @@
   display: none;
   margin: 36px auto;
   text-align: center;
-  color: var(--muted);
-  background: #fff;
-  border: 1px dashed var(--hairline);
+  color: var(--sc-muted);
+  background: var(--sc-surface);
+  border: 1px dashed var(--sc-line);
   border-radius: 16px;
   padding: 28px;
 }
@@ -523,16 +521,15 @@
   display: block;
 }
 
-/* ---------- Modern University Bento Card ---------- */
+/* ---------- sclass Bento University Card ---------- */
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid var(--hairline);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(17, 19, 24, 0.04);
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line);
+  border-radius: 18px;
+  transition: border-color 160ms ease, transform 160ms ease;
   animation: cardIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
   overflow: hidden;
   content-visibility: auto;
@@ -540,8 +537,7 @@
 }
 
 .card:hover {
-  border-color: rgba(212, 160, 23, 0.6);
-  box-shadow: 0 14px 32px rgba(17, 19, 24, 0.09);
+  border-color: var(--sc-line-strong);
   transform: translateY(-2px);
 }
 
@@ -553,11 +549,11 @@
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid var(--hairline);
-  background: #fffaf2;
-  color: var(--sz-ink, #1d2433);
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
   line-height: 1;
   display: inline-flex;
@@ -567,14 +563,14 @@
 }
 
 .favBtn:hover {
-  border-color: var(--gold);
-  color: var(--gold-deep);
+  border-color: var(--sc-gold);
+  color: var(--sc-gold-text);
 }
 
 .favBtnActive {
-  background: rgba(212, 160, 23, 0.16);
-  border-color: rgba(212, 160, 23, 0.5);
-  color: #b48006;
+  background: rgba(242, 194, 48, 0.16);
+  border-color: rgba(242, 194, 48, 0.5);
+  color: var(--sc-gold-text);
 }
 
 .cardLink {
@@ -634,8 +630,9 @@
 
 .tag {
   display: inline-block;
-  background: rgba(23, 25, 31, 0.06);
-  color: var(--ink);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
+  color: var(--sc-text);
   font-weight: 700;
   font-size: 0.72rem;
   padding: 3px 9px;
@@ -643,18 +640,21 @@
 }
 
 .tagGrant {
-  background: rgba(212, 160, 23, 0.2);
-  color: #845e00;
+  background: rgba(242, 194, 48, 0.16);
+  border-color: rgba(242, 194, 48, 0.35);
+  color: var(--sc-gold-text);
 }
 
 .tagMoss {
-  background: rgba(46, 112, 69, 0.14);
-  color: #215734;
+  background: var(--sc-emerald-bg);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: var(--sc-emerald);
 }
 
 .tagWarn {
-  background: rgba(154, 91, 31, 0.12);
-  color: #824b16;
+  background: var(--sc-amber-bg);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: var(--sc-amber);
 }
 
 .metricsGrid {
@@ -664,8 +664,8 @@
   margin-top: 12px;
   padding: 10px;
   border-radius: 12px;
-  background: #f8f7f3;
-  border: 1px solid rgba(23, 25, 31, 0.06);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
 }
 
 .metricCell span {
@@ -824,10 +824,10 @@
     max-height: min(84vh, 700px);
     z-index: 70;
     border-right: 0;
-    border-top: 1px solid var(--hairline);
+    border-top: 1px solid var(--sc-line);
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 -16px 40px rgba(17, 19, 24, 0.2);
-    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
+    background: var(--sc-surface);
     overflow: auto;
     padding-bottom: calc(18px + env(safe-area-inset-bottom));
   }
@@ -838,7 +838,7 @@
     inset: 0;
     z-index: 65;
     border: 0;
-    background: rgba(17, 19, 24, 0.45);
+    background: rgba(0, 0, 0, 0.55);
   }
 
   .kpiStrip {
@@ -869,9 +869,9 @@
   min-height: 40px;
   padding: 0 14px;
   border-radius: 999px;
-  border: 2px solid var(--sz-line, #ece3d3);
-  background: #fff;
-  color: var(--sz-ink, #1d2433);
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   font: inherit;
   font-weight: 700;
   font-size: 0.9rem;
@@ -879,9 +879,9 @@
 }
 
 .presetChips button[aria-pressed="true"] {
-  background: var(--sz-ink, #1d2433);
-  border-color: var(--sz-ink, #1d2433);
-  color: #fff;
+  background: var(--sc-pill-active-bg);
+  border-color: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
 }
 
 .advanced {

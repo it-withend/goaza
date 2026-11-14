@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import Link from "@/components/i18n/Link";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { localizePath, splitLang, type Tr } from "@/lib/i18n";
+import { CommandSearch } from "./CommandSearch";
 import { PlanCta } from "./PlanCta";
 import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "./TelegramIcon";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./site.module.css";
 
 type NavItem = { href: string; label: string; active: (path: string) => boolean };
@@ -95,8 +97,10 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
     <header className={styles.header}>
       <div className={styles.headerInner}>
         <Link href="/" className={styles.brand} aria-label={tr("Studyaza — на главную", "Studyaza — bosh sahifa")}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" width={32} height={32} alt="" />
+          <span className={styles.logoMark}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" width={26} height={26} alt="" />
+          </span>
           <span>Studyaza</span>
         </Link>
 
@@ -109,6 +113,7 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
         </nav>
 
         <div className={styles.headerActions}>
+          <CommandSearch subscribed={subscribed} />
           <a
             href={TELEGRAM_CHANNEL_URL}
             target="_blank"
@@ -117,7 +122,7 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             aria-label={tr("Telegram-канал", "Telegram kanali")}
             title={tr("Telegram-канал", "Telegram kanali")}
           >
-            <TelegramIcon size={20} />
+            <TelegramIcon size={18} />
           </a>
           <NextLink
             href={localizePath(other, path)}
@@ -126,8 +131,13 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             lang={other}
             aria-label={other === "uz" ? "O'zbek tiliga o'tish" : "Перейти на русский"}
           >
-            {other === "uz" ? "UZ" : "RU"}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
+            </svg>
+            <span>{other === "uz" ? "UZ" : "RU"}</span>
           </NextLink>
+          <ThemeToggle />
           {account?.onOpenFilters ? (
             <button type="button" className={styles.headerGhost} onClick={account.onOpenFilters}>
               {tr("Фильтры", "Filtrlar")}

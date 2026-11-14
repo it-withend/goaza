@@ -116,3 +116,27 @@ it("renders a Telegram logo link without showing @studyaza and avoids @ on displ
   expect(screen.getByRole("link", { name: /telegram-канал/i })).toHaveAttribute("href", "https://t.me/studyaza");
   expect(screen.queryByText(/@studyaza/i)).not.toBeInTheDocument();
 });
+
+it("toggles between dark and light theme and persists sz_theme", async () => {
+  status({ subscribed: false, username: null });
+  document.documentElement.dataset.theme = "dark";
+  render(<SiteHeader />);
+  const toggle = screen.getByRole("button", { name: /включить светлую тему/i });
+  await userEvent.click(toggle);
+  expect(document.documentElement.dataset.theme).toBe("light");
+  expect(window.localStorage.getItem("sz_theme")).toBe("light");
+  await userEvent.click(screen.getByRole("button", { name: /включить тёмную тему/i }));
+  expect(document.documentElement.dataset.theme).toBe("dark");
+  expect(window.localStorage.getItem("sz_theme")).toBe("dark");
+});
+
+it("opens the quick search modal and filters guides/grants", async () => {
+  status({ subscribed: false, username: null });
+  render(<SiteHeader />);
+  await userEvent.click(screen.getByRole("button", { name: /быстрый поиск/i }));
+  const dialog = screen.getByRole("dialog", { name: /быстрый поиск/i });
+  expect(dialog).toBeInTheDocument();
+  const input = screen.getByRole("searchbox");
+  await userEvent.type(input, "дедлайн");
+  expect(screen.getByRole("link", { name: /календарь дедлайнов/i })).toHaveAttribute("href", "/deadlines");
+});

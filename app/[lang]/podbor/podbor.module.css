@@ -3,8 +3,8 @@
   gap: 22px;
   padding: 22px;
   border-radius: 20px;
-  background: #fff;
-  border: 1px solid var(--hairline);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line);
 }
 
 .form fieldset {
@@ -27,10 +27,10 @@
   min-height: 48px;
   padding: 0 14px;
   border-radius: 12px;
-  border: 1px solid rgba(26, 26, 26, 0.2);
-  background: #fff;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
   font: inherit;
-  color: inherit;
+  color: var(--sc-text);
 }
 
 .form input:focus-visible,
@@ -84,8 +84,9 @@
   min-height: 40px;
   padding: 0 12px;
   border-radius: 10px;
-  border: 1px solid var(--hairline);
-  background: #fff;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -98,13 +99,14 @@
 }
 
 .chips button[aria-pressed="true"] {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
+  background: var(--sc-pill-active-bg);
+  border-color: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
 }
 
 .chips button[aria-pressed="true"] span {
-  color: rgba(255, 255, 255, 0.7);
+  color: inherit;
+  opacity: 0.72;
 }
 
 .help {
@@ -133,7 +135,7 @@
 
 .error {
   margin: 0;
-  color: #8b3a2a;
+  color: var(--sc-rose);
   font-weight: 600;
 }
 
@@ -196,7 +198,7 @@
 }
 
 .basket li a:hover b {
-  color: #8a6a12;
+  color: var(--sc-gold-text);
 }
 
 .uniText {
@@ -217,7 +219,7 @@
 .uniText em {
   font-style: normal;
   font-size: 0.88rem;
-  color: #3d7a4a;
+  color: var(--sc-emerald);
 }
 
 .unlock {

@@ -1,6 +1,6 @@
 import Link from "@/components/i18n/Link";
-import { GRANTS } from "@/content/grants";
-import { GUIDES } from "@/content/guides";
+import { getGrants, GRANTS } from "@/content/grants";
+import { getGuides, GUIDES } from "@/content/guides";
 import type { LandingStats } from "@/lib/landing-stats";
 import { locale, trFor, type Lang } from "@/lib/i18n";
 import { countryName } from "@/lib/types";
@@ -23,6 +23,7 @@ function getSteps(lang: Lang) {
         "Класс, бюджет семьи, английский, SAT, страны и специальность. Две минуты, без регистрации.",
         "Sinf, oila byudjeti, ingliz tili, SAT, davlatlar va mutaxassislik. Ikki daqiqa, ro'yxatdan o'tmasdan.",
       ),
+      tag: tr("2 минуты", "2 daqiqa"),
     },
     {
       title: tr("Получите список по корзинам", "Savatlar bo'yicha ro'yxat oling"),
@@ -30,6 +31,7 @@ function getSteps(lang: Lang) {
         "Мечта, реальные и запасные — только вузы, которые семья потянет по деньгам, с шансом для каждого.",
         "Orzu, haqiqiy va zaxira — faqat oilangiz byudjetiga mos universitetlar va har biri uchun imkoniyat.",
       ),
+      tag: tr("3 корзины", "3 savat"),
     },
     {
       title: tr("Идите по плану", "Reja bo'yicha harakatlaning"),
@@ -37,20 +39,62 @@ function getSteps(lang: Lang) {
         "Дедлайны с обратным отсчётом, дела на неделю и гайды к каждому шагу: эссе, рекомендации, CSS Profile.",
         "Teskari sanoqli dedlaynlar, haftalik vazifalar va har bir qadam uchun qo'llanmalar: esse, tavsiyanomalar, CSS Profile.",
       ),
+      tag: tr("По шагам", "Bosqichma-bosqich"),
     },
   ];
 }
+
+function getNextCycleMilestone(lang: Lang) {
+  const tr = trFor(lang);
+  const now = new Date();
+  const candidates = [
+    {
+      date: new Date("2027-01-15T23:59:00Z"),
+      title: tr("Stipendium Hungaricum и Regular USA", "Stipendium Hungaricum va Regular AQSh"),
+      badge: tr("Набор 2027/28", "2027/28 qabul"),
+      dateText: tr("до 15 янв, 23:59", "15 yanvargacha, 23:59"),
+    },
+    {
+      date: new Date("2027-02-20T23:59:00Z"),
+      title: tr("Türkiye Bursları", "Türkiye Bursları"),
+      badge: tr("Госгрант Турции", "Turkiya davlat granti"),
+      dateText: tr("до 20 фев, 23:59", "20 fevralgacha, 23:59"),
+    },
+    {
+      date: new Date("2027-11-01T23:59:00Z"),
+      title: tr("Early Action / Early Decision", "Early Action / Early Decision"),
+      badge: tr("Ранняя волна 2028/29", "Erta to'lqin 2028/29"),
+      dateText: tr("до 1 ноя, 23:59", "1 noyabrgacha, 23:59"),
+    },
+  ];
+  const next = candidates.find((c) => c.date.getTime() > now.getTime()) ?? candidates[candidates.length - 1];
+  const diffMs = Math.max(0, next.date.getTime() - now.getTime());
+  const days = Math.max(1, Math.ceil(diffMs / 86_400_000));
+  const pct = Math.max(12, Math.min(92, Math.round(100 - (Math.min(days, 180) / 180) * 100)));
+  return { ...next, days, pct };
+}
+
+const ACCENT_CYCLE = ["accentGold", "accentEmerald", "accentBlue", "accentRose"] as const;
 
 export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: Lang }) {
   const tr = trFor(lang);
   const gov = GRANTS.filter((g) => g.kind === "government").length;
   const countries = stats.byCountry.slice(0, 12);
   const steps = getSteps(lang);
+  const grants = getGrants(lang).slice(0, 4);
+  const guides = getGuides(lang).slice(0, 5);
+  const milestone = getNextCycleMilestone(lang);
+  const ringRadius = 46;
+  const ringCirc = 2 * Math.PI * ringRadius;
+  const ringDash = `${((milestone.pct / 100) * ringCirc).toFixed(1)} ${ringCirc.toFixed(1)}`;
 
   return (
     <>
       <section className={h.hero}>
         <div className={h.heroText}>
+          <span className={h.eyebrow}>
+            {tr("НАБОР 2027/2028 · STUDYAZA АТЛАС", "2027/2028 QABUL · STUDYAZA ATLASI")}
+          </span>
           <h1>
             {tr(
               "Личный план поступления за границу — даже если денег на учёбу нет",
@@ -68,82 +112,183 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
             <Link href="/unis" className={h.ctaSecond}>
               {tr("Смотреть вузы", "OTMlarni ko'rish")}
             </Link>
+            <Link href="/grants" className={h.ctaSecond}>
+              {tr("Гранты 2027/28", "Grantlar 2027/28")}
+            </Link>
           </div>
-          <ul className={h.facts}>
-            <li>
-              <b>{fmt(stats.total, lang)}</b> {tr("вузов", "ta OTM")}
-            </li>
-            <li>
-              <b>{stats.countries}</b> {tr("стран", "ta davlat")}
-            </li>
-            <li>
-              <b>{fmt(stats.grants, lang)}</b> {tr("с полным грантом", "to'liq grant bilan")}
-            </li>
-            <li>
-              <b>{tr("0 ₽", "0 so'm")}</b> {tr("за всё", "hamma narsa bepul")}
-            </li>
+        </div>
+
+        <Link href="/deadlines" className={h.ringCard} aria-label={tr("Ближайший срок подачи и все дедлайны", "Eng yaqin muddat va barcha dedlaynlar")}>
+          <div className={h.ringWrap}>
+            <svg viewBox="0 0 110 110" className={h.ringSvg} aria-hidden="true">
+              <circle cx="55" cy="55" r={ringRadius} className={h.ringTrack} />
+              <circle
+                cx="55"
+                cy="55"
+                r={ringRadius}
+                className={h.ringArc}
+                strokeDasharray={ringDash}
+              />
+            </svg>
+            <div className={h.ringCenter}>
+              <b>{milestone.days}</b>
+              <span>{tr("дн.", "kun")}</span>
+            </div>
+          </div>
+          <div className={h.ringMeta}>
+            <span className={h.ringEyebrow}>
+              <i />
+              {tr("БЛИЖАЙШИЙ КРУПНЫЙ СРОК", "ENG YAQIN ASOSIY MUDDAT")}
+            </span>
+            <strong>{milestone.title}</strong>
+            <span className={h.ringBadge}>{milestone.badge}</span>
+            <p className={h.ringSub}>{milestone.dateText}</p>
+            <span className={h.ringLink}>{tr("Все дедлайны →", "Barcha dedlaynlar →")}</span>
+          </div>
+        </Link>
+      </section>
+
+      <Link href="/plan/start" className={h.nextStrip}>
+        <div className={h.nextStripLeft}>
+          <small>{tr("СЛЕДУЮЩИЙ ШАГ ДЛЯ СТАРТА", "BOSHLASH UCHUN KEYINGI QADAM")}</small>
+          <b>{tr("Анкета подбора вузов · 6 коротких вопросов без регистрации", "OTM tanlash anketasi · ro'yxatdan o'tmasdan 6 ta qisqa savol")}</b>
+        </div>
+        <span className={h.nextStripBadge}>{tr("за 2 минуты", "2 daqiqada")}</span>
+      </Link>
+
+      <section className={h.kpiGrid} aria-label={tr("Ключевые цифры базы", "Bazaning asosiy raqamlari")}>
+        <Link href="/unis" className={h.kpiCard}>
+          <strong>{fmt(stats.total, lang)}</strong>
+          <span>{tr("Вузов в базе", "Bazadagi OTMlar")}</span>
+          <i className={h.accentGold} />
+        </Link>
+        <Link href="/unis" className={h.kpiCard}>
+          <strong>{fmt(stats.grants, lang)}</strong>
+          <span>{tr("С полным грантом", "To'liq grant bilan")}</span>
+          <i className={h.accentEmerald} />
+        </Link>
+        <Link href="/grants" className={h.kpiCard}>
+          <strong>{gov}</strong>
+          <span>{tr("Госпрограмм мира", "Davlat grantlari")}</span>
+          <i className={h.accentBlue} />
+        </Link>
+        <Link href="/guides" className={h.kpiCard}>
+          <strong>{GUIDES.length}</strong>
+          <span>{tr("Пошаговых гайдов", "Bosqichma-bosqich qo'llanma")}</span>
+          <i className={h.accentRose} />
+        </Link>
+      </section>
+
+      <section className={h.bentoThree} aria-label={tr("Как это работает и что внутри", "Qanday ishlaydi va ichida nimalar bor")}>
+        <div className={h.bentoPanel}>
+          <div className={h.panelHead}>
+            <h2>{tr("Как это работает", "Bu qanday ishlaydi")}</h2>
+            <Link href="/plan/start">{tr("Начать →", "Boshlash →")}</Link>
+          </div>
+          <ol className={h.timeline}>
+            {steps.map((s) => (
+              <li key={s.title}>
+                <span className={h.tlDot} aria-hidden="true" />
+                <div className={h.tlBody}>
+                  <div className={h.tlTop}>
+                    <b>{s.title}</b>
+                    <span className={h.tlTag}>{s.tag}</span>
+                  </div>
+                  <p>{s.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className={h.bentoPanel}>
+          <div className={h.panelHead}>
+            <h2>{tr("Государственные гранты", "Davlat grantlari")}</h2>
+            <Link href="/grants">{tr("Все →", "Barchasi →")}</Link>
+          </div>
+          <ul className={h.grantBars}>
+            {grants.map((g, idx) => (
+              <li key={g.slug}>
+                <Link href={`/grants#${g.slug}`} className={h.grantBarLink}>
+                  <div className={h.grantBarTop}>
+                    <b>{g.name}</b>
+                    <span>100%</span>
+                  </div>
+                  <div className={h.grantBarTrack}>
+                    <i className={h[ACCENT_CYCLE[idx % ACCENT_CYCLE.length]]} style={{ width: `${96 - idx * 6}%` }} />
+                  </div>
+                  <small>{g.country}</small>
+                </Link>
+              </li>
+            ))}
           </ul>
+        </div>
+
+        <div className={h.bentoPanel}>
+          <div className={h.panelHead}>
+            <h2>{tr("Новые гайды", "Yangi qo'llanmalar")}</h2>
+            <Link href="/guides">{tr("Все →", "Barchasi →")}</Link>
+          </div>
+          <ul className={h.guideList}>
+            {guides.map((g) => (
+              <li key={g.slug}>
+                <Link href={`/guides/${g.slug}`} className={h.guideRow}>
+                  <span className={h.guideType}>{tr("ГАЙД", "QO'LL")}</span>
+                  <span className={h.guideTitle}>
+                    <b>{g.title}</b>
+                    <small>{tr(`${g.minutes} мин чтения`, `${g.minutes} daq o'qish`)}</small>
+                  </span>
+                  <span className={h.guidePill}>{tr("Изучить", "O'qish")}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className={h.block} aria-labelledby="cabinet-preview-title">
+        <div className={h.blockHead}>
+          <div>
+            <h2 id="cabinet-preview-title">{tr("Как выглядит ваш кабинет", "Shaxsiy kabinetingiz ko'rinishi")}</h2>
+            <p className={h.blockSub}>
+              {tr(
+                "Три корзины вузов под ваш бюджет, реальный расчёт шанса и список документов по неделям.",
+                "Byudjetingizga mos 3 ta OTM savati, haqiqiy imkoniyat hisobi va haftalik hujjatlar ro'yxati.",
+              )}
+            </p>
+          </div>
+          <Link href="/plan">{tr("Открыть мой план →", "Mening rejamni ochish →")}</Link>
         </div>
         <CabinetPreview lang={lang} />
       </section>
 
-      <section className={h.block} aria-labelledby="how">
-        <h2 id="how">{tr("Как это работает", "Bu qanday ishlaydi")}</h2>
-        <ol className={h.steps}>
-          {steps.map((s, i) => (
-            <li key={s.title}>
-              <span className={h.stepNum}>{i + 1}</span>
-              <b>{s.title}</b>
-              <p>{s.text}</p>
-            </li>
-          ))}
-        </ol>
-        <PlanCta className={h.ctaMain} />
-      </section>
-
-      <section className={h.block} aria-labelledby="inside">
-        <h2 id="inside">{tr("Что внутри", "Ichida nimalar bor")}</h2>
-        <div className={h.inside}>
-          <Link href="/unis" className={h.insideCard}>
-            <b>{fmt(stats.total, lang)}</b>
-            <span>{tr("вузов с ценами, шансами, требованиями и сроками", "narxlari, imkoniyatlari, talablari va muddatlari bilan OTMlar")}</span>
-          </Link>
-          <Link href="/grants" className={h.insideCardGreen}>
-            <b>{gov}</b>
-            <span>
-              {tr(
-                "государственных программ: Венгрия, Турция, Корея, Япония, Китай",
-                "davlat dasturlari: Vengriya, Turkiya, Koreya, Yaponiya, Xitoy",
-              )}
-            </span>
-          </Link>
-          <Link href="/guides" className={h.insideCardBlue}>
-            <b>{GUIDES.length}</b>
-            <span>
-              {tr(
-                "гайдов: список вузов, документы, экзамены, финпомощь, эссе",
-                "qo'llanmalar: OTMlar ro'yxati, hujjatlar, imtihonlar, moliyaviy yordam, esse",
-              )}
-            </span>
-          </Link>
-          <Link href="/deadlines" className={h.insideCardPink}>
-            <b>{tr("Все сроки подачи", "Barcha hujjat muddatlari")}</b>
-            <span>{tr("ранняя и обычная подача по каждому вузу с обратным отсчётом", "har bir OTM uchun erta va asosiy muddatlar teskari sanoq bilan")}</span>
-          </Link>
-        </div>
-      </section>
-
       <section className={h.block} aria-labelledby="countries-title">
         <div className={h.blockHead}>
-          <h2 id="countries-title">{tr("Вузы по странам", "Davlatlar bo'yicha universitetlar")}</h2>
-          <Link href="/unis">{tr("Все страны", "Barcha davlatlar")}</Link>
+          <div>
+            <h2 id="countries-title">{tr("Вузы по странам", "Davlatlar bo'yicha universitetlar")}</h2>
+            <p className={h.blockSub}>
+              {tr(
+                `${stats.countries} стран на интерактивной карте — от США и Европы до Азии.`,
+                `Interaktiv xaritada ${stats.countries} ta davlat — AQSh va Yevropadan Osiyogacha.`,
+              )}
+            </p>
+          </div>
+          <Link href="/unis">{tr("Все страны →", "Barcha davlatlar →")}</Link>
         </div>
         <div className={h.countriesSplit}>
-          <div className={h.countries}>
-            {countries.map((c) => (
-              <Link key={c.country} href={`/unis#c-${c.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
-                {countryName(c.country, lang)}
-                <span>{c.count}</span>
+          <div className={h.countriesGrid}>
+            {countries.map((c, idx) => (
+              <Link
+                key={c.country}
+                href={`/unis#c-${c.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                className={h.countryTile}
+              >
+                <div className={h.countryTileTop}>
+                  <strong>{countryName(c.country, lang)}</strong>
+                  <span>→</span>
+                </div>
+                <small>{tr(`${c.count} вузов`, `${c.count} ta OTM`)}</small>
+                <i className={h[ACCENT_CYCLE[idx % ACCENT_CYCLE.length]]} />
               </Link>
             ))}
           </div>

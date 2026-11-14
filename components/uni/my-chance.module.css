@@ -4,8 +4,8 @@
   min-height: 120px;
   padding: 18px;
   border-radius: 20px;
-  background: var(--sz-base, #fffaf2);
-  border: 2px solid var(--sz-line, #ece3d3);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line);
 }
 
 .box small {
@@ -22,23 +22,23 @@
 .box p {
   margin: 0;
   line-height: 1.5;
-  color: var(--sz-ink, #1d2433);
+  color: var(--sc-text);
 }
 
 .dream {
-  color: var(--sz-dream, #7a2a63);
+  color: var(--sc-gold-text);
 }
 
 .target {
-  color: var(--sz-target, #9a4b07);
+  color: var(--sc-amber);
 }
 
 .safety {
-  color: var(--sz-safety, #1f6b4a);
+  color: var(--sc-emerald);
 }
 
 .no {
-  color: #8b3a2a;
+  color: var(--sc-rose);
 }
 
 .add,
@@ -57,12 +57,12 @@
 }
 
 .inPlan {
-  border: 2px solid var(--sz-line, #ece3d3);
-  background: #fff;
-  color: var(--sz-ink, #1d2433);
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
+  color: var(--sc-text);
 }
 
 .link {
-  color: var(--sz-info, #1f4f8b);
+  color: var(--sc-link);
   font-weight: 700;
 }

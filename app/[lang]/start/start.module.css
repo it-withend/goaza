@@ -60,8 +60,8 @@
 .grade {
   padding: 16px 18px;
   border-radius: 16px;
-  background: #fff;
-  border: 1px solid var(--hairline);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line);
 }
 
 .grade h3 {
@@ -72,7 +72,7 @@
 
 .focus {
   margin: 2px 0 10px;
-  color: #8a6a12;
+  color: var(--sc-gold-text);
   font-weight: 700;
   font-size: 0.9rem;
 }

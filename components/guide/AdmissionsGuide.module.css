@@ -7,11 +7,11 @@
 }
 
 .hero {
-  background: #14171f;
-  color: #f4f2ec;
+  background: var(--sc-surface);
+  color: var(--sc-text);
   border-radius: 20px;
   padding: clamp(20px, 3.2vw, 32px);
-  border: 1px solid rgba(226, 179, 60, 0.25);
+  border: 1px solid var(--sc-line);
   display: grid;
   gap: 14px;
 }
@@ -30,7 +30,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #f0c554;
+  color: var(--sc-gold-text);
   margin-bottom: 6px;
 }
 
@@ -45,7 +45,7 @@
 .heroLead {
   margin: 8px 0 0;
   max-width: 72ch;
-  color: rgba(244, 242, 236, 0.8);
+  color: var(--sc-muted);
   font-size: 0.96rem;
   line-height: 1.55;
 }
@@ -78,8 +78,8 @@
 }
 
 .statPill {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
   border-radius: 12px;
   padding: 10px 14px;
 }
@@ -87,32 +87,31 @@
 .statPill strong {
   display: block;
   font-size: 1.2rem;
-  color: #f4cb66;
+  color: var(--sc-gold-text);
 }
 
 .statPill span {
   font-size: 0.78rem;
-  color: rgba(244, 242, 236, 0.72);
+  color: var(--sc-muted);
 }
 
 .tabsBar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  background: #fff;
+  background: var(--sc-surface);
   padding: 10px;
   border-radius: 16px;
-  border: 1px solid rgba(20, 23, 31, 0.09);
-  box-shadow: 0 2px 10px rgba(20, 23, 31, 0.04);
+  border: 1px solid var(--sc-line);
 }
 
 .tabBtn {
   min-height: 40px;
   padding: 8px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(20, 23, 31, 0.1);
-  background: #f8f7f3;
-  color: #262b36;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   font-weight: 700;
   font-size: 0.86rem;
   cursor: pointer;
@@ -120,20 +119,20 @@
 }
 
 .tabBtn:hover {
-  border-color: #c28d18;
-  background: #fffbf0;
+  border-color: var(--sc-gold);
+  background: var(--sc-elev-2);
 }
 
 .tabBtnActive {
-  background: #14171f;
-  color: #f4cb66;
-  border-color: #14171f;
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  border-color: var(--sc-pill-active-bg);
 }
 
 .section {
-  background: #fff;
+  background: var(--sc-surface);
   border-radius: 18px;
-  border: 1px solid rgba(20, 23, 31, 0.09);
+  border: 1px solid var(--sc-line);
   padding: clamp(18px, 2.8vw, 26px);
   display: grid;
   gap: 16px;
@@ -145,7 +144,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 10px;
-  border-bottom: 1px solid rgba(20, 23, 31, 0.08);
+  border-bottom: 1px solid var(--sc-line);
   padding-bottom: 12px;
 }
 
@@ -153,20 +152,20 @@
   margin: 0;
   font-family: var(--font-serif), "Source Serif 4", Georgia, serif;
   font-size: 1.4rem;
-  color: #14171f;
+  color: var(--sc-text);
 }
 
 .sectionSub {
   margin: 4px 0 0;
-  color: #555c6b;
+  color: var(--sc-muted);
   font-size: 0.92rem;
   line-height: 1.5;
 }
 
 /* Strategy Calculator */
 .calcBox {
-  background: #faf7ee;
-  border: 1px solid rgba(194, 141, 24, 0.3);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line-strong);
   border-radius: 14px;
   padding: 18px;
   display: grid;
@@ -189,7 +188,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #5e4b1a;
+  color: var(--sc-gold-text);
 }
 
 .chipRow {
@@ -202,24 +201,24 @@
   min-height: 36px;
   padding: 6px 11px;
   border-radius: 9px;
-  border: 1px solid rgba(20, 23, 31, 0.14);
-  background: #fff;
-  color: #1f242e;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-surface);
+  color: var(--sc-text);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .optionChipActive {
-  background: #14171f;
-  color: #f4cb66;
-  border-color: #14171f;
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  border-color: var(--sc-pill-active-bg);
 }
 
 .calcResult {
-  background: #fff;
+  background: var(--sc-surface);
   border-radius: 12px;
-  border: 1px solid rgba(20, 23, 31, 0.1);
+  border: 1px solid var(--sc-line);
   padding: 16px;
   display: grid;
   gap: 10px;
@@ -228,13 +227,13 @@
 .calcResult h3 {
   margin: 0;
   font-size: 1.05rem;
-  color: #14171f;
+  color: var(--sc-text);
 }
 
 .calcResult p {
   margin: 0;
   font-size: 0.9rem;
-  color: #3f4654;
+  color: var(--sc-muted);
   line-height: 1.5;
 }
 
@@ -246,15 +245,16 @@
   min-height: 38px;
   padding: 0 14px;
   border-radius: 10px;
-  background: #14171f;
-  color: #f4cb66;
+  background: var(--sc-gold);
+  color: var(--sz-ink);
   font-weight: 700;
   font-size: 0.85rem;
   text-decoration: none;
 }
 
 .ctaLink:hover {
-  background: #232836;
+  background: #e2b33c;
+  color: var(--sz-ink);
 }
 
 .cardsGrid {
@@ -264,8 +264,8 @@
 }
 
 .card {
-  background: #faf9f6;
-  border: 1px solid rgba(20, 23, 31, 0.09);
+  background: var(--sc-elev);
+  border: 1px solid var(--sc-line);
   border-radius: 14px;
   padding: 16px;
   display: grid;
@@ -282,21 +282,21 @@
   letter-spacing: 0.05em;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(226, 179, 60, 0.22);
-  color: #6b4c08;
+  background: rgba(242, 194, 48, 0.16);
+  color: var(--sc-gold-text);
 }
 
 .cardTitle {
   margin: 0;
   font-size: 1.02rem;
   font-weight: 800;
-  color: #14171f;
+  color: var(--sc-text);
 }
 
 .cardMeta {
   margin: 0;
   font-size: 0.85rem;
-  color: #8b630c;
+  color: var(--sc-gold-text);
   font-weight: 700;
 }
 
@@ -304,7 +304,7 @@
   margin: 0;
   font-size: 0.88rem;
   line-height: 1.5;
-  color: #363c48;
+  color: var(--sc-muted);
 }
 
 .bulletList {
@@ -314,18 +314,18 @@
   gap: 5px;
   font-size: 0.86rem;
   line-height: 1.45;
-  color: #2f3540;
+  color: var(--sc-text);
 }
 
 .inlineLink {
-  color: #9e6b06;
+  color: var(--sc-gold-text);
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .inlineLink:hover {
-  color: #6b4702;
+  color: var(--sc-gold);
 }
 
 /* Search & Filter Toolbar for Tables */
@@ -341,26 +341,26 @@
   min-height: 40px;
   padding: 0 12px;
   border-radius: 10px;
-  border: 1px solid rgba(20, 23, 31, 0.16);
-  background: #fff;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
   font-size: 0.9rem;
-  color: #14171f;
+  color: var(--sc-text);
 }
 
 .selectInput {
   min-height: 40px;
   padding: 0 12px;
   border-radius: 10px;
-  border: 1px solid rgba(20, 23, 31, 0.16);
-  background: #fff;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev);
   font-size: 0.86rem;
   font-weight: 600;
-  color: #14171f;
+  color: var(--sc-text);
 }
 
 .tableWrap {
   overflow-x: auto;
-  border: 1px solid rgba(20, 23, 31, 0.1);
+  border: 1px solid var(--sc-line);
   border-radius: 12px;
   max-height: 520px;
 }
@@ -375,8 +375,8 @@
 .table thead th {
   position: sticky;
   top: 0;
-  background: #14171f;
-  color: #f4f2ec;
+  background: var(--sc-elev-2);
+  color: var(--sc-text);
   padding: 10px 12px;
   font-weight: 700;
   font-size: 0.78rem;
@@ -387,21 +387,21 @@
 
 .table tbody td {
   padding: 10px 12px;
-  border-top: 1px solid rgba(20, 23, 31, 0.07);
+  border-top: 1px solid var(--sc-line);
   vertical-align: top;
-  color: #252a34;
+  color: var(--sc-text);
 }
 
 .table tbody tr:hover {
-  background: #faf7ee;
+  background: var(--sc-elev);
 }
 
 .pillGreen {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #e6f5ea;
-  color: #176130;
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--sc-emerald);
   font-weight: 700;
   font-size: 0.76rem;
 }
@@ -410,8 +410,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #fcf1d4;
-  color: #7c5404;
+  background: rgba(242, 194, 48, 0.18);
+  color: var(--sc-gold-text);
   font-weight: 700;
   font-size: 0.76rem;
 }
@@ -420,8 +420,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #eceef2;
-  color: #464e5c;
+  background: var(--sc-elev-2);
+  color: var(--sc-muted);
   font-weight: 700;
   font-size: 0.76rem;
 }
@@ -439,8 +439,9 @@
   align-items: flex-start;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(20, 23, 31, 0.09);
-  background: #faf9f6;
+  border: 1px solid var(--sc-line);
+  background: var(--sc-elev);
+  color: var(--sc-text);
   cursor: pointer;
   font-size: 0.85rem;
   line-height: 1.4;
@@ -448,16 +449,16 @@
 
 .checkItem input {
   margin-top: 3px;
-  accent-color: #14171f;
+  accent-color: var(--sc-gold);
   width: 16px;
   height: 16px;
   flex: none;
 }
 
 .checkDone {
-  background: #eff7f1;
-  border-color: rgba(23, 97, 48, 0.25);
-  color: #274f35;
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.35);
+  color: var(--sc-emerald);
 }
 
 .timelineList {
@@ -466,8 +467,8 @@
 }
 
 .timelineCard {
-  border-left: 4px solid #e2b33c;
-  background: #faf9f6;
+  border-left: 4px solid var(--sc-gold);
+  background: var(--sc-elev);
   border-radius: 0 12px 12px 0;
   padding: 14px 16px;
   display: grid;
@@ -479,15 +480,15 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #8f6308;
+  color: var(--sc-gold-text);
 }
 
 .noteBanner {
-  background: #f5f2e8;
-  border-left: 4px solid #c28d18;
+  background: var(--sc-elev);
+  border-left: 4px solid var(--sc-gold);
   border-radius: 8px;
   padding: 12px 14px;
   font-size: 0.86rem;
-  color: #363022;
+  color: var(--sc-text);
   line-height: 1.5;
 }
