@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "@/components/i18n/Link";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { localizePath, splitLang, type Tr } from "@/lib/i18n";
 import { CommandSearch } from "./CommandSearch";
 import { PlanCta } from "./PlanCta";
@@ -12,16 +13,16 @@ import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "./TelegramIcon";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./site.module.css";
 
-type NavItem = { href: string; label: string; active: (path: string) => boolean };
+type NavItem = { href: string; label: string; icon: IconName; active: (path: string) => boolean };
 
 const under = (base: string) => (p: string) => p === base || p.startsWith(`${base}/`);
 
 /** Guests: public catalog and guides. Subscribers: the full catalog and the applicant guide. */
 function navFor(subscribed: boolean, tr: Tr): NavItem[] {
-  const plan: NavItem = { href: "/plan", label: tr("Мой план", "Mening rejam"), active: under("/plan") };
+  const plan: NavItem = { href: "/plan", label: tr("Мой план", "Mening rejam"), icon: "compass", active: under("/plan") };
   const tail: NavItem[] = [
-    { href: "/grants", label: tr("Гранты", "Grantlar"), active: under("/grants") },
-    { href: "/deadlines", label: tr("Сроки", "Muddatlar"), active: under("/deadlines") },
+    { href: "/grants", label: tr("Гранты", "Grantlar"), icon: "award", active: under("/grants") },
+    { href: "/deadlines", label: tr("Сроки", "Muddatlar"), icon: "calendar", active: under("/deadlines") },
   ];
   return subscribed
     ? [
@@ -29,15 +30,16 @@ function navFor(subscribed: boolean, tr: Tr): NavItem[] {
         {
           href: "/dashboard",
           label: tr("Каталог вузов", "Universitetlar katalogi"),
+          icon: "graduation-cap",
           active: (p) => p === "/dashboard" || p.startsWith("/dashboard/u") || under("/unis")(p),
         },
-        { href: "/dashboard/guide", label: tr("Гайд абитуриента", "Abituriyent qo'llanmasi"), active: under("/dashboard/guide") },
+        { href: "/dashboard/guide", label: tr("Гайд абитуриента", "Abituriyent qo'llanmasi"), icon: "book-open", active: under("/dashboard/guide") },
         ...tail,
       ]
     : [
         plan,
-        { href: "/unis", label: tr("Вузы", "Universitetlar"), active: under("/unis") },
-        { href: "/guides", label: tr("Гайды", "Qo'llanmalar"), active: under("/guides") },
+        { href: "/unis", label: tr("Вузы", "Universitetlar"), icon: "graduation-cap", active: under("/unis") },
+        { href: "/guides", label: tr("Гайды", "Qo'llanmalar"), icon: "book-open", active: under("/guides") },
         ...tail,
       ];
 }
@@ -101,13 +103,14 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" width={26} height={26} alt="" />
           </span>
-          <span>Studyaza</span>
+          <span className={styles.brandName}>Studyaza</span>
         </Link>
 
         <nav className={`${styles.nav}${open ? ` ${styles.navOpen}` : ""}`} aria-label={tr("Основная навигация", "Asosiy navigatsiya")}>
           {navFor(subscribed, tr).map((item) => (
-            <Link key={item.href} href={item.href} aria-current={item.active(path) ? "page" : undefined}>
-              {item.label}
+            <Link key={item.href} href={item.href} aria-current={item.active(path) ? "page" : undefined} className={styles.navItem}>
+              <Icon name={item.icon} size={15} className={styles.navIcon} />
+              <span>{item.label}</span>
             </Link>
           ))}
         </nav>
@@ -131,21 +134,20 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             lang={other}
             aria-label={other === "uz" ? "O'zbek tiliga o'tish" : "Перейти на русский"}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
-            </svg>
+            <Icon name="globe" size={13} />
             <span>{other === "uz" ? "UZ" : "RU"}</span>
           </NextLink>
           <ThemeToggle />
           {account?.onOpenFilters ? (
-            <button type="button" className={styles.headerGhost} onClick={account.onOpenFilters}>
-              {tr("Фильтры", "Filtrlar")}
+            <button type="button" className={`${styles.headerGhost} ${styles.filterTrigger}`} onClick={account.onOpenFilters}>
+              <Icon name="sliders" size={14} />
+              <span>{tr("Фильтры", "Filtrlar")}</span>
             </button>
           ) : null}
           {subscribed && handle ? (
             <span className={styles.accountChip} title={tr("Вы вошли через Telegram", "Telegram orqali kirdingiz")}>
-              {handle}
+              <Icon name="user" size={13} />
+              <span>{handle}</span>
             </span>
           ) : (
             <PlanCta
@@ -155,8 +157,9 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             />
           )}
           {subscribed ? (
-            <button type="button" className={styles.headerGhost} onClick={handleLogout}>
-              {tr("Выйти", "Chiqish")}
+            <button type="button" className={`${styles.headerGhost} ${styles.logoutBtn}`} onClick={handleLogout}>
+              <Icon name="log-out" size={14} />
+              <span className={styles.logoutText}>{tr("Выйти", "Chiqish")}</span>
             </button>
           ) : null}
           <button
@@ -166,8 +169,7 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
             aria-label={open ? tr("Закрыть меню", "Menyuni yopish") : tr("Открыть меню", "Menyuni ochish")}
             onClick={() => setOpen((v) => !v)}
           >
-            <span />
-            <span />
+            <Icon name={open ? "x" : "menu"} size={17} />
           </button>
         </div>
       </div>

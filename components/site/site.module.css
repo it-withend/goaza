@@ -36,12 +36,12 @@
 }
 
 .headerInner {
-  max-width: 1180px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .brand {
@@ -55,6 +55,7 @@
   font-size: 1rem;
   letter-spacing: -0.02em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .logoMark {
@@ -81,15 +82,23 @@
   min-width: 0;
 }
 
-.nav a {
-  padding: 7px 13px;
+.nav a,
+.navItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
   border-radius: 999px;
   color: var(--sc-muted);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   text-decoration: none;
   white-space: nowrap;
   transition: background 0.14s ease, color 0.14s ease;
+}
+
+.navIcon {
+  opacity: 0.85;
 }
 
 .nav a:hover {
@@ -102,11 +111,24 @@
   background: var(--sc-pill-active-bg);
 }
 
+.nav a[aria-current="page"] .navIcon {
+  opacity: 1;
+}
+
+@media (max-width: 1320px) {
+  .nav a,
+  .navItem {
+    padding: 6px 10px;
+    font-size: 0.83rem;
+  }
+}
+
 .headerActions {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .headerCta {
@@ -193,6 +215,7 @@
 .accountChip {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   min-height: 38px;
   padding: 0 13px;
   border-radius: 999px;
@@ -207,6 +230,7 @@
 .headerGhost {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   min-height: 38px;
   padding: 0 13px;
   border-radius: 999px;
@@ -224,6 +248,17 @@
   border-color: var(--sc-line-strong);
 }
 
+@media (min-width: 981px) {
+  .filterTrigger {
+    display: none;
+  }
+}
+
+.logoutBtn,
+.filterTrigger {
+  white-space: nowrap;
+}
+
 .menuBtn {
   display: none;
   width: 38px;
@@ -231,19 +266,10 @@
   border: 1px solid var(--sc-line);
   border-radius: 999px;
   background: var(--sc-surface);
+  color: var(--sc-text);
   cursor: pointer;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-}
-
-.menuBtn span {
-  display: block;
-  width: 16px;
-  height: 2px;
-  background: var(--sc-text);
-  border-radius: 2px;
 }
 
 .page :where(a, button):focus-visible {
@@ -251,20 +277,19 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1140px) {
   .headerInner {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: space-between;
-    gap: 8px 10px;
-    padding: 8px 12px;
+    gap: 8px;
+    padding: 8px 14px;
   }
 
   .headerActions {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
     gap: 5px;
     min-width: 0;
-    max-width: 100%;
   }
 
   .menuBtn {
@@ -274,14 +299,17 @@
 
   .nav {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    position: fixed;
+    top: 58px;
+    left: 12px;
+    right: 12px;
+    z-index: 60;
     flex-direction: column;
-    padding: 10px 12px 16px;
+    gap: 4px;
+    padding: 10px;
+    border-radius: 16px;
     background: var(--sc-surface);
-    border-bottom: 1px solid var(--sc-line);
+    border: 1px solid var(--sc-line-strong);
     box-shadow: var(--shadow);
   }
 
@@ -289,23 +317,48 @@
     display: flex;
   }
 
-  .nav a {
-    padding: 12px;
-    font-size: 1rem;
+  .nav a,
+  .navItem {
+    padding: 11px 14px;
+    font-size: 0.96rem;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .cmdBtn kbd {
+    display: none;
+  }
+
+  .cmdBtn {
+    width: 36px;
+    padding: 0;
+  }
+
+  .accountChip {
+    display: none;
+  }
+
+  .logoutText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .logoutBtn {
+    width: 36px;
+    min-height: 36px;
+    padding: 0;
+    justify-content: center;
   }
 }
 
 @media (max-width: 640px) {
   .headerInner {
-    gap: 6px 8px;
+    gap: 6px;
     padding: 8px 10px;
-  }
-
-  .headerActions {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 5px;
-    max-width: 100%;
   }
 
   .brand {
@@ -324,16 +377,14 @@
     height: 22px;
   }
 
-  .cmdBtn kbd {
-    display: none;
-  }
-
   .cmdBtn,
   .tgBtn,
   .iconBtn,
-  .menuBtn {
+  .menuBtn,
+  .logoutBtn {
     width: 34px;
     height: 34px;
+    min-height: 34px;
     padding: 0;
   }
 
@@ -350,19 +401,16 @@
     white-space: nowrap;
   }
 
-  .accountChip {
-    max-width: 92px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 34px;
-    padding: 0 8px;
-    font-size: 0.76rem;
-  }
-
-  .headerGhost {
+  .filterTrigger {
     min-height: 34px;
     padding: 0 9px;
     font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tgBtn {
+    display: none;
   }
 }
 
@@ -696,10 +744,12 @@
 
 .tableWrap {
   margin: 0 0 16px;
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--sc-line);
   border-radius: 14px;
   background: var(--sc-surface);
+  box-shadow: var(--sc-sheen);
 }
 
 .table {
@@ -732,6 +782,50 @@
 .table tr:last-child th,
 .table tr:last-child td {
   border-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .tableWrap {
+    overflow-x: visible;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--sc-line);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .table tbody th,
+  .table tbody td {
+    padding: 0;
+    border: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .table tbody th {
+    font-size: 0.98rem;
+  }
 }
 
 .note {

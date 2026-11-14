@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { UniProfile } from "@/components/uni/UniProfile";
 import { langOf, localizePath, trFor } from "@/lib/i18n";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
@@ -44,15 +46,19 @@ export default async function UniversityPage({
   const related = await fetchRelatedUniversities(u.country, u.slug, 6).catch(() => []);
 
   return (
-    <UniProfile
-      u={u}
-      related={related}
-      full
-      backHref={safeBackHref(sp.from)}
-      backLabel={trFor(lang)("К списку", "Ro'yxatga")}
-      lang={lang}
-      relatedBase="/dashboard/u"
-      botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
-    />
+    <>
+      <SiteHeader />
+      <UniProfile
+        u={u}
+        related={related}
+        full
+        backHref={safeBackHref(sp.from)}
+        backLabel={trFor(lang)("К списку", "Ro'yxatga")}
+        lang={lang}
+        relatedBase="/dashboard/u"
+        botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
+      />
+      <SiteFooter />
+    </>
   );
 }

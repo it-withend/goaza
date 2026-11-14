@@ -207,6 +207,9 @@
 }
 
 .ringLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--sc-link);
@@ -225,6 +228,7 @@
   background: var(--sc-surface);
   border: 1px solid var(--sc-line);
   border-left: 3px solid var(--sz-accent);
+  box-shadow: var(--sc-sheen);
   text-decoration: none;
   color: var(--sc-text);
   transition: border-color 0.14s ease, background 0.14s ease;
@@ -239,6 +243,7 @@
 .nextStripLeft {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .nextStripLeft small {
@@ -254,6 +259,9 @@
 }
 
 .nextStripBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(242, 194, 48, 0.14);
@@ -274,20 +282,60 @@
 .kpiCard {
   position: relative;
   display: grid;
-  gap: 4px;
+  gap: 6px;
   padding: 16px 18px 18px;
   border-radius: 16px;
   background: var(--sc-surface);
   border: 1px solid var(--sc-line);
+  box-shadow: var(--sc-sheen);
   text-decoration: none;
   color: var(--sc-text);
   overflow: hidden;
-  transition: border-color 0.14s ease, transform 0.14s ease;
+  min-width: 0;
+  transition: border-color 0.14s ease, background 0.14s ease, transform 0.14s ease;
 }
 
 .kpiCard:hover {
+  background: var(--sc-elev);
   border-color: var(--sc-line-strong);
   transform: translateY(-2px);
+}
+
+.kpiTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.kpiIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--sc-line);
+}
+
+.kpiIconGold {
+  background: rgba(242, 194, 48, 0.14);
+  color: var(--sc-gold-text);
+}
+
+.kpiIconEmerald {
+  background: var(--sc-emerald-bg);
+  color: var(--sc-emerald);
+}
+
+.kpiIconBlue {
+  background: var(--sc-blue-bg);
+  color: var(--sc-blue);
+}
+
+.kpiIconRose {
+  background: var(--sc-rose-bg);
+  color: var(--sc-rose);
 }
 
 .kpiCard strong {
@@ -298,7 +346,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.kpiCard span {
+.kpiCard > span {
   font-size: 0.82rem;
   color: var(--sc-muted);
   font-weight: 600;
@@ -344,12 +392,13 @@
   border-radius: 18px;
   background: var(--sc-surface);
   border: 1px solid var(--sc-line);
+  box-shadow: var(--sc-sheen);
   min-width: 0;
 }
 
 .panelHead {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 14px;
@@ -357,12 +406,18 @@
 
 .panelHead h2 {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-display), var(--font-sans), sans-serif;
   font-size: 0.98rem;
   color: var(--sc-text);
 }
 
 .panelHead a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--sc-muted);
@@ -501,12 +556,13 @@
 }
 
 .guideType {
-  padding: 4px 7px;
-  border-radius: 8px;
-  background: var(--sc-elev-2);
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--sc-well);
   border: 1px solid var(--sc-line);
-  font-size: 0.65rem;
-  font-weight: 800;
   color: var(--sc-muted);
   flex-shrink: 0;
 }
@@ -548,9 +604,11 @@
   gap: 10px;
   padding: 16px;
   border-radius: 22px;
-  background: var(--sc-surface);
+  background: var(--sc-well);
   border: 1px solid var(--sc-line);
   box-shadow: var(--shadow);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .pvHero {
@@ -558,9 +616,11 @@
   gap: 6px;
   padding: 14px 18px;
   border-radius: 16px;
-  background: var(--sc-elev);
+  background: var(--sc-surface);
   border: 1px solid var(--sc-line);
+  box-shadow: var(--sc-sheen);
   color: var(--sc-text);
+  min-width: 0;
 }
 
 .pvHero b {
@@ -716,6 +776,9 @@
 }
 
 .blockHead a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   color: var(--sc-link);
   font-weight: 700;
   font-size: 0.9rem;
@@ -728,7 +791,7 @@
 
 .countriesSplit {
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 420px);
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 420px);
   gap: 20px;
   align-items: center;
 }
@@ -748,14 +811,16 @@
   border-radius: 16px;
   background: var(--sc-surface);
   border: 1px solid var(--sc-line);
+  box-shadow: var(--sc-sheen);
   color: var(--sc-text);
   text-decoration: none;
   overflow: hidden;
   min-width: 0;
-  transition: border-color 0.14s ease, transform 0.14s ease;
+  transition: border-color 0.14s ease, background 0.14s ease, transform 0.14s ease;
 }
 
 .countryTile:hover {
+  background: var(--sc-elev);
   border-color: var(--sc-line-strong);
   transform: translateY(-2px);
 }
@@ -765,19 +830,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+  min-width: 0;
+}
+
+.countryNameWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .countryTileTop strong {
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.countryTileTop span {
+.countryTileTop > svg {
   color: var(--sc-muted);
-  font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .countryTile small {
@@ -872,6 +946,16 @@
   }
 
   .pvBaskets {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .pvTiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .globeCard {
+    padding: 10px;
   }
 }

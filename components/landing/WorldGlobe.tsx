@@ -33,7 +33,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const globeRef = useRef<GlobeHandle | null>(null);
   const [hover, setHover] = useState<GlobePoint | null>(null);
-  const [size, setSize] = useState({ w: 340, h: 340 });
+  const [size, setSize] = useState({ w: 280, h: 280 });
 
   const points = useMemo(
     () =>
@@ -59,7 +59,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
     const sync = () => {
       const rect = node.getBoundingClientRect();
       if (!rect.width) return;
-      const side = Math.max(200, Math.min(440, Math.floor(rect.width)));
+      const side = Math.max(200, Math.min(420, Math.floor(rect.width)));
       setSize({ w: side, h: side });
     };
     sync();

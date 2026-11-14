@@ -7,6 +7,7 @@ import { countryName } from "@/lib/types";
 import { PlanCta } from "@/components/site/PlanCta";
 import { TELEGRAM_CHANNEL_URL, TelegramIcon } from "@/components/site/TelegramIcon";
 import { WorldGlobe } from "@/components/landing/WorldGlobe";
+import { CountryFlag, Icon } from "@/components/ui/Icon";
 import { CabinetPreview } from "./CabinetPreview";
 import h from "./home.module.css";
 
@@ -149,7 +150,10 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
             <strong>{milestone.title}</strong>
             <span className={h.ringBadge}>{milestone.badge}</span>
             <p className={h.ringSub}>{milestone.dateText}</p>
-            <span className={h.ringLink}>{tr("Все дедлайны →", "Barcha dedlaynlar →")}</span>
+            <span className={h.ringLink}>
+              <span>{tr("Все дедлайны", "Barcha dedlaynlar")}</span>
+              <Icon name="arrow-right" size={14} />
+            </span>
           </div>
         </Link>
       </section>
@@ -159,27 +163,50 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
           <small>{tr("СЛЕДУЮЩИЙ ШАГ ДЛЯ СТАРТА", "BOSHLASH UCHUN KEYINGI QADAM")}</small>
           <b>{tr("Анкета подбора вузов · 6 коротких вопросов без регистрации", "OTM tanlash anketasi · ro'yxatdan o'tmasdan 6 ta qisqa savol")}</b>
         </div>
-        <span className={h.nextStripBadge}>{tr("за 2 минуты", "2 daqiqada")}</span>
+        <span className={h.nextStripBadge}>
+          <Icon name="sparkles" size={13} />
+          <span>{tr("за 2 минуты", "2 daqiqada")}</span>
+        </span>
       </Link>
 
       <section className={h.kpiGrid} aria-label={tr("Ключевые цифры базы", "Bazaning asosiy raqamlari")}>
         <Link href="/unis" className={h.kpiCard}>
-          <strong>{fmt(stats.total, lang)}</strong>
+          <div className={h.kpiTop}>
+            <strong>{fmt(stats.total, lang)}</strong>
+            <span className={`${h.kpiIcon} ${h.kpiIconGold}`}>
+              <Icon name="graduation-cap" size={16} />
+            </span>
+          </div>
           <span>{tr("Вузов в базе", "Bazadagi OTMlar")}</span>
           <i className={h.accentGold} />
         </Link>
         <Link href="/unis" className={h.kpiCard}>
-          <strong>{fmt(stats.grants, lang)}</strong>
+          <div className={h.kpiTop}>
+            <strong>{fmt(stats.grants, lang)}</strong>
+            <span className={`${h.kpiIcon} ${h.kpiIconEmerald}`}>
+              <Icon name="award" size={16} />
+            </span>
+          </div>
           <span>{tr("С полным грантом", "To'liq grant bilan")}</span>
           <i className={h.accentEmerald} />
         </Link>
         <Link href="/grants" className={h.kpiCard}>
-          <strong>{gov}</strong>
+          <div className={h.kpiTop}>
+            <strong>{gov}</strong>
+            <span className={`${h.kpiIcon} ${h.kpiIconBlue}`}>
+              <Icon name="landmark" size={16} />
+            </span>
+          </div>
           <span>{tr("Госпрограмм мира", "Davlat grantlari")}</span>
           <i className={h.accentBlue} />
         </Link>
         <Link href="/guides" className={h.kpiCard}>
-          <strong>{GUIDES.length}</strong>
+          <div className={h.kpiTop}>
+            <strong>{GUIDES.length}</strong>
+            <span className={`${h.kpiIcon} ${h.kpiIconRose}`}>
+              <Icon name="book-open" size={16} />
+            </span>
+          </div>
           <span>{tr("Пошаговых гайдов", "Bosqichma-bosqich qo'llanma")}</span>
           <i className={h.accentRose} />
         </Link>
@@ -188,8 +215,14 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
       <section className={h.bentoThree} aria-label={tr("Как это работает и что внутри", "Qanday ishlaydi va ichida nimalar bor")}>
         <div className={h.bentoPanel}>
           <div className={h.panelHead}>
-            <h2>{tr("Как это работает", "Bu qanday ishlaydi")}</h2>
-            <Link href="/plan/start">{tr("Начать →", "Boshlash →")}</Link>
+            <h2>
+              <Icon name="compass" size={16} />
+              <span>{tr("Как это работает", "Bu qanday ishlaydi")}</span>
+            </h2>
+            <Link href="/plan/start">
+              <span>{tr("Начать", "Boshlash")}</span>
+              <Icon name="arrow-right" size={13} />
+            </Link>
           </div>
           <ol className={h.timeline}>
             {steps.map((s) => (
@@ -209,8 +242,14 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
 
         <div className={h.bentoPanel}>
           <div className={h.panelHead}>
-            <h2>{tr("Государственные гранты", "Davlat grantlari")}</h2>
-            <Link href="/grants">{tr("Все →", "Barchasi →")}</Link>
+            <h2>
+              <Icon name="award" size={16} />
+              <span>{tr("Государственные гранты", "Davlat grantlari")}</span>
+            </h2>
+            <Link href="/grants">
+              <span>{tr("Все", "Barchasi")}</span>
+              <Icon name="arrow-right" size={13} />
+            </Link>
           </div>
           <ul className={h.grantBars}>
             {grants.map((g, idx) => (
@@ -232,14 +271,22 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
 
         <div className={h.bentoPanel}>
           <div className={h.panelHead}>
-            <h2>{tr("Новые гайды", "Yangi qo'llanmalar")}</h2>
-            <Link href="/guides">{tr("Все →", "Barchasi →")}</Link>
+            <h2>
+              <Icon name="book-open" size={16} />
+              <span>{tr("Новые гайды", "Yangi qo'llanmalar")}</span>
+            </h2>
+            <Link href="/guides">
+              <span>{tr("Все", "Barchasi")}</span>
+              <Icon name="arrow-right" size={13} />
+            </Link>
           </div>
           <ul className={h.guideList}>
             {guides.map((g) => (
               <li key={g.slug}>
                 <Link href={`/guides/${g.slug}`} className={h.guideRow}>
-                  <span className={h.guideType}>{tr("ГАЙД", "QO'LL")}</span>
+                  <span className={h.guideType}>
+                    <Icon name="file-text" size={15} />
+                  </span>
                   <span className={h.guideTitle}>
                     <b>{g.title}</b>
                     <small>{tr(`${g.minutes} мин чтения`, `${g.minutes} daq o'qish`)}</small>
@@ -263,7 +310,10 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
               )}
             </p>
           </div>
-          <Link href="/plan">{tr("Открыть мой план →", "Mening rejamni ochish →")}</Link>
+          <Link href="/plan">
+            <span>{tr("Открыть мой план", "Mening rejamni ochish")}</span>
+            <Icon name="arrow-right" size={14} />
+          </Link>
         </div>
         <CabinetPreview lang={lang} />
       </section>
@@ -279,7 +329,10 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
               )}
             </p>
           </div>
-          <Link href="/unis">{tr("Все страны →", "Barcha davlatlar →")}</Link>
+          <Link href="/unis">
+            <span>{tr("Все страны", "Barcha davlatlar")}</span>
+            <Icon name="arrow-right" size={14} />
+          </Link>
         </div>
         <div className={h.countriesSplit}>
           <div className={h.countriesGrid}>
@@ -290,8 +343,11 @@ export function HomeHub({ stats, lang = "ru" }: { stats: LandingStats; lang?: La
                 className={h.countryTile}
               >
                 <div className={h.countryTileTop}>
-                  <strong>{countryName(c.country, lang)}</strong>
-                  <span>→</span>
+                  <span className={h.countryNameWrap}>
+                    <CountryFlag country={c.country} size={18} />
+                    <strong>{countryName(c.country, lang)}</strong>
+                  </span>
+                  <Icon name="arrow-right" size={14} />
                 </div>
                 <small>{tr(`${c.count} вузов`, `${c.count} ta OTM`)}</small>
                 <i className={h[ACCENT_CYCLE[idx % ACCENT_CYCLE.length]]} />

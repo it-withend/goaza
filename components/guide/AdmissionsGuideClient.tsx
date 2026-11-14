@@ -5,6 +5,7 @@ import Link from "@/components/i18n/Link";
 import { useRouter } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { Icon } from "@/components/ui/Icon";
 import { localizePath } from "@/lib/i18n";
 import {
   getAdmissionsKnowledge,
@@ -433,7 +434,12 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                       <li key={c}>{c}</li>
                     ))}
                   </ul>
-                  {gs.importantNote && <p className={styles.cardText}>⚠ {gs.importantNote}</p>}
+                  {gs.importantNote && (
+                    <p className={`${styles.cardText} ${styles.warnInline}`}>
+                      <Icon name="alert-triangle" size={14} />
+                      <span>{gs.importantNote}</span>
+                    </p>
+                  )}
                   <a href={gs.url} target="_blank" rel="noopener noreferrer" className={styles.inlineLink}>
                     {tr("Официальный сайт программы ↗", "Dasturning rasmiy sayti ↗")}
                   </a>
