@@ -680,16 +680,18 @@
   top: 12px;
   right: 12px;
   z-index: 3;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
   border: 1px solid var(--hairline);
-  background: #faf9f6;
-  color: var(--muted);
-  font-size: 1.05rem;
+  background: #fffaf2;
+  color: var(--sz-ink, #1d2433);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
   line-height: 1;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
 }
@@ -984,4 +986,43 @@
   .presetBtn:hover {
     transform: none;
   }
+}
+
+.presetChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.presetChips button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 2px solid var(--sz-line, #ece3d3);
+  background: #fff;
+  color: var(--sz-ink, #1d2433);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.presetChips button[aria-pressed="true"] {
+  background: var(--sz-ink, #1d2433);
+  border-color: var(--sz-ink, #1d2433);
+  color: #fff;
+}
+
+.advanced {
+  border-top: 1px solid var(--hairline);
+  padding-top: 10px;
+}
+
+.advanced > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+  cursor: pointer;
 }

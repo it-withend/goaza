@@ -2,7 +2,7 @@
 
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { filterCatalog, type CatalogUni } from "@/lib/catalog";
+import { filterCatalog, PRESETS, type CatalogUni, type PresetId } from "@/lib/catalog";
 import { INST_LABEL, countryRu } from "@/lib/types";
 import type { computeMeta } from "@/lib/universities";
 import { UniversityCard } from "@/components/UniversityCard";
@@ -54,6 +54,11 @@ export function DashboardClient({
   const [hasIntlAid, setHasIntlAid] = useState(() => boot.get("intlAid") === "1");
   const [urgentDeadline, setUrgentDeadline] = useState(() => boot.get("urgent") === "1");
   const [favOnly, setFavOnly] = useState(() => boot.get("fav") === "1");
+  const [presets, setPresets] = useState<PresetId[]>(() =>
+    (boot.get("p")?.split(",") || []).filter((x): x is PresetId => PRESETS.some((pr) => pr.id === x)),
+  );
+  const togglePreset = (id: PresetId) =>
+    setPresets((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   const [tuitionMax, setTuitionMax] = useState(() =>
     boot.has("tuitionMax") ? Number(boot.get("tuitionMax")) : meta.tuitionMax,
   );
@@ -107,6 +112,7 @@ export function DashboardClient({
     if (hasIntlAid) sp.set("intlAid", "1");
     if (urgentDeadline) sp.set("urgent", "1");
     if (favOnly) sp.set("fav", "1");
+    if (presets.length) sp.set("p", presets.join(","));
     if (tuitionMax < meta.tuitionMax) sp.set("tuitionMax", String(tuitionMax));
     if (aidMin > 0) sp.set("aidMin", String(aidMin));
     if (rateMax < 100) sp.set("rateMax", String(rateMax));
@@ -115,7 +121,7 @@ export function DashboardClient({
     if (sort !== "name") sp.set("sort", sort);
     const raw = sp.toString();
     return raw ? `?${raw}` : "";
-  }, [
+  }, [presets, 
     q,
     country,
     grantOnly,
@@ -145,6 +151,7 @@ export function DashboardClient({
   const unis = useMemo(
     () =>
       filterCatalog(initial, {
+        presets,
         q: deferredQ,
         country,
         grantOnly,
@@ -160,6 +167,7 @@ export function DashboardClient({
         sort,
       }),
     [
+      presets,
       initial,
       deferredQ,
       country,
@@ -219,6 +227,7 @@ export function DashboardClient({
   }
 
   function resetFilters() {
+    setPresets([]);
     setQ("");
     setCountry("");
     setGrantOnly(false);
@@ -304,7 +313,7 @@ export function DashboardClient({
   }
 
   const noPresetsActive =
-    !grantOnly && !needBlind && !hasIntlAid && !urgentDeadline && !favOnly && !country;
+    !presets.length && !grantOnly && !needBlind && !hasIntlAid && !urgentDeadline && !favOnly && !country;
 
   const cardsClass = view === "grid" ? styles.cardsGrid : styles.cardsList;
 
@@ -361,116 +370,105 @@ export function DashboardClient({
       </div>
 
       <div className={styles.fBlock}>
-        <h4>Ключевые условия</h4>
-        <label className={styles.check}>
-          <input type="checkbox" checked={grantOnly} onChange={(e) => setGrantOnly(e.target.checked)} />
-          <span>Полный грант</span>
-          <em className={styles.n}>{meta.grants}</em>
-        </label>
-        <label className={styles.check}>
-          <input type="checkbox" checked={needBlind} onChange={(e) => setNeedBlind(e.target.checked)} />
-          <span>Need-blind политика</span>
-        </label>
-        <label className={styles.check}>
-          <input
-            type="checkbox"
-            checked={hasIntlAid}
-            onChange={(e) => setHasIntlAid(e.target.checked)}
-          />
-          <span>Фонд для иностранцев</span>
-          <em className={styles.n}>{intlFundCount}</em>
-        </label>
-        <label className={styles.check}>
-          <input
-            type="checkbox"
-            checked={urgentDeadline}
-            onChange={(e) => setUrgentDeadline(e.target.checked)}
-          />
-          <span>Дедлайн ≤ 60 дней</span>
-        </label>
+        <h4>Что для вас важно</h4>
+        <div className={styles.presetChips}>
+          {PRESETS.map((pr) => (
+            <button
+              key={pr.id}
+              type="button"
+              aria-pressed={presets.includes(pr.id)}
+              onClick={() => togglePreset(pr.id)}
+            >
+              {pr.label}
+            </button>
+          ))}
+        </div>
         <label className={styles.check}>
           <input type="checkbox" checked={favOnly} onChange={(e) => setFavOnly(e.target.checked)} />
-          <span>★ Только избранное</span>
+          <span>Только мой план</span>
           <em className={styles.n}>{favSet.size}</em>
         </label>
       </div>
 
+      <details className={styles.advanced}>
+        <summary>Точные фильтры</summary>
       <div className={styles.fBlock}>
-        <h4>Бюджет и шансы</h4>
-        <div className={styles.rangeRow}>
-          <label>
-            Стоимость до <span>${money(tuitionMax)}</span>
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={meta.tuitionMax}
-            step={500}
-            value={tuitionMax}
-            onChange={(e) => setTuitionMax(Number(e.target.value))}
-          />
-        </div>
-        <div className={styles.rangeRow}>
-          <label>
-            Помощь от <span>${money(aidMin)}</span>
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={meta.aidMax}
-            step={500}
-            value={aidMin}
-            onChange={(e) => setAidMin(Number(e.target.value))}
-          />
-        </div>
-        <div className={styles.rangeRow}>
-          <label>
-            Поступление до <span>{rateMax}%</span>
-          </label>
-          <input
-            type="range"
-            min={1}
-            max={100}
-            step={1}
-            value={rateMax}
-            onChange={(e) => setRateMax(Number(e.target.value))}
-          />
-        </div>
-      </div>
-
-      <div className={styles.fBlock}>
-        <h4>Тип вуза</h4>
-        <div className={styles.chips}>
-          {meta.inst.map(([key, n]) => (
-            <label className={styles.chip} key={key}>
-              <input
-                type="checkbox"
-                checked={inst.includes(key)}
-                onChange={() => toggleChip(inst, key, setInst)}
-              />
-              {INST_LABEL[key] || key}
-              <span className={styles.n}>{n}</span>
+          <h4>Бюджет и шансы</h4>
+          <div className={styles.rangeRow}>
+            <label>
+              Стоимость до <span>${money(tuitionMax)}</span>
             </label>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.fBlock}>
-        <h4>Тип помощи</h4>
-        <div className={styles.chips}>
-          {meta.aidTypes.slice(0, 10).map(([key, n]) => (
-            <label className={styles.chip} key={key}>
-              <input
-                type="checkbox"
-                checked={aidTypes.includes(key)}
-                onChange={() => toggleChip(aidTypes, key, setAidTypes)}
-              />
-              {key}
-              <span className={styles.n}>{n}</span>
+            <input
+              type="range"
+              min={0}
+              max={meta.tuitionMax}
+              step={500}
+              value={tuitionMax}
+              onChange={(e) => setTuitionMax(Number(e.target.value))}
+            />
+          </div>
+          <div className={styles.rangeRow}>
+            <label>
+              Помощь от <span>${money(aidMin)}</span>
             </label>
-          ))}
+            <input
+              type="range"
+              min={0}
+              max={meta.aidMax}
+              step={500}
+              value={aidMin}
+              onChange={(e) => setAidMin(Number(e.target.value))}
+            />
+          </div>
+          <div className={styles.rangeRow}>
+            <label>
+              Поступление до <span>{rateMax}%</span>
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={100}
+              step={1}
+              value={rateMax}
+              onChange={(e) => setRateMax(Number(e.target.value))}
+            />
+          </div>
         </div>
-      </div>
+  
+        <div className={styles.fBlock}>
+          <h4>Тип вуза</h4>
+          <div className={styles.chips}>
+            {meta.inst.map(([key, n]) => (
+              <label className={styles.chip} key={key}>
+                <input
+                  type="checkbox"
+                  checked={inst.includes(key)}
+                  onChange={() => toggleChip(inst, key, setInst)}
+                />
+                {INST_LABEL[key] || key}
+                <span className={styles.n}>{n}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+  
+        <div className={styles.fBlock}>
+          <h4>Тип помощи</h4>
+          <div className={styles.chips}>
+            {meta.aidTypes.slice(0, 10).map(([key, n]) => (
+              <label className={styles.chip} key={key}>
+                <input
+                  type="checkbox"
+                  checked={aidTypes.includes(key)}
+                  onChange={() => toggleChip(aidTypes, key, setAidTypes)}
+                />
+                {key}
+                <span className={styles.n}>{n}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </details>
 
       <button type="button" className={styles.resetBtn} onClick={resetFilters}>
         Сбросить все фильтры
@@ -523,44 +521,22 @@ export function DashboardClient({
               >
                 Все вузы
               </button>
-              <button
-                type="button"
-                className={`${styles.presetBtn}${grantOnly ? ` ${styles.presetBtnActive}` : ""}`}
-                onClick={() => setGrantOnly((v) => !v)}
-              >
-                Полный грант
-              </button>
-              <button
-                type="button"
-                className={`${styles.presetBtn}${needBlind ? ` ${styles.presetBtnActive}` : ""}`}
-                onClick={() => setNeedBlind((v) => !v)}
-              >
-                Need-blind
-              </button>
-              <button
-                type="button"
-                className={`${styles.presetBtn}${hasIntlAid ? ` ${styles.presetBtnActive}` : ""}`}
-                onClick={() => {
-                  const next = !hasIntlAid;
-                  setHasIntlAid(next);
-                  if (next && sort === "name") setSort("intl_aid");
-                }}
-              >
-                Фонд иностранцев
-              </button>
-              <button
-                type="button"
-                className={`${styles.presetBtn}${urgentDeadline ? ` ${styles.presetBtnActive}` : ""}`}
-                onClick={() => setUrgentDeadline((v) => !v)}
-              >
-                Дедлайн ≤ 60 дн.
-              </button>
+              {PRESETS.map((pr) => (
+                <button
+                  key={pr.id}
+                  type="button"
+                  className={`${styles.presetBtn}${presets.includes(pr.id) ? ` ${styles.presetBtnActive}` : ""}`}
+                  onClick={() => togglePreset(pr.id)}
+                >
+                  {pr.label}
+                </button>
+              ))}
               <button
                 type="button"
                 className={`${styles.presetBtn}${favOnly ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={() => setFavOnly((v) => !v)}
               >
-                ★ Избранное ({favSet.size})
+                Мой план ({favSet.size})
               </button>
             </div>
 

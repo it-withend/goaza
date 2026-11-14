@@ -51,11 +51,10 @@ function UniversityCardImpl({
           type="button"
           className={`${styles.favBtn}${isFavorite ? ` ${styles.favBtnActive}` : ""}`}
           aria-pressed={isFavorite}
-          aria-label={isFavorite ? `Убрать ${u.name} из избранного` : `Добавить ${u.name} в избранное`}
-          title={isFavorite ? "Убрать из избранного" : "В избранное"}
+          aria-label={isFavorite ? `Убрать ${u.name} из моего плана` : `Добавить ${u.name} в мой план`}
           onClick={() => onToggleFavorite(u.slug)}
         >
-          {isFavorite ? "★" : "☆"}
+          {isFavorite ? "В плане" : "+ В план"}
         </button>
       ) : null}
 

@@ -143,3 +143,37 @@ describe("describeDeadline", () => {
     expect(daysLeftLabel(-2)).toBe("прошёл");
   });
 });
+
+describe("catalog presets", () => {
+  const now = new Date(Date.UTC(2026, 10, 14));
+  const list = [
+    uni({ slug: "grant", name: "Grant U", full_grant: true, tuition_num: 60000, sat: "1450-1550", regular_deadline: "2027-01-01" }),
+    uni({ slug: "free", name: "Free U", tuition_num: 0, sat: null, country: "Germany" }),
+    uni({ slug: "blind", name: "Blind U", need_blind: true, tuition_num: 70000, sat: "Optional" }),
+    uni({ slug: "cheap", name: "Cheap U", tuition_num: 8000, sat: "Not required", regular_deadline: "2026-11-20" }),
+  ];
+  const slugs = (presets: string[]) =>
+    filterCatalog(list, { presets: presets as never }, now).map((u) => u.slug).sort();
+
+  it("full_grant keeps universities with a full grant", () => {
+    expect(slugs(["full_grant"])).toEqual(["grant"]);
+  });
+  it("free_tuition keeps zero tuition", () => {
+    expect(slugs(["free_tuition"])).toEqual(["free"]);
+  });
+  it("no_sat keeps empty, optional or not-required SAT", () => {
+    expect(slugs(["no_sat"])).toEqual(["blind", "cheap", "free"]);
+  });
+  it("need_blind keeps need-blind", () => {
+    expect(slugs(["need_blind"])).toEqual(["blind"]);
+  });
+  it("can_apply keeps deadlines at least 14 days away", () => {
+    expect(slugs(["can_apply"])).toEqual(["grant"]);
+  });
+  it("under_10k keeps known tuition up to $10,000", () => {
+    expect(slugs(["under_10k"])).toEqual(["cheap", "free"]);
+  });
+  it("combines presets with AND", () => {
+    expect(slugs(["no_sat", "under_10k"])).toEqual(["cheap", "free"]);
+  });
+});

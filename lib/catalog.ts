@@ -28,12 +28,47 @@ export type CatalogUni = {
   avg_aid_num: number | null;
   intl_aid_policy: string | null;
   lang: string | null;
+  sat: string | null;
   logo: boolean;
   /** Lowercased haystack for search. */
   s: string;
 };
 
+export type PresetId = "full_grant" | "free_tuition" | "no_sat" | "need_blind" | "can_apply" | "under_10k";
+
+/** Plain-language filters shown as chips in the catalog. */
+export const PRESETS: { id: PresetId; label: string }[] = [
+  { id: "full_grant", label: "Полный грант иностранцам" },
+  { id: "free_tuition", label: "Бесплатное обучение" },
+  { id: "no_sat", label: "Без SAT" },
+  { id: "need_blind", label: "Need-blind" },
+  { id: "can_apply", label: "Успею подать" },
+  { id: "under_10k", label: "До $10 000 в год" },
+];
+
+const NO_SAT = /optional|не требуется|not required|test[- ]?blind|не нужен/i;
+
+export function matchesPreset(u: CatalogUni, id: PresetId, now: Date): boolean {
+  switch (id) {
+    case "full_grant":
+      return u.full_grant;
+    case "free_tuition":
+      return u.tuition_num === 0;
+    case "no_sat":
+      return !u.sat || !u.sat.trim() || NO_SAT.test(u.sat);
+    case "need_blind":
+      return u.need_blind;
+    case "can_apply": {
+      const d = describeDeadline(u.deadline, now);
+      return Boolean(d && d.daysLeft != null && d.daysLeft >= 14);
+    }
+    case "under_10k":
+      return u.tuition_num != null && u.tuition_num <= 10000;
+  }
+}
+
 export type CatalogFilters = {
+  presets?: PresetId[];
   q?: string;
   country?: string;
   grantOnly?: boolean;
@@ -126,6 +161,7 @@ export function toCatalogUni(u: University, hasLogo: boolean): CatalogUni {
     avg_aid_num: parseCurrencyAmount(u.avg_aid_award),
     intl_aid_policy: u.intl_aid_policy || null,
     lang: shortLang(u.lang),
+    sat: u.sat ? u.sat.slice(0, 80) : null,
     logo: hasLogo,
     s: haystack,
   };
@@ -149,7 +185,9 @@ export function filterCatalog(all: CatalogUni[], f: CatalogFilters, now = new Da
       ? f.favSlugs
       : new Set(f.favSlugs)
     : null;
+  const presets = f.presets || [];
   const out = all.filter((u) => {
+    if (presets.length && !presets.every((p) => matchesPreset(u, p, now))) return false;
     if (f.country && u.country !== f.country) return false;
     if (f.grantOnly && !u.full_grant) return false;
     if (f.needBlind && !u.need_blind) return false;
