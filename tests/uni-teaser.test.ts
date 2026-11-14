@@ -38,7 +38,7 @@ describe("toTeaser", () => {
     const t = toTeaser(base);
     const json = JSON.stringify(t);
     expect(t.tuitionBand).toBe("от $50 тыс. / год");
-    expect(t.instType).toBe("Ivy League / Private");
+    expect(t.instType).toBe("Лига плюща / Частный");
     expect(t.majors).toEqual(["Government", "Economics", "Computer Science"]);
     for (const secret of ["75,891", "75891", "Jan 1", "Nov 1", "90,000", "CSS Profile", "1500-1580"]) {
       expect(json).not.toContain(secret);

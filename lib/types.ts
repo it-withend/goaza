@@ -89,13 +89,13 @@ export const COUNTRY_RU: Record<string, string> = {
 };
 
 export const INST_LABEL: Record<string, string> = {
-  ivy: "Ivy League",
-  liberal_arts: "Liberal arts",
-  research: "Research",
-  public: "Public",
-  private: "Private",
-  tech: "STEM / Tech",
-  womens: "Women's college",
+  ivy: "Лига плюща",
+  liberal_arts: "Колледж свободных искусств",
+  research: "Исследовательский",
+  public: "Государственный",
+  private: "Частный",
+  tech: "Технический",
+  womens: "Женский колледж",
 };
 
 export function countryRu(c: string) {

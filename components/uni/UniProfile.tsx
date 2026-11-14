@@ -11,6 +11,19 @@ import { hasLogo } from "@/lib/logos";
 import { countryRu, INST_LABEL, type University } from "@/lib/types";
 import type { UniDirectoryEntry } from "@/lib/universities";
 import { websiteUrl } from "@/lib/university-logo";
+import {
+  aidPolicyRu,
+  aidSummary,
+  aidTypeRu,
+  essayRu,
+  instTypeRu,
+  langRu,
+  livingRu,
+  majorsRu,
+  money,
+  noteRu,
+  satRu,
+} from "@/lib/humanize";
 import styles from "./university.module.css";
 
 type Val = string | number | null | undefined;
@@ -22,7 +35,7 @@ function Row({ label, value }: { label: string; value?: Val }) {
   return (
     <div className={styles.row}>
       <dt>{label}</dt>
-      <dd>{String(value)}</dd>
+      <dd>{money(String(value))}</dd>
     </div>
   );
 }
@@ -32,7 +45,7 @@ function Stat({ label, value }: { label: string; value?: Val }) {
   return (
     <div className={styles.stat}>
       <small>{label}</small>
-      <strong>{String(value)}</strong>
+      <strong>{money(String(value))}</strong>
     </div>
   );
 }
@@ -70,10 +83,10 @@ export function UniProfile({
 }) {
   const photo = campusPhotoUrl(u.slug);
   const sc = scorecardFor(u.slug);
-  const usd = (n: number) => `$${new Intl.NumberFormat("en-US").format(Math.round(n))}`;
+  const usd = (n: number) => `$${new Intl.NumberFormat("ru-RU").format(Math.round(n)).replace(/\s/g, " ")}`;
   const site = websiteUrl(u.website_domain);
   const tags = [
-    ...(u.need_blind ? ["Need-blind"] : []),
+    ...(u.need_blind ? ["Доход семьи не влияет на приём"] : []),
     ...(u.inst_tags || []).map((t) => INST_LABEL[t] || t),
   ];
   const early = describeDeadline(u.early_deadline);
@@ -87,8 +100,14 @@ export function UniProfile({
           { label: "Ранний", d: early },
           { label: "Основной", d: regular },
         ].filter((x) => x.d);
-  const majors = splitList(u.majors);
-  const aidTypes = (u.aid_types || []).filter(Boolean);
+  const majors = majorsRu(splitList(u.majors));
+  const aid = aidSummary(full ? u.aid_max || u.avg_aid_award : u.aid_max);
+  const policy = aidPolicyRu(u.intl_aid_policy);
+  const note = noteRu(u.notes);
+  const living = livingRu(u.living_note);
+  const instType = instTypeRu(u.inst_type);
+  const req = { lang: langRu(u.lang), sat: satRu(u.sat), essay: essayRu(u.essay) };
+  const aidTypes = [...new Set((u.aid_types || []).filter(Boolean).map(aidTypeRu))];
   const countryGuide = getCountryGuide(u.country);
   const fundLine = [
     u.total_aid_millions ? `Фонд ${u.total_aid_millions}/год` : null,
@@ -125,8 +144,9 @@ export function UniProfile({
     lvl,
     items: factors ? Object.entries(factors).filter(([, v]) => v === lvl).map(([k]) => k) : [],
   })).filter((g) => g.items.length);
-  const hasFinance = aidTypes.length > 0 || finance.some(([, v]) => has(v)) || has(u.intl_aid_policy);
-  const hasReq = [u.lang, u.sat, u.essay, u.recommendations, u.app_fee].some(has);
+  const hasFinance =
+    aidTypes.length > 0 || finance.some(([, v]) => has(v)) || Boolean(policy) || Boolean(aid?.names.length);
+  const hasReq = [req.lang, req.sat, req.essay, u.recommendations, u.app_fee].some(has);
   const hasStudents = students.some(([, v]) => has(v));
   const hasChances = chances.filter(([, v]) => has(v)).length > 1;
 
@@ -149,7 +169,7 @@ export function UniProfile({
               <p className={styles.place}>
                 {countryRu(u.country)}
                 {u.city ? `, ${u.city}` : ""}
-                {u.inst_type ? ` · ${u.inst_type}` : ""}
+                {instType ? ` · ${instType}` : ""}
               </p>
               <h1>{u.name}</h1>
               <div className={styles.tags}>
@@ -166,8 +186,9 @@ export function UniProfile({
       <div className={styles.body}>
         <section className={styles.metrics} aria-label="Ключевые цифры">
           <div>
-            <small>Стоимость</small>
-            <strong>{u.tuition_display || "—"}</strong>
+            <small>Стоимость учёбы</small>
+            <strong>{money(u.tuition_display) || "Нет данных"}</strong>
+            {!u.tuition_display ? <span className={styles.metricSub}>смотрите на сайте вуза</span> : null}
           </div>
           <div>
             <small>Поступление</small>
@@ -180,7 +201,7 @@ export function UniProfile({
           </div>
           <div>
             <small>Помощь иностранцам</small>
-            <strong>{(full ? u.aid_max || u.avg_aid_award : u.aid_max) || "—"}</strong>
+            <strong>{aid?.short || "Нет данных"}</strong>
             {full && fundLine ? <span className={styles.metricSub}>{fundLine}</span> : null}
           </div>
           <div>
@@ -201,10 +222,20 @@ export function UniProfile({
             {hasFinance ? (
               <section className={styles.panel} id="money">
                 <h2>Финансы и гранты</h2>
-                {has(u.intl_aid_policy) ? (
+                {policy ? (
                   <p className={styles.prose}>
-                    <b>Политика для иностранцев:</b> {u.intl_aid_policy}
+                    <b>Как вуз смотрит на доход семьи:</b> {policy}
                   </p>
+                ) : null}
+                {aid?.names.length ? (
+                  <>
+                    <h3 className={styles.subhead}>Стипендии вуза</h3>
+                    <ul className={styles.nameList}>
+                      {aid.names.map((n) => (
+                        <li key={n}>{n}</li>
+                      ))}
+                    </ul>
+                  </>
                 ) : null}
                 {aidTypes.length ? (
                   <div className={styles.chips}>
@@ -303,12 +334,12 @@ export function UniProfile({
               <section className={styles.panel} id="requirements">
                 <h2>Требования и документы</h2>
                 <dl className={styles.dl}>
-                  <Row label="Язык" value={u.lang} />
-                  <Row label="SAT / ACT" value={u.sat} />
-                  <Row label="Эссе" value={u.essay} />
+                  <Row label="Английский" value={req.lang} />
+                  <Row label="SAT / ACT" value={req.sat} />
+                  <Row label="Эссе" value={req.essay} />
                   <Row label="Рекомендации" value={u.recommendations} />
                   <Row label="Пошлина за заявку" value={u.app_fee} />
-                  <Row label="Fee waiver" value={u.fee_waiver} />
+                  <Row label="Освобождение от сбора" value={u.fee_waiver} />
                 </dl>
                 <p className={styles.muted}>
                   Полный список документов —{" "}
@@ -342,15 +373,15 @@ export function UniProfile({
               </section>
             ) : null}
 
-            {has(u.living_note) || has(u.notes) ? (
+            {living || note ? (
               <section className={styles.panel}>
                 <h2>Полезно знать</h2>
-                {has(u.living_note) ? (
+                {living ? (
                   <p className={styles.prose}>
-                    <b>Проживание.</b> {u.living_note}
+                    <b>Проживание.</b> {living}
                   </p>
                 ) : null}
-                {has(u.notes) ? <p className={styles.prose}>{u.notes}</p> : null}
+                {note ? <p className={styles.prose}>{note.split("|").map((x) => x.trim()).join(" · ")}</p> : null}
               </section>
             ) : null}
 
