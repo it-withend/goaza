@@ -59,9 +59,10 @@ export function GrantsCatalogClient({
           ) : null}
         </div>
 
-        <div className={g.chipsRow}>
+        <div className={g.chipsRow} role="group" aria-label={tr("Тип гранта", "Grant turi")}>
           <button
             type="button"
+            aria-pressed={kindFilter === "all"}
             className={`${g.chip}${kindFilter === "all" ? ` ${g.chipActive}` : ""}`}
             onClick={() => setKindFilter("all")}
           >
@@ -73,6 +74,7 @@ export function GrantsCatalogClient({
               <button
                 key={k.kind}
                 type="button"
+                aria-pressed={kindFilter === k.kind}
                 className={`${g.chip}${kindFilter === k.kind ? ` ${g.chipActive}` : ""}`}
                 onClick={() => setKindFilter(k.kind)}
               >
@@ -82,9 +84,10 @@ export function GrantsCatalogClient({
           })}
         </div>
 
-        <div className={g.chipsRow}>
+        <div className={g.chipsRow} role="group" aria-label={tr("Уровень обучения", "Ta'lim bosqichi")}>
           <button
             type="button"
+            aria-pressed={levelFilter === "all"}
             className={`${g.chip}${levelFilter === "all" ? ` ${g.chipActive}` : ""}`}
             onClick={() => setLevelFilter("all")}
           >
@@ -94,6 +97,7 @@ export function GrantsCatalogClient({
             <button
               key={lvl}
               type="button"
+              aria-pressed={levelFilter === lvl}
               className={`${g.chip}${levelFilter === lvl ? ` ${g.chipActive}` : ""}`}
               onClick={() => setLevelFilter(lvl)}
             >

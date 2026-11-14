@@ -5,6 +5,11 @@
   overflow-x: clip;
 }
 
+.page :where(a, button):focus-visible {
+  outline: 2px solid var(--sc-gold, #f2c230);
+  outline-offset: 2px;
+}
+
 /* ---------- hero ---------- */
 .hero {
   position: relative;
@@ -242,7 +247,7 @@
 
 .side {
   position: sticky;
-  top: 16px;
+  top: 74px;
 }
 
 .panel {

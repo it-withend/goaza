@@ -461,15 +461,18 @@ const COUNTRY_MAP: Record<string, CountryKey> = {
   europe: "eu",
   европа: "eu",
   yevropa: "eu",
-  es: "eu",
   eu: "eu",
 };
 
 function resolveCountryKey(country: string): CountryKey | null {
   const clean = country.trim().toLowerCase().replace(/\s+/g, " ");
   if (COUNTRY_MAP[clean]) return COUNTRY_MAP[clean];
+  const words = clean.split(/[\s,()/-]+/).filter(Boolean);
+  for (const w of words) {
+    if (COUNTRY_MAP[w]) return COUNTRY_MAP[w];
+  }
   for (const [k, v] of Object.entries(COUNTRY_MAP)) {
-    if (clean.includes(k)) return v;
+    if (k.length >= 5 && clean.includes(k)) return v;
   }
   return null;
 }
@@ -498,12 +501,7 @@ export function CountryFlag({
       className={className}
       style={{ flexShrink: 0, borderRadius: 3, overflow: "hidden", display: "inline-block" }}
     >
-      <defs>
-        <clipPath id={`fl-${key}-${size}`}>
-          <rect width="24" height="18" rx="2.5" />
-        </clipPath>
-      </defs>
-      <g clipPath={`url(#fl-${key}-${size})`}>
+      <g>
         {key === "us" && (
           <>
             <rect width="24" height="18" fill="#fff" />
@@ -704,7 +702,6 @@ export function CountryFlag({
         )}
         {key === "uz" && (
           <>
-            <rect width="24" height="5.6" fill="#1eb53a" />
             <rect width="24" height="5.6" fill="#0099b5" />
             <rect y="5.6" width="24" height="0.8" fill="#ce1126" />
             <rect y="6.4" width="24" height="5.2" fill="#f8fafc" />
@@ -719,7 +716,7 @@ export function CountryFlag({
           </>
         )}
       </g>
-      <rect width="24" height="18" rx="2.5" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.8" />
+      <rect width="24" height="18" rx="2.5" fill="none" stroke="rgba(128,128,128,0.28)" strokeWidth="0.8" />
     </svg>
   );
 }

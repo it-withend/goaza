@@ -166,7 +166,9 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder={tr("Найти раздел, грант, гайд или вуз…", "Bo'lim, grant, qo'llanma yoki OTM topish…")}
-                aria-activedescendant={filtered[activeIdx] ? `cmd-opt-${activeIdx}` : undefined}
+                aria-activedescendant={
+                  activeIdx < filtered.length + (trimmed && subscribed ? 1 : 0) ? `cmd-opt-${activeIdx}` : undefined
+                }
               />
               <button type="button" className={styles.cmdEsc} onClick={() => setOpen(false)}>
                 ESC

@@ -17,6 +17,11 @@
   overflow-x: clip;
 }
 
+.shell :where(a, button, input, select):focus-visible {
+  outline: 2px solid var(--sc-gold);
+  outline-offset: 2px;
+}
+
 .main {
   min-width: 0;
   display: flex;
@@ -190,7 +195,7 @@
 }
 
 .check:hover {
-  background: rgba(23, 25, 31, 0.04);
+  background: var(--sc-elev);
 }
 
 .check input {
@@ -936,7 +941,7 @@
     align-items: center;
     gap: 8px;
     position: sticky;
-    top: 58px;
+    top: 55px;
     z-index: 20;
     margin: 0 0 12px;
     padding: 8px 10px;
@@ -1012,6 +1017,12 @@
   .cardsList .intlFundStrip {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobileBar {
+    top: 51px;
   }
 }
 

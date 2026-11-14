@@ -177,10 +177,21 @@ export function DashboardClient({
 
   const [visible, setVisible] = useState(FIRST_BATCH);
   useEffect(() => setVisible(FIRST_BATCH), [unis]);
+  const mobileFilterRef = useRef<HTMLButtonElement>(null);
+  const filtersDoneRef = useRef<HTMLButtonElement>(null);
+  const wasFiltersOpen = useRef(false);
   useEffect(() => {
-    if (!filtersOpen) return;
+    if (!filtersOpen) {
+      if (wasFiltersOpen.current) {
+        wasFiltersOpen.current = false;
+        mobileFilterRef.current?.focus();
+      }
+      return;
+    }
+    wasFiltersOpen.current = true;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    filtersDoneRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setFiltersOpen(false);
     };
@@ -316,13 +327,23 @@ export function DashboardClient({
   const cardsClass = view === "grid" ? styles.cardsGrid : styles.cardsList;
 
   const filters = (
-    <aside className={styles.filtersPanel} aria-label={tr("Фильтры", "Filtrlar")}>
+    <aside
+      className={styles.filtersPanel}
+      role={filtersOpen ? "dialog" : undefined}
+      aria-modal={filtersOpen ? true : undefined}
+      aria-label={tr("Фильтры", "Filtrlar")}
+    >
       <div className={styles.filtersHead}>
         <div>
           <h2 className={styles.filtersTitle}>{tr("Подбор вузов", "OTM tanlash")}</h2>
           <p className={styles.hint}>{tr("Фильтры суммируются (И)", "Filtrlar birgalikda ishlaydi (VA)")}</p>
         </div>
-        <button type="button" className={styles.filtersDone} onClick={() => setFiltersOpen(false)}>
+        <button
+          ref={filtersDoneRef}
+          type="button"
+          className={styles.filtersDone}
+          onClick={() => setFiltersOpen(false)}
+        >
           {tr("Готово", "Tayyor")}
         </button>
       </div>
@@ -394,7 +415,7 @@ export function DashboardClient({
         <h4>{tr("Годовой бюджет", "Yillik byudjet")}</h4>
         <div className={styles.rangeRow}>
           <label htmlFor="f-tuition">
-            {tr("Стоимость до", "Narxi gacha")} <span>${money(tuitionMax)}</span>
+            {tr("Стоимость до", "Maks. narxi")} <span>${money(tuitionMax)}</span>
           </label>
           <input
             id="f-tuition"
@@ -414,7 +435,7 @@ export function DashboardClient({
           <h4>{tr("Помощь и шансы", "Yordam va imkoniyatlar")}</h4>
           <div className={styles.rangeRow}>
             <label htmlFor="f-aid">
-              {tr("Помощь от", "Yordam dan")} <span>${money(aidMin)}</span>
+              {tr("Помощь от", "Min. yordam")} <span>${money(aidMin)}</span>
             </label>
             <input
               id="f-aid"
@@ -428,7 +449,7 @@ export function DashboardClient({
           </div>
           <div className={styles.rangeRow}>
             <label htmlFor="f-rate">
-              {tr("Поступление до", "Qabul foizi gacha")} <span>{rateMax}%</span>
+              {tr("Поступление до", "Maks. qabul foizi")} <span>{rateMax}%</span>
             </label>
             <input
               id="f-rate"
@@ -493,7 +514,6 @@ export function DashboardClient({
     <DashboardShell
       accountName={accountName}
       onLogout={() => void logout()}
-      onOpenFilters={() => setFiltersOpen(true)}
     >
       <div className={`${styles.workspace}${filtersOpen ? ` ${styles.filtersDrawerOpen}` : ""}`}>
         <button
@@ -506,7 +526,9 @@ export function DashboardClient({
         <section className={styles.results}>
           <div className={styles.mobileBar}>
             <button
+              ref={mobileFilterRef}
               type="button"
+              aria-expanded={filtersOpen}
               className={styles.mobileFilterBtn}
               onClick={() => setFiltersOpen(true)}
             >
@@ -567,6 +589,7 @@ export function DashboardClient({
             <div className={styles.presets} role="group" aria-label={tr("Быстрые подборки", "Tez tanlovlar")}>
               <button
                 type="button"
+                aria-pressed={noPresetsActive}
                 className={`${styles.presetBtn}${noPresetsActive ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={resetFilters}
               >
@@ -576,6 +599,7 @@ export function DashboardClient({
                 <button
                   key={pr.id}
                   type="button"
+                  aria-pressed={presets.includes(pr.id)}
                   className={`${styles.presetBtn}${presets.includes(pr.id) ? ` ${styles.presetBtnActive}` : ""}`}
                   onClick={() => togglePreset(pr.id)}
                 >
@@ -584,6 +608,7 @@ export function DashboardClient({
               ))}
               <button
                 type="button"
+                aria-pressed={favOnly}
                 className={`${styles.presetBtn}${favOnly ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={() => setFavOnly((v) => !v)}
               >
@@ -647,7 +672,7 @@ export function DashboardClient({
             {favOnly && favSet.size === 0
               ? tr(
                   "В плане пока пусто. Нажмите «В план» на карточке любого вуза, чтобы собрать свой список.",
-                  "Rejada hozircha bo'sh. O'z ro'yxatingizni yig'ish uchun istalgan OTM kartasidagi tugmani bosing.",
+                  "Rejada hozircha bo'sh. O'z ro'yxatingizni yig'ish uchun istalgan OTM kartasidagi «Rejaga» tugmasini bosing.",
                 )
               : tr(
                   "По текущим фильтрам ничего не найдено. Ослабьте один из фильтров.",

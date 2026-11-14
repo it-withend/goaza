@@ -3,6 +3,7 @@ import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { memo } from "react";
 import type { CatalogUni } from "@/lib/catalog";
 import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
+import { langRu } from "@/lib/humanize";
 import { countryName, instLabel } from "@/lib/types";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { CountryFlag, Icon } from "@/components/ui/Icon";
@@ -155,7 +156,7 @@ function UniversityCardImpl({
         <div className={styles.cardFoot}>
           <span className={styles.langNote}>
             <Icon name="languages" size={13} />
-            <span>{u.lang || tr("Язык уточняется", "Til aniqlanmoqda")}</span>
+            <span>{langRu(u.lang, lang) || u.lang || tr("Язык уточняется", "Til aniqlanmoqda")}</span>
           </span>
           <span className={styles.cardCta}>
             <span>{tr("Профиль", "Profil")}</span>

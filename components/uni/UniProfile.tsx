@@ -176,7 +176,7 @@ export function UniProfile({
         <Image className={styles.heroImg} src={photo} alt="" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
         <div className={styles.heroShade} />
         <div className={styles.heroInner}>
-          <nav className={styles.heroNav}>
+          <nav className={styles.heroNav} aria-label={tr("Навигация по вузу", "OTM navigatsiyasi")}>
             <Link href={backHref} className={styles.back}>
               <Icon name="arrow-left" size={15} />
               <span>{backLabel}</span>

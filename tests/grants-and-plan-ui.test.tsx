@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { GrantsCatalogClient } from "@/components/grants/GrantsCatalogClient";
 import { UniPlanButton } from "@/components/uni/UniPlanButton";
+import { CountryFlag } from "@/components/ui/Icon";
 import { getGrants, kindLabel, levelLabel, type GrantKind, type Level } from "@/content/grants";
 import { LIST_KEY } from "@/lib/profile";
 
@@ -62,4 +63,20 @@ it("toggles university in applicant plan list from profile hero button", () => {
 
   fireEvent.click(removeBtn);
   expect(JSON.parse(window.localStorage.getItem(LIST_KEY) || "[]")).toEqual([]);
+});
+
+it("resolves country flags without substring false positives or clipPath id collisions", () => {
+  const { container } = render(
+    <div>
+      <CountryFlag country="Turkish Republic of Northern Cyprus" />
+      <CountryFlag country="USA" />
+      <CountryFlag country="Uzbekistan" />
+    </div>,
+  );
+  expect(container.querySelectorAll("clipPath")).toHaveLength(0);
+  // First svg is fallback globe (no US #1d4487 canton), second is US flag.
+  const svgs = container.querySelectorAll("svg");
+  expect(svgs).toHaveLength(3);
+  expect(svgs[0].innerHTML).not.toContain("#1d4487");
+  expect(svgs[1].innerHTML).toContain("#1d4487");
 });
