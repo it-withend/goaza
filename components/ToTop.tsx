@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTr } from "@/components/i18n/LangProvider";
 
 export function ToTop() {
+  const tr = useTr();
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 420);
@@ -14,7 +16,7 @@ export function ToTop() {
     <button
       type="button"
       className={`to-top${show ? " show" : ""}`}
-      aria-label="Наверх"
+      aria-label={tr("Наверх", "Yuqoriga")}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       ↑

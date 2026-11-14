@@ -2,8 +2,10 @@
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { filterCatalog, PRESETS, type CatalogUni, type PresetId } from "@/lib/catalog";
-import { INST_LABEL, countryRu } from "@/lib/types";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { filterCatalog, PRESETS, presetLabel, type CatalogUni, type PresetId } from "@/lib/catalog";
+import { locale, localizePath } from "@/lib/i18n";
+import { countryName, instLabel } from "@/lib/types";
 import type { computeMeta } from "@/lib/universities";
 import { UniversityCard } from "@/components/UniversityCard";
 import { useApplicant } from "@/lib/use-applicant";
@@ -15,15 +17,6 @@ type Meta = ReturnType<typeof computeMeta>;
 
 const FIRST_BATCH = 24;
 const BATCH = 36;
-
-const SORT_LABELS: Record<string, string> = {
-  grant: "Сначала полные гранты",
-  intl_aid: "Бюджет помощи иностранцам ↓",
-  intl_avg: "Средний грант иностранцам ↓",
-  rate: "По % поступления",
-  tuition: "По стоимости",
-  aid: "По макс. помощи",
-};
 
 function money(n: number) {
   return n.toLocaleString("en-US");
@@ -44,7 +37,21 @@ export function DashboardClient({
   accountName: string;
   initialQuery?: string;
 }) {
+  const lang = useLang();
+  const tr = useTr();
   const router = useRouter();
+
+  const sortLabels: Record<string, string> = useMemo(
+    () => ({
+      grant: tr("Сначала полные гранты", "Avval to'liq grantlar"),
+      intl_aid: tr("Бюджет помощи иностранцам ↓", "Xorijliklarga yordam byudjeti ↓"),
+      intl_avg: tr("Средний грант иностранцам ↓", "Xorijliklarga o'rtacha grant ↓"),
+      rate: tr("По % поступления", "Qabul % bo'yicha"),
+      tuition: tr("По стоимости", "Narxi bo'yicha"),
+      aid: tr("По макс. помощи", "Maks. yordam bo'yicha"),
+    }),
+    [tr],
+  );
   const boot = useMemo(() => new URLSearchParams(initialQuery), [initialQuery]);
 
   const [q, setQ] = useState(() => readParam(boot, "q"));
@@ -114,13 +121,14 @@ export function DashboardClient({
   ]);
 
   useEffect(() => {
-    const next = catalogQuery ? `/dashboard${catalogQuery}` : "/dashboard";
+    const target = catalogQuery ? `/dashboard${catalogQuery}` : "/dashboard";
+    const next = localizePath(lang, target);
     if (typeof window !== "undefined") {
       const current = `${window.location.pathname}${window.location.search}`;
       if (current === next) return;
     }
     window.history.replaceState(window.history.state, "", next);
-  }, [catalogQuery]);
+  }, [catalogQuery, lang]);
 
   const deferredQ = useDeferredValue(q);
   const unis = useMemo(
@@ -188,8 +196,8 @@ export function DashboardClient({
       list.push(u);
       map.set(u.country, list);
     }
-    return [...map.entries()].sort((a, b) => countryRu(a[0]).localeCompare(countryRu(b[0]), "ru"));
-  }, [unis]);
+    return [...map.entries()].sort((a, b) => countryName(a[0], lang).localeCompare(countryName(b[0], lang), locale(lang)));
+  }, [unis, lang]);
 
   function toggleChip(list: string[], value: string, setter: (v: string[]) => void) {
     setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
@@ -197,7 +205,7 @@ export function DashboardClient({
 
   async function logout() {
     await fetch("/api/auth/telegram", { method: "DELETE" });
-    router.replace("/");
+    router.replace(localizePath(lang, "/"));
     router.refresh();
   }
 
@@ -219,56 +227,56 @@ export function DashboardClient({
   }
 
   const activeTokens: { key: string; label: string; clear: () => void }[] = [];
-  if (q.trim()) activeTokens.push({ key: "q", label: `Поиск: ${q.trim()}`, clear: () => setQ("") });
+  if (q.trim()) activeTokens.push({ key: "q", label: `${tr("Поиск:", "Qidiruv:")} ${q.trim()}`, clear: () => setQ("") });
   if (country) {
     activeTokens.push({
       key: "country",
-      label: countryRu(country),
+      label: countryName(country, lang),
       clear: () => setCountry(""),
     });
   }
-  if (grantOnly) activeTokens.push({ key: "grant", label: "Полный грант", clear: () => setGrantOnly(false) });
+  if (grantOnly) activeTokens.push({ key: "grant", label: tr("Полный грант", "To'liq grant"), clear: () => setGrantOnly(false) });
   if (needBlind) activeTokens.push({ key: "nb", label: "Need-blind", clear: () => setNeedBlind(false) });
   if (hasIntlAid) {
     activeTokens.push({
       key: "intlAid",
-      label: "С фондом для иностр.",
+      label: tr("С фондом для иностр.", "Xorijliklar fondi bilan"),
       clear: () => setHasIntlAid(false),
     });
   }
   if (urgentDeadline) {
     activeTokens.push({
       key: "urgent",
-      label: "Дедлайн ≤ 60 дн.",
+      label: tr("Дедлайн ≤ 60 дн.", "Dedlayn ≤ 60 kun"),
       clear: () => setUrgentDeadline(false),
     });
   }
-  if (favOnly) activeTokens.push({ key: "fav", label: "★ Избранное", clear: () => setFavOnly(false) });
+  if (favOnly) activeTokens.push({ key: "fav", label: tr("★ Избранное", "★ Tanlanganlar"), clear: () => setFavOnly(false) });
   if (tuitionMax < meta.tuitionMax) {
     activeTokens.push({
       key: "tuition",
-      label: `Стоимость ≤ $${money(tuitionMax)}`,
+      label: `${tr("Стоимость", "Narx")} ≤ $${money(tuitionMax)}`,
       clear: () => setTuitionMax(meta.tuitionMax),
     });
   }
   if (aidMin > 0) {
     activeTokens.push({
       key: "aid",
-      label: `Помощь ≥ $${money(aidMin)}`,
+      label: `${tr("Помощь", "Yordam")} ≥ $${money(aidMin)}`,
       clear: () => setAidMin(0),
     });
   }
   if (rateMax < 100) {
     activeTokens.push({
       key: "rate",
-      label: `Поступление ≤ ${rateMax}%`,
+      label: `${tr("Поступление", "Qabul")} ≤ ${rateMax}%`,
       clear: () => setRateMax(100),
     });
   }
   for (const key of inst) {
     activeTokens.push({
       key: `inst-${key}`,
-      label: INST_LABEL[key] || key,
+      label: instLabel(key, lang),
       clear: () => setInst((prev) => prev.filter((x) => x !== key)),
     });
   }
@@ -282,7 +290,7 @@ export function DashboardClient({
   if (sort !== "name") {
     activeTokens.push({
       key: "sort",
-      label: `Сорт: ${SORT_LABELS[sort] || sort}`,
+      label: `${tr("Сорт:", "Saralash:")} ${sortLabels[sort] || sort}`,
       clear: () => setSort("name"),
     });
   }
@@ -293,14 +301,14 @@ export function DashboardClient({
   const cardsClass = view === "grid" ? styles.cardsGrid : styles.cardsList;
 
   const filters = (
-    <aside className={styles.filtersPanel} aria-label="Фильтры">
+    <aside className={styles.filtersPanel} aria-label={tr("Фильтры", "Filtrlar")}>
       <div className={styles.filtersHead}>
         <div>
-          <h2 className={styles.filtersTitle}>Подбор вузов</h2>
-          <p className={styles.hint}>Фильтры суммируются (И)</p>
+          <h2 className={styles.filtersTitle}>{tr("Подбор вузов", "OTM tanlash")}</h2>
+          <p className={styles.hint}>{tr("Фильтры суммируются (И)", "Filtrlar birgalikda ishlaydi (VA)")}</p>
         </div>
         <button type="button" className={styles.filtersDone} onClick={() => setFiltersOpen(false)}>
-          Готово
+          {tr("Готово", "Tayyor")}
         </button>
       </div>
 
@@ -308,22 +316,22 @@ export function DashboardClient({
         <span aria-hidden>⌕</span>
         <input
           type="search"
-          placeholder="Вуз, город, грант, направление…"
+          placeholder={tr("Вуз, город, грант, направление…", "OTM, shahar, grant, yo'nalish…")}
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          aria-label="Поиск университетов"
+          aria-label={tr("Поиск университетов", "Universitetlarni qidirish")}
         />
       </div>
 
       <div className={styles.selectWrap}>
         <label className={styles.fieldLabel} htmlFor="country-select">
-          Страна
+          {tr("Страна", "Davlat")}
         </label>
         <select id="country-select" value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option value="">Все страны ({meta.countries.length})</option>
+          <option value="">{tr(`Все страны (${meta.countries.length})`, `Barcha davlatlar (${meta.countries.length})`)}</option>
           {meta.countries.map(([c, n]) => (
             <option key={c} value={c}>
-              {countryRu(c)} ({n})
+              {countryName(c, lang)} ({n})
             </option>
           ))}
         </select>
@@ -331,21 +339,21 @@ export function DashboardClient({
 
       <div className={styles.selectWrap}>
         <label className={styles.fieldLabel} htmlFor="sort-select">
-          Сортировка
+          {tr("Сортировка", "Saralash")}
         </label>
         <select id="sort-select" value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="name">По алфавиту и странам</option>
-          <option value="intl_aid">По бюджету помощи иностранцам ↓</option>
-          <option value="intl_avg">По среднему гранту иностранцам ↓</option>
-          <option value="grant">Сначала полные гранты</option>
-          <option value="rate">По % поступления ↑</option>
-          <option value="tuition">По стоимости ↑</option>
-          <option value="aid">По макс. помощи ↓</option>
+          <option value="name">{tr("По алфавиту и странам", "Alifbo va davlatlar bo'yicha")}</option>
+          <option value="intl_aid">{tr("По бюджету помощи иностранцам ↓", "Xorijliklarga yordam byudjeti ↓")}</option>
+          <option value="intl_avg">{tr("По среднему гранту иностранцам ↓", "Xorijliklarga o'rtacha grant ↓")}</option>
+          <option value="grant">{tr("Сначала полные гранты", "Avval to'liq grantlar")}</option>
+          <option value="rate">{tr("По % поступления ↑", "Qabul % bo'yicha ↑")}</option>
+          <option value="tuition">{tr("По стоимости ↑", "Narxi bo'yicha ↑")}</option>
+          <option value="aid">{tr("По макс. помощи ↓", "Maks. yordam bo'yicha ↓")}</option>
         </select>
       </div>
 
       <div className={styles.fBlock}>
-        <h4>Что для вас важно</h4>
+        <h4>{tr("Что для вас важно", "Siz uchun nima muhim")}</h4>
         <div className={styles.presetChips}>
           {PRESETS.map((pr) => (
             <button
@@ -354,24 +362,24 @@ export function DashboardClient({
               aria-pressed={presets.includes(pr.id)}
               onClick={() => togglePreset(pr.id)}
             >
-              {pr.label}
+              {presetLabel(pr, lang)}
             </button>
           ))}
         </div>
         <label className={styles.check}>
           <input type="checkbox" checked={favOnly} onChange={(e) => setFavOnly(e.target.checked)} />
-          <span>Только мой план</span>
+          <span>{tr("Только мой план", "Faqat mening rejam")}</span>
           <em className={styles.n}>{favSet.size}</em>
         </label>
       </div>
 
       <details className={styles.advanced}>
-        <summary>Точные фильтры</summary>
+        <summary>{tr("Точные фильтры", "Aniq filtrlar")}</summary>
       <div className={styles.fBlock}>
-          <h4>Бюджет и шансы</h4>
+          <h4>{tr("Бюджет и шансы", "Byudjet va imkoniyatlar")}</h4>
           <div className={styles.rangeRow}>
             <label>
-              Стоимость до <span>${money(tuitionMax)}</span>
+              {tr("Стоимость до", "Narxi gacha")} <span>${money(tuitionMax)}</span>
             </label>
             <input
               type="range"
@@ -384,7 +392,7 @@ export function DashboardClient({
           </div>
           <div className={styles.rangeRow}>
             <label>
-              Помощь от <span>${money(aidMin)}</span>
+              {tr("Помощь от", "Yordam dan")} <span>${money(aidMin)}</span>
             </label>
             <input
               type="range"
@@ -397,7 +405,7 @@ export function DashboardClient({
           </div>
           <div className={styles.rangeRow}>
             <label>
-              Поступление до <span>{rateMax}%</span>
+              {tr("Поступление до", "Qabul foizi gacha")} <span>{rateMax}%</span>
             </label>
             <input
               type="range"
@@ -411,7 +419,7 @@ export function DashboardClient({
         </div>
   
         <div className={styles.fBlock}>
-          <h4>Тип вуза</h4>
+          <h4>{tr("Тип вуза", "OTM turi")}</h4>
           <div className={styles.chips}>
             {meta.inst.map(([key, n]) => (
               <label className={styles.chip} key={key}>
@@ -420,7 +428,7 @@ export function DashboardClient({
                   checked={inst.includes(key)}
                   onChange={() => toggleChip(inst, key, setInst)}
                 />
-                {INST_LABEL[key] || key}
+                {instLabel(key, lang)}
                 <span className={styles.n}>{n}</span>
               </label>
             ))}
@@ -428,7 +436,7 @@ export function DashboardClient({
         </div>
   
         <div className={styles.fBlock}>
-          <h4>Тип помощи</h4>
+          <h4>{tr("Тип помощи", "Yordam turi")}</h4>
           <div className={styles.chips}>
             {meta.aidTypes.slice(0, 10).map(([key, n]) => (
               <label className={styles.chip} key={key}>
@@ -446,7 +454,7 @@ export function DashboardClient({
       </details>
 
       <button type="button" className={styles.resetBtn} onClick={resetFilters}>
-        Сбросить все фильтры
+        {tr("Сбросить все фильтры", "Barcha filtrlarni tozalash")}
       </button>
     </aside>
   );
@@ -461,40 +469,40 @@ export function DashboardClient({
         <button
           type="button"
           className={styles.filtersDrawerBackdrop}
-          aria-label="Закрыть фильтры"
+          aria-label={tr("Закрыть фильтры", "Filtrlarni yopish")}
           onClick={() => setFiltersOpen(false)}
         />
         {filters}
         <section className={styles.results} aria-live="polite">
           <div className={styles.kpiStrip}>
             <div className={styles.kpiTile}>
-              <small>В выдаче</small>
+              <small>{tr("В выдаче", "Natijada")}</small>
               <strong>
                 {loading ? "…" : unis.length} <span>/ {meta.total}</span>
               </strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>Полные гранты</small>
+              <small>{tr("Полные гранты", "To'liq grantlar")}</small>
               <strong>{filteredGrants}</strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>С фондом иностр.</small>
+              <small>{tr("С фондом иностр.", "Xorijliklar fondi bilan")}</small>
               <strong>{intlFundCount}</strong>
             </div>
             <div className={styles.kpiTile}>
-              <small>Ваш шорт-лист</small>
+              <small>{tr("Ваш шорт-лист", "Sizning ro'yxatingiz")}</small>
               <strong>★ {favSet.size}</strong>
             </div>
           </div>
 
           <div className={styles.toolbar}>
-            <div className={styles.presets} role="group" aria-label="Быстрые подборки">
+            <div className={styles.presets} role="group" aria-label={tr("Быстрые подборки", "Tez tanlovlar")}>
               <button
                 type="button"
                 className={`${styles.presetBtn}${noPresetsActive ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={resetFilters}
               >
-                Все вузы
+                {tr("Все вузы", "Barcha OTMlar")}
               </button>
               {PRESETS.map((pr) => (
                 <button
@@ -503,7 +511,7 @@ export function DashboardClient({
                   className={`${styles.presetBtn}${presets.includes(pr.id) ? ` ${styles.presetBtnActive}` : ""}`}
                   onClick={() => togglePreset(pr.id)}
                 >
-                  {pr.label}
+                  {presetLabel(pr, lang)}
                 </button>
               ))}
               <button
@@ -511,30 +519,30 @@ export function DashboardClient({
                 className={`${styles.presetBtn}${favOnly ? ` ${styles.presetBtnActive}` : ""}`}
                 onClick={() => setFavOnly((v) => !v)}
               >
-                Мой план ({favSet.size})
+                {tr("Мой план", "Mening rejam")} ({favSet.size})
               </button>
             </div>
 
-            <div className={styles.viewToggle} role="group" aria-label="Вид списка">
+            <div className={styles.viewToggle} role="group" aria-label={tr("Вид списка", "Ro'yxat ko'rinishi")}>
               <button
                 type="button"
                 aria-pressed={view === "grid"}
                 onClick={() => setView("grid")}
               >
-                Сетка
+                {tr("Сетка", "Katak")}
               </button>
               <button
                 type="button"
                 aria-pressed={view === "list"}
                 onClick={() => setView("list")}
               >
-                Список
+                {tr("Список", "Ro'yxat")}
               </button>
             </div>
           </div>
 
           {activeTokens.length ? (
-            <div className={styles.tokens} aria-label="Активные фильтры">
+            <div className={styles.tokens} aria-label={tr("Активные фильтры", "Faol filtrlar")}>
               {activeTokens.map((token) => (
                 <button key={token.key} type="button" className={styles.token} onClick={token.clear}>
                   {token.label} ×
@@ -542,35 +550,41 @@ export function DashboardClient({
               ))}
               {activeTokens.length > 1 ? (
                 <button type="button" className={styles.tokenClearAll} onClick={resetFilters}>
-                  Сбросить всё
+                  {tr("Сбросить всё", "Hammasini tozalash")}
                 </button>
               ) : null}
             </div>
           ) : null}
 
-          <nav className={styles.countryNav} aria-label="Страны">
+          <nav className={styles.countryNav} aria-label={tr("Страны", "Davlatlar")}>
             <button type="button" aria-pressed={!country} onClick={() => setCountry("")}>
-              Все <span className={styles.n}>{meta.total}</span>
+              {tr("Все", "Hammasi")} <span className={styles.n}>{meta.total}</span>
             </button>
             {meta.countries.map(([c, n]) => (
               <button type="button" key={c} aria-pressed={country === c} onClick={() => setCountry(c)}>
-                {countryRu(c)} <span className={styles.n}>{n}</span>
+                {countryName(c, lang)} <span className={styles.n}>{n}</span>
               </button>
             ))}
           </nav>
 
           <div className={`${styles.empty}${unis.length === 0 ? ` ${styles.emptyShow}` : ""}`}>
             {favOnly && favSet.size === 0
-              ? "В избранном пока пусто. Нажмите ★ на карточке любого вуза, чтобы собрать свой список."
-              : "По текущим фильтрам ничего не найдено. Ослабьте один из фильтров."}
+              ? tr(
+                  "В избранном пока пусто. Нажмите ★ на карточке любого вуза, чтобы собрать свой список.",
+                  "Tanlanganlar hozircha bo'sh. O'z ro'yxatingizni yig'ish uchun istalgan OTM kartasidagi tugmani bosing.",
+                )
+              : tr(
+                  "По текущим фильтрам ничего не найдено. Ослабьте один из фильтров.",
+                  "Joriy filtrlar bo'yicha hech narsa topilmadi. Filtrlardan birini yumshating.",
+                )}
           </div>
 
           {sort !== "name" ? (
             unis.length > 0 ? (
               <section className={styles.countrySection}>
                 <div className={styles.sectionHeader}>
-                  <h2>{SORT_LABELS[sort] || "Результаты"}</h2>
-                  <span>{unis.length} вузов</span>
+                  <h2>{sortLabels[sort] || tr("Результаты", "Natijalar")}</h2>
+                  <span>{tr(`${unis.length} вузов`, `${unis.length} ta OTM`)}</span>
                 </div>
                 <div className={cardsClass}>
                   {unis.slice(0, visible).map((u, index) => (
@@ -599,7 +613,7 @@ export function DashboardClient({
                 return (
                   <section className={styles.countrySection} key={c} id={`sec-${c}`}>
                     <div className={styles.sectionHeader}>
-                      <h2>{countryRu(c)}</h2>
+                      <h2>{countryName(c, lang)}</h2>
                       <span>{list.length}</span>
                     </div>
                     <div className={cardsClass}>
@@ -623,7 +637,7 @@ export function DashboardClient({
           {visible < unis.length ? (
             <div ref={sentinel} className={styles.loadMore}>
               <button type="button" onClick={() => setVisible((v) => Math.min(v + BATCH, unis.length))}>
-                Показать ещё · осталось {unis.length - visible}
+                {tr(`Показать ещё · осталось ${unis.length - visible}`, `Yana ko'rsatish · qoldi ${unis.length - visible}`)}
               </button>
             </div>
           ) : null}

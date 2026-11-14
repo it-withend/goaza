@@ -1,5 +1,22 @@
+import type { Lang } from "@/lib/i18n";
 import merit103Raw from "@/lib/merit-scholarships-103.json";
 import usCssAid81Raw from "@/lib/us-css-aid-81.json";
+import {
+  AFFORDABLE_EU_UNIS_UZ,
+  BUDGET_TRACKS_UZ,
+  CANADA_PLAYBOOK_UZ,
+  COUNTRY_PORTALS_UZ,
+  DOC_CHECKLIST_UZ,
+  ESSAY_26_MISTAKES_UZ,
+  ESSAY_PLAYBOOK_UZ,
+  FULL_RIDE_TSVIRKKOO_UZ,
+  GOV_SCHOLARSHIPS_UZ,
+  INTERNAL_UNI_SCHOLARSHIPS_UZ,
+  OFFICER_INSIGHTS_UZ,
+  SHORTLIST_FORMULA_UZ,
+  TIMELINE_2_YEARS_UZ,
+  YALE_ESSAY_CASES_UZ,
+} from "./admissions-knowledge.uz";
 
 export interface BudgetTrack {
   id: string;
@@ -861,3 +878,40 @@ export const TIMELINE_2_YEARS: TimelinePhase[] = [
     ],
   },
 ];
+
+export function getAdmissionsKnowledge(lang: Lang = "ru") {
+  if (lang === "uz") {
+    return {
+      shortlistFormula: SHORTLIST_FORMULA_UZ,
+      budgetTracks: BUDGET_TRACKS_UZ,
+      govScholarships: GOV_SCHOLARSHIPS_UZ,
+      internalUniScholarships: INTERNAL_UNI_SCHOLARSHIPS_UZ,
+      affordableEuUnis: AFFORDABLE_EU_UNIS_UZ,
+      fullRideList: FULL_RIDE_TSVIRKKOO_UZ,
+      docChecklist: DOC_CHECKLIST_UZ,
+      countryPortals: COUNTRY_PORTALS_UZ,
+      essayPlaybook: ESSAY_PLAYBOOK_UZ,
+      essayMistakes: ESSAY_26_MISTAKES_UZ,
+      officerInsights: OFFICER_INSIGHTS_UZ,
+      yaleEssayCases: YALE_ESSAY_CASES_UZ,
+      canadaPlaybook: CANADA_PLAYBOOK_UZ,
+      timeline2Years: TIMELINE_2_YEARS_UZ,
+    };
+  }
+  return {
+    shortlistFormula: SHORTLIST_FORMULA,
+    budgetTracks: BUDGET_TRACKS,
+    govScholarships: GOV_SCHOLARSHIPS,
+    internalUniScholarships: INTERNAL_UNI_SCHOLARSHIPS,
+    affordableEuUnis: AFFORDABLE_EU_UNIS,
+    fullRideList: FULL_RIDE_TSVIRKKOO,
+    docChecklist: DOC_CHECKLIST,
+    countryPortals: COUNTRY_PORTALS,
+    essayPlaybook: ESSAY_PLAYBOOK,
+    essayMistakes: ESSAY_26_MISTAKES,
+    officerInsights: OFFICER_INSIGHTS,
+    yaleEssayCases: YALE_ESSAY_CASES,
+    canadaPlaybook: CANADA_PLAYBOOK,
+    timeline2Years: TIMELINE_2_YEARS,
+  };
+}

@@ -15,7 +15,6 @@ export function DashboardShell({
   children: ReactNode;
   onLogout: () => void;
   onOpenFilters?: () => void;
-  activeSection?: "catalog" | "guide";
 }) {
   return (
     <div className={styles.shell}>

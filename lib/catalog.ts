@@ -37,14 +37,18 @@ export type CatalogUni = {
 export type PresetId = "full_grant" | "free_tuition" | "no_sat" | "need_blind" | "can_apply" | "under_10k";
 
 /** Plain-language filters shown as chips in the catalog. */
-export const PRESETS: { id: PresetId; label: string }[] = [
-  { id: "full_grant", label: "Полный грант иностранцам" },
-  { id: "free_tuition", label: "Бесплатное обучение" },
-  { id: "no_sat", label: "Без SAT" },
-  { id: "need_blind", label: "Need-blind" },
-  { id: "can_apply", label: "Успею подать" },
-  { id: "under_10k", label: "До $10 000 в год" },
+export const PRESETS: { id: PresetId; label: string; labelUz: string }[] = [
+  { id: "full_grant", label: "Полный грант иностранцам", labelUz: "Chet elliklarga to'liq grant" },
+  { id: "free_tuition", label: "Бесплатное обучение", labelUz: "Bepul ta'lim" },
+  { id: "no_sat", label: "Без SAT", labelUz: "SAT siz" },
+  { id: "need_blind", label: "Need-blind", labelUz: "Need-blind" },
+  { id: "can_apply", label: "Успею подать", labelUz: "Topshirishga ulguraman" },
+  { id: "under_10k", label: "До $10 000 в год", labelUz: "Yiliga $10 000 gacha" },
 ];
+
+export function presetLabel(pr: { label: string; labelUz: string }, lang: "ru" | "uz"): string {
+  return lang === "uz" ? pr.labelUz : pr.label;
+}
 
 const NO_SAT = /optional|не требуется|not required|test[- ]?blind|не нужен/i;
 

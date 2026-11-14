@@ -4,25 +4,34 @@ import { GateCta } from "@/components/gate/GateCta";
 import { SitePage } from "@/components/site/SitePage";
 import styles from "@/components/gate/gate.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { langOf, localizePath, trFor } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
-import { countryRu } from "@/lib/types";
+import { countryName } from "@/lib/types";
 import { fetchUniversityDirectory, type UniDirectoryEntry } from "@/lib/universities";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Каталог университетов за границей по странам",
-  description:
-    "Список университетов для международных студентов по странам: США, Великобритания, Европа, Турция, Корея и другие. Где есть полный грант — отмечено.",
-  alternates: { canonical: "/unis" },
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const lang = langOf((await params).lang);
+  const tr = trFor(lang);
+  return {
+    title: tr("Каталог университетов за границей по странам", "Davlatlar bo'yicha xorijiy universitetlar katalogi"),
+    description: tr(
+      "Список университетов для международных студентов по странам: США, Великобритания, Европа, Турция, Корея и другие. Где есть полный грант — отмечено.",
+      "Xalqaro talabalar uchun davlatlar bo'yicha universitetlar ro'yxati: AQSh, Buyuk Britaniya, Yevropa, Turkiya, Koreya va boshqalar. To'liq grant bor joylar belgilangan.",
+    ),
+    alternates: { canonical: localizePath(lang, "/unis") },
+    robots: { index: true, follow: true },
+  };
+}
 
 function countryAnchor(country: string) {
   return `c-${country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 }
 
-export default async function UnisIndexPage() {
+export default async function UnisIndexPage({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = langOf((await params).lang);
+  const tr = trFor(lang);
   const all = await fetchUniversityDirectory().catch(() => [] as UniDirectoryEntry[]);
   const byCountry = new Map<string, UniDirectoryEntry[]>();
   for (const u of all) {
@@ -36,8 +45,8 @@ export default async function UnisIndexPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: `Каталог университетов · ${SITE_NAME}`,
-    url: `${SITE_URL}/unis`,
+    name: `${tr("Каталог университетов", "Universitetlar katalogi")} · ${SITE_NAME}`,
+    url: `${SITE_URL}${localizePath(lang, "/unis")}`,
     numberOfItems: all.length,
   };
 
@@ -47,22 +56,29 @@ export default async function UnisIndexPage() {
       <SitePage wide>
         <div>
           <section className={styles.hero}>
-            <p className={styles.eyebrow}>Атлас Studyaza</p>
-            <h1>{all.length} университетов в {groups.length} странах</h1>
+            <p className={styles.eyebrow}>{tr("Атлас Studyaza", "Studyaza Atlasi")}</p>
+            <h1>
+              {tr(
+                `${all.length} университетов в ${groups.length} странах`,
+                `${groups.length} davlatda ${all.length} ta universitet`,
+              )}
+            </h1>
             <p className={styles.copy}>
-              {grants} из них дают полный грант иностранным студентам. Ниже — все вузы по странам.
-              Цены, шансы и сроки каждого вуза открыты всем. Фильтры по бюджету и полный список грантов — в атласе после бесплатной подписки на @studyaza.
+              {tr(
+                `${grants} из них дают полный грант иностранным студентам. Ниже — все вузы по странам. Цены, шансы и сроки каждого вуза открыты всем. Фильтры по бюджету и полный список грантов — в атласе после бесплатной подписки на @studyaza.`,
+                `Ulardan ${grants} tasi chet ellik talabalarga to'liq grant beradi. Quyida — davlatlar bo'yicha barcha OTMlar. Har bir OTM narxi, imkoniyatlari va muddatlari hamma uchun ochiq. Byudjet bo'yicha filtrlar va grantlarning to'liq ro'yxati — @studyaza kanaliga bepul obunadan so'ng atlasda.`,
+              )}
             </p>
             <div className={styles.heroCta}>
               <GateCta
                 botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "goazabot"}
-                label="Открыть атлас с фильтрами"
+                label={tr("Открыть атлас с фильтрами", "Filtrli atlasni ochish")}
               />
             </div>
-            <nav className={styles.countryNav} aria-label="Страны">
+            <nav className={styles.countryNav} aria-label={tr("Страны", "Davlatlar")}>
               {groups.map(([country, list]) => (
                 <a key={country} href={`#${countryAnchor(country)}`}>
-                  {countryRu(country)} <span>{list.length}</span>
+                  {countryName(country, lang)} <span>{list.length}</span>
                 </a>
               ))}
             </nav>
@@ -71,13 +87,13 @@ export default async function UnisIndexPage() {
           {groups.map(([country, list]) => (
             <section key={country} id={countryAnchor(country)} className={styles.countryBlock}>
               <h2>
-                {countryRu(country)} <span>{list.length}</span>
+                {countryName(country, lang)} <span>{list.length}</span>
               </h2>
               <ul className={styles.uniList}>
                 {list.map((u) => (
                   <li key={u.slug}>
                     <Link href={`/unis/${u.slug}`}>{u.name}</Link>
-                    {u.full_grant ? <span className={styles.dot} title="Полный грант" /> : null}
+                    {u.full_grant ? <span className={styles.dot} title={tr("Полный грант", "To'liq grant")} /> : null}
                   </li>
                 ))}
               </ul>

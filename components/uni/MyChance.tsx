@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "@/components/i18n/Link";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
 import { useEffect, useState } from "react";
 import type { Match } from "@/lib/matcher";
 import { useApplicant } from "@/lib/use-applicant";
@@ -8,12 +9,18 @@ import s from "./my-chance.module.css";
 
 type Result = Match | { slug: string; name: string; excluded: string };
 
-const BASKET_RU = { dream: "мечта", target: "реальный вариант", safety: "запасной вариант" } as const;
-
 /** Personal chance for one university, from the profile saved in the browser. */
 export function MyChance({ slug, name }: { slug: string; name: string }) {
+  const lang = useLang();
+  const tr = useTr();
   const { ready, profile, has, toggle } = useApplicant();
   const [res, setRes] = useState<Result | null>(null);
+
+  const basketLabel = {
+    dream: tr("мечта", "orzu"),
+    target: tr("реальный вариант", "haqiqiy variant"),
+    safety: tr("запасной вариант", "zaxira variant"),
+  } as const;
 
   useEffect(() => {
     if (!ready || !profile) return;
@@ -21,7 +28,7 @@ export function MyChance({ slug, name }: { slug: string; name: string }) {
     fetch("/api/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ profile, slugs: [slug] }),
+      body: JSON.stringify({ profile, slugs: [slug], lang }),
     })
       .then((r) => (r.ok ? r.json() : null))
       .then((j: { matches: Result[] } | null) => alive && setRes(j?.matches?.[0] ?? null))
@@ -29,24 +36,29 @@ export function MyChance({ slug, name }: { slug: string; name: string }) {
     return () => {
       alive = false;
     };
-  }, [ready, profile, slug]);
+  }, [ready, profile, slug, lang]);
 
   if (!ready) return <div className={s.box} aria-busy="true" />;
 
   const inPlan = has(slug);
   const button = (
     <button type="button" className={inPlan ? s.inPlan : s.add} onClick={() => toggle(slug)}>
-      {inPlan ? "В моём плане — убрать" : "Добавить в мой план"}
+      {inPlan ? tr("В моём плане — убрать", "Rejamda — olib tashlash") : tr("Добавить в мой план", "Rejamga qo'shish")}
     </button>
   );
 
   if (!profile) {
     return (
       <div className={s.box}>
-        <small>Ваш шанс</small>
-        <p>Ответьте на 6 вопросов — и увидите свой шанс поступить в {name} с учётом бюджета семьи.</p>
+        <small>{tr("Ваш шанс", "Sizning imkoniyatingiz")}</small>
+        <p>
+          {tr(
+            `Ответьте на 6 вопросов — и увидите свой шанс поступить в ${name} с учётом бюджета семьи.`,
+            `6 ta savolga javob bering — oilangiz byudjetini hisobga olgan holda ${name} ga kirish imkoniyatingizni ko'rasiz.`,
+          )}
+        </p>
         <Link href="/plan/start" className={s.link}>
-          Заполнить профиль
+          {tr("Заполнить профиль", "Profilni to'ldirish")}
         </Link>
         {button}
       </div>
@@ -56,8 +68,8 @@ export function MyChance({ slug, name }: { slug: string; name: string }) {
   if (res && "excluded" in res) {
     return (
       <div className={s.box}>
-        <small>Ваш шанс</small>
-        <strong className={s.no}>Не подходит</strong>
+        <small>{tr("Ваш шанс", "Sizning imkoniyatingiz")}</small>
+        <strong className={s.no}>{tr("Не подходит", "Mos kelmaydi")}</strong>
         <p>{res.excluded}</p>
         {button}
       </div>
@@ -66,12 +78,12 @@ export function MyChance({ slug, name }: { slug: string; name: string }) {
 
   return (
     <div className={s.box}>
-      <small>Ваш шанс</small>
+      <small>{tr("Ваш шанс", "Sizning imkoniyatingiz")}</small>
       {res ? (
         <>
           <strong className={s[res.basket]}>≈ {res.chance}%</strong>
           <p>
-            Для вас это {BASKET_RU[res.basket]}.{res.reasons.length ? ` ${res.reasons.join(". ")}.` : ""}
+            {tr("Для вас это", "Siz uchun bu")} {basketLabel[res.basket]}.{res.reasons.length ? ` ${res.reasons.join(". ")}.` : ""}
           </p>
         </>
       ) : (
@@ -79,7 +91,7 @@ export function MyChance({ slug, name }: { slug: string; name: string }) {
       )}
       {button}
       <Link href="/plan" className={s.link}>
-        Открыть мой план
+        {tr("Открыть мой план", "Rejamni ochish")}
       </Link>
     </div>
   );

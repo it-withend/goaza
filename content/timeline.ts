@@ -24,6 +24,21 @@ export const PROGRAM_WINDOWS: Window[] = [
 
 export type GradeStep = { grade: string; focus: string; items: string[] };
 
+import type { Lang } from "@/lib/i18n";
+import { BY_GRADE_UZ, PROGRAM_WINDOWS_UZ, US_ROUNDS_UZ } from "./timeline.uz";
+
+export function getUsRounds(lang: Lang): Window[] {
+  return lang === "uz" ? US_ROUNDS_UZ : US_ROUNDS;
+}
+
+export function getProgramWindows(lang: Lang): Window[] {
+  return lang === "uz" ? PROGRAM_WINDOWS_UZ : PROGRAM_WINDOWS;
+}
+
+export function getByGrade(lang: Lang): GradeStep[] {
+  return lang === "uz" ? BY_GRADE_UZ : BY_GRADE;
+}
+
 export const BY_GRADE: GradeStep[] = [
   {
     grade: "9 класс",

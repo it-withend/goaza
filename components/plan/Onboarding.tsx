@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "@/components/i18n/Link";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { localizePath } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { EnglishTest, Grades } from "@/lib/matcher";
@@ -10,33 +12,35 @@ import s from "./onboarding.module.css";
 
 type Country = { value: string; label: string; count: number };
 
-const GRADES: { v: Grade; l: string }[] = [
-  { v: "9", l: "9 класс" },
-  { v: "10", l: "10 класс" },
-  { v: "11", l: "11 класс" },
-  { v: "12", l: "12 класс / выпускной" },
-  { v: "gap", l: "Уже окончил(а) школу" },
-];
-
-const BUDGETS = [
-  { v: 0, l: "Ничего — нужен полный грант" },
-  { v: 5000, l: "До $5 000 в год" },
-  { v: 15000, l: "До $15 000 в год" },
-  { v: 30000, l: "До $30 000 в год" },
-  { v: 90000, l: "Больше $30 000" },
-];
-
-const SCHOOL: { v: Grades; l: string }[] = [
-  { v: "excellent", l: "Почти все пятёрки" },
-  { v: "good", l: "В основном пятёрки и четвёрки" },
-  { v: "average", l: "Много четвёрок и троек" },
-];
-
 const TOTAL = 6;
 
 export function Onboarding({ countries }: { countries: Country[] }) {
+  const lang = useLang();
+  const tr = useTr();
   const router = useRouter();
   const { ready, profile, setProfile, addMany } = useApplicant();
+
+  const gradeOpts: { v: Grade; l: string }[] = [
+    { v: "9", l: tr("9 класс", "9-sinf") },
+    { v: "10", l: tr("10 класс", "10-sinf") },
+    { v: "11", l: tr("11 класс", "11-sinf") },
+    { v: "12", l: tr("12 класс / выпускной", "12-sinf / bitiruvchi") },
+    { v: "gap", l: tr("Уже окончил(а) школу", "Maktabni allaqachon tugatganman") },
+  ];
+
+  const budgetOpts = [
+    { v: 0, l: tr("Ничего — нужен полный грант", "Hech narsa — to'liq grant kerak") },
+    { v: 5000, l: tr("До $5 000 в год", "Yiliga $5 000 gacha") },
+    { v: 15000, l: tr("До $15 000 в год", "Yiliga $15 000 gacha") },
+    { v: 30000, l: tr("До $30 000 в год", "Yiliga $30 000 gacha") },
+    { v: 90000, l: tr("Больше $30 000", "$30 000 dan ortiq") },
+  ];
+
+  const schoolOpts: { v: Grades; l: string }[] = [
+    { v: "excellent", l: tr("Почти все пятёрки", "Deyarli barcha baholar a'lo") },
+    { v: "good", l: tr("В основном пятёрки и четвёрки", "Asosan 4 va 5 baholar") },
+    { v: "average", l: tr("Много четвёрок и троек", "Ko'proq 3 va 4 baholar") },
+  ];
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [grade, setGrade] = useState<Grade | null>(null);
@@ -96,30 +100,41 @@ export function Onboarding({ countries }: { countries: Country[] }) {
           sat: next.sat,
           grades,
           major: next.major,
+          lang,
         }),
       });
-      if (res.ok) {
-        const j = (await res.json()) as Record<"dream" | "target" | "safety", { slug: string }[]>;
-        addMany([...j.dream, ...j.target, ...j.safety].map((m) => m.slug));
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
       }
+      const j = (await res.json()) as Record<"dream" | "target" | "safety", { slug: string }[]>;
+      addMany([...j.dream, ...j.target, ...j.safety].map((m) => m.slug));
+      setBusy(false);
+      router.push(localizePath(lang, "/plan"));
     } catch {
-      setError("Профиль сохранён, но подобрать вузы не удалось — добавьте их из каталога.");
+      setError(
+        tr(
+          "Профиль сохранён, но подобрать вузы сейчас не удалось — попробуйте ещё раз или откройте план и добавьте вузы из каталога.",
+          "Profil saqlandi, lekin hozir universitetlarni saralab bo'lmadi — qayta urinib ko'ring yoki rejani ochib katalogdan qo'shing.",
+        ),
+      );
+      setBusy(false);
     }
-    setBusy(false);
-    router.push("/plan");
   }
 
   return (
     <div className={s.wrap}>
       {ready && profile ? (
         <p className={s.saved}>
-          Ваш план уже сохранён в этом браузере — можно поправить ответы ниже или{" "}
-          <Link href="/plan">открыть мой план</Link>.
+          {tr(
+            "Ваш план уже сохранён в этом браузере — можно поправить ответы ниже или ",
+            "Rejangiz allaqachon ushbu brauzerda saqlangan — quyidagi javoblarni tahrirlashingiz yoki ",
+          )}
+          <Link href="/plan">{tr("открыть мой план", "rejamni ochishingiz mumkin")}</Link>.
         </p>
       ) : null}
       <div className={s.top}>
         <span>
-          Шаг {step} из {TOTAL}
+          {tr(`Шаг ${step} из ${TOTAL}`, `${TOTAL} tadan ${step}-qadam`)}
         </span>
         <div className={s.bar} aria-hidden>
           <i style={{ width: `${(step / TOTAL) * 100}%` }} />
@@ -136,14 +151,14 @@ export function Onboarding({ countries }: { countries: Country[] }) {
       >
         {step === 1 ? (
           <fieldset>
-            <legend>Давайте знакомиться</legend>
+            <legend>{tr("Давайте знакомиться", "Tanishib olaylik")}</legend>
             <label className={s.field}>
-              <span>Как вас зовут? (необязательно)</span>
+              <span>{tr("Как вас зовут? (необязательно)", "Ismingiz nima? (ixtiyoriy)")}</span>
               <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} autoComplete="given-name" />
             </label>
-            <p className={s.q}>В каком вы классе?</p>
+            <p className={s.q}>{tr("В каком вы классе?", "Nechanchi sinfda o'qiysiz?")}</p>
             <div className={s.options}>
-              {GRADES.map((g) => (
+              {gradeOpts.map((g) => (
                 <label key={g.v} className={s.option}>
                   <input type="radio" name="grade" checked={grade === g.v} onChange={() => setGrade(g.v)} />
                   <span>{g.l}</span>
@@ -155,10 +170,15 @@ export function Onboarding({ countries }: { countries: Country[] }) {
 
         {step === 2 ? (
           <fieldset>
-            <legend>Сколько семья может платить в год за учёбу и жильё?</legend>
-            <p className={s.help}>Честный ответ важнее всего: от него зависит, какие вузы вообще имеет смысл рассматривать.</p>
+            <legend>{tr("Сколько семья может платить в год за учёбу и жильё?", "Oilangiz o'qish va yashash uchun yiliga qancha to'lay oladi?")}</legend>
+            <p className={s.help}>
+              {tr(
+                "Честный ответ важнее всего: от него зависит, какие вузы вообще имеет смысл рассматривать.",
+                "Halol javob eng muhimi: qaysi universitetlarni ko'rib chiqish ma'qulligi shunga bog'liq.",
+              )}
+            </p>
             <div className={s.options}>
-              {BUDGETS.map((b) => (
+              {budgetOpts.map((b) => (
                 <label key={b.v} className={s.option}>
                   <input type="radio" name="budget" checked={budget === b.v} onChange={() => setBudget(b.v)} />
                   <span>{b.l}</span>
@@ -170,17 +190,17 @@ export function Onboarding({ countries }: { countries: Country[] }) {
 
         {step === 3 ? (
           <fieldset>
-            <legend>Английский</legend>
+            <legend>{tr("Английский", "Ingliz tili")}</legend>
             <div className={s.row}>
-              <select value={test} onChange={(e) => setTest(e.target.value as EnglishTest)} aria-label="Тест по английскому">
+              <select value={test} onChange={(e) => setTest(e.target.value as EnglishTest)} aria-label={tr("Тест по английскому", "Ingliz tili testi")}>
                 <option value="ielts">IELTS</option>
                 <option value="toefl">TOEFL iBT</option>
                 <option value="duolingo">Duolingo</option>
-                <option value="none">Ещё не сдавал(а)</option>
+                <option value="none">{tr("Ещё не сдавал(а)", "Hali topshirmaganman")}</option>
               </select>
               {test !== "none" ? (
                 <label className={s.field}>
-                  <span>Балл</span>
+                  <span>{tr("Балл", "Ball")}</span>
                   <input
                     inputMode="decimal"
                     value={score}
@@ -190,9 +210,9 @@ export function Onboarding({ countries }: { countries: Country[] }) {
                 </label>
               ) : null}
             </div>
-            <p className={s.q}>Как вы учитесь?</p>
+            <p className={s.q}>{tr("Как вы учитесь?", "Maktabda qanday o'qiysiz?")}</p>
             <div className={s.options}>
-              {SCHOOL.map((o) => (
+              {schoolOpts.map((o) => (
                 <label key={o.v} className={s.option}>
                   <input type="radio" name="school" checked={grades === o.v} onChange={() => setGrades(o.v)} />
                   <span>{o.l}</span>
@@ -205,9 +225,14 @@ export function Onboarding({ countries }: { countries: Country[] }) {
         {step === 4 ? (
           <fieldset>
             <legend>SAT</legend>
-            <p className={s.help}>Сдавали — впишите балл. Нет — оставьте пустым, это нормально.</p>
+            <p className={s.help}>
+              {tr(
+                "Сдавали — впишите балл. Нет — оставьте пустым, это нормально.",
+                "Topshirgan bo'lsangiz — ballni kiriting. Yo'q bo'lsa — bo'sh qoldiring, bu oddiy hol.",
+              )}
+            </p>
             <label className={s.field}>
-              <span>Балл SAT</span>
+              <span>{tr("Балл SAT", "SAT balli")}</span>
               <input inputMode="numeric" value={sat} onChange={(e) => setSat(e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="1380" />
             </label>
           </fieldset>
@@ -215,8 +240,10 @@ export function Onboarding({ countries }: { countries: Country[] }) {
 
         {step === 5 ? (
           <fieldset>
-            <legend>Какие страны рассматриваете?</legend>
-            <p className={s.help}>Можно ничего не выбирать — будем искать везде.</p>
+            <legend>{tr("Какие страны рассматриваете?", "Qaysi davlatlarni ko'rib chiqyapsiz?")}</legend>
+            <p className={s.help}>
+              {tr("Можно ничего не выбирать — будем искать везде.", "Hech narsa tanlamasangiz ham bo'ladi — hamma joydan qidiramiz.")}
+            </p>
             <div className={s.chips}>
               {countries.map((c) => (
                 <button
@@ -234,28 +261,32 @@ export function Onboarding({ countries }: { countries: Country[] }) {
 
         {step === 6 ? (
           <fieldset>
-            <legend>Кем хотите стать?</legend>
+            <legend>{tr("Кем хотите стать?", "Kim bo'lishni xohlaysiz?")}</legend>
             <label className={s.field}>
-              <span>Специальность (необязательно)</span>
+              <span>{tr("Специальность (необязательно)", "Mutaxassislik (ixtiyoriy)")}</span>
               <input value={major} onChange={(e) => setMajor(e.target.value)} placeholder="Computer Science, Economics…" maxLength={80} />
             </label>
-            <p className={s.help}>Подберём вузы, где это направление сильное.</p>
+            <p className={s.help}>{tr("Подберём вузы, где это направление сильное.", "Ushbu yo'nalish kuchli bo'lgan OTMlarni tanlab beramiz.")}</p>
           </fieldset>
         ) : null}
 
         <div className={s.actions}>
           {step > 1 ? (
             <button type="button" className={s.back} onClick={() => setStep(step - 1)}>
-              Назад
+              {tr("Назад", "Orqaga")}
             </button>
           ) : (
             <span />
           )}
           <button type="submit" className={s.next} disabled={!canNext || busy}>
-            {step < TOTAL ? "Дальше" : busy ? "Собираем…" : "Собрать мой план"}
+            {step < TOTAL ? tr("Дальше", "Keyingi") : busy ? tr("Собираем…", "Tayyorlanmoqda…") : tr("Собрать мой план", "Rejamni tuzish")}
           </button>
         </div>
-        {error ? <p className={s.error}>{error}</p> : null}
+        {error ? (
+          <p className={s.error} role="alert">
+            {error} <Link href="/plan">{tr("Открыть план", "Rejani ochish")}</Link>
+          </p>
+        ) : null}
       </form>
     </div>
   );

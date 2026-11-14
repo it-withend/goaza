@@ -4,23 +4,12 @@ import { useMemo, useState } from "react";
 import Link from "@/components/i18n/Link";
 import { useRouter } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { localizePath } from "@/lib/i18n";
 import {
-  AFFORDABLE_EU_UNIS,
-  BUDGET_TRACKS,
-  CANADA_PLAYBOOK,
-  COUNTRY_PORTALS,
-  DOC_CHECKLIST,
-  ESSAY_26_MISTAKES,
-  ESSAY_PLAYBOOK,
-  FULL_RIDE_TSVIRKKOO,
-  GOV_SCHOLARSHIPS,
-  INTERNAL_UNI_SCHOLARSHIPS,
+  getAdmissionsKnowledge,
   MERIT_103_TABLE,
-  OFFICER_INSIGHTS,
-  SHORTLIST_FORMULA,
-  TIMELINE_2_YEARS,
   US_CSS_AID_TABLE,
-  YALE_ESSAY_CASES,
 } from "@/lib/admissions-knowledge";
 import styles from "./AdmissionsGuide.module.css";
 
@@ -34,23 +23,45 @@ type TabId =
   | "canada"
   | "timeline";
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "all", label: "Всё сразу" },
-  { id: "strategy", label: "Стратегия и бюджет $0" },
-  { id: "grants", label: "Гранты и 103 Full-Ride" },
-  { id: "css", label: "CSS Waiver и ISFAA (81 вуз)" },
-  { id: "docs", label: "Документы и порталы" },
-  { id: "essays", label: "Эссе и 26 ошибок" },
-  { id: "canada", label: "Гид по Канаде" },
-  { id: "timeline", label: "Таймлайн 2 года" },
-];
-
 type BudgetBracket = "zero" | "low" | "mid";
 type SatProfile = "high" | "mid" | "none";
 
 export function AdmissionsGuideClient({ accountName }: { accountName: string }) {
   const router = useRouter();
+  const lang = useLang();
+  const tr = useTr();
   const [tab, setTab] = useState<TabId>("all");
+
+  const {
+    shortlistFormula,
+    budgetTracks,
+    govScholarships,
+    internalUniScholarships,
+    affordableEuUnis,
+    fullRideList,
+    docChecklist,
+    countryPortals,
+    essayPlaybook,
+    essayMistakes,
+    officerInsights,
+    yaleEssayCases,
+    canadaPlaybook,
+    timeline2Years,
+  } = useMemo(() => getAdmissionsKnowledge(lang), [lang]);
+
+  const tabs: { id: TabId; label: string }[] = useMemo(
+    () => [
+      { id: "all", label: tr("Всё сразу", "Hammasi birdan") },
+      { id: "strategy", label: tr("Стратегия и бюджет $0", "Strategiya va $0 byudjet") },
+      { id: "grants", label: tr("Гранты и 103 Full-Ride", "Grantlar va 103 Full-Ride") },
+      { id: "css", label: tr("CSS Waiver и ISFAA (81 вуз)", "CSS Waiver va ISFAA (81 OTM)") },
+      { id: "docs", label: tr("Документы и порталы", "Hujjatlar va portallar") },
+      { id: "essays", label: tr("Эссе и 26 ошибок", "Esse va 26 xato") },
+      { id: "canada", label: tr("Гид по Канаде", "Kanada bo'yicha gid") },
+      { id: "timeline", label: tr("Таймлайн 2 года", "2 yillik taymlayn") },
+    ],
+    [tr],
+  );
 
   // Strategy calculator state
   const [budget, setBudget] = useState<BudgetBracket>("zero");
@@ -74,7 +85,7 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
 
   async function logout() {
     await fetch("/api/auth/telegram", { method: "DELETE" });
-    router.replace("/");
+    router.replace(localizePath(lang, "/"));
     router.refresh();
   }
 
@@ -96,12 +107,12 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
 
   const filteredFullRide = useMemo(() => {
     const q = frQ.trim().toLowerCase();
-    return FULL_RIDE_TSVIRKKOO.filter((row) => {
+    return fullRideList.filter((row) => {
       if (frTag !== "ALL" && row.tag !== frTag) return false;
       if (!q) return true;
       return `${row.name} ${row.note}`.toLowerCase().includes(q);
     });
-  }, [frQ, frTag]);
+  }, [frQ, frTag, fullRideList]);
 
   const filteredCss = useMemo(() => {
     const q = cssQ.trim().toLowerCase();
@@ -133,77 +144,126 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
   const recommendation = useMemo(() => {
     if (budget === "zero" && satProfile === "high") {
       return {
-        title: "Оптимальная стратегия: Need-Blind / Need-Based США + 103 Merit Full-Ride + Госстипендии",
-        text: "С SAT 1400+ и бюджетом около $0 подавайтесь сразу по трём линиям: 1) Need-Blind и ISFAA-вузы США в Reach/Target, 2) 3–4 штата из таблицы 103 Merit Full-Ride (Alabama, Hendrix, W&L Johnson, Simmons и др.), 3) Stipendium Hungaricum / Türkiye Bursları как надёжный Financial Safety.",
+        title: tr(
+          "Оптимальная стратегия: Need-Blind / Need-Based США + 103 Merit Full-Ride + Госстипендии",
+          "Optimal strategiya: AQSH Need-Blind / Need-Based + 103 Merit Full-Ride + Davlat stipendiyalari",
+        ),
+        text: tr(
+          "С SAT 1400+ и бюджетом около $0 подавайтесь сразу по трём линиям: 1) Need-Blind и ISFAA-вузы США в Reach/Target, 2) 3–4 штата из таблицы 103 Merit Full-Ride (Alabama, Hendrix, W&L Johnson, Simmons и др.), 3) Stipendium Hungaricum / Türkiye Bursları как надёжный Financial Safety.",
+          "SAT 1400+ va ~$0 byudjet bilan bir vaqtning o'zida uch yo'nalishda topshiring: 1) Reach/Target ga AQSHning Need-Blind va ISFAA OTMlari, 2) 103 Merit Full-Ride jadvalidan 3–4 shtat (Alabama, Hendrix, W&L Johnson, Simmons va b.), 3) Ishonchli Financial Safety sifatida Stipendium Hungaricum / Türkiye Bursları.",
+        ),
         href: "/dashboard?grant=1&sort=intl_aid",
-        cta: "Открыть вузы с полным грантом и бюджетом помощи ↓",
+        cta: tr(
+          "Открыть вузы с полным грантом и бюджетом помощи ↓",
+          "To'liq grant va yordam byudjetiga ega OTMlarni ochish ↓",
+        ),
       };
     }
     if (budget === "zero") {
       return {
-        title: "Оптимальная стратегия: ISFAA/CSS Waiver США (test-optional) + Береа + 100% Госстипендии",
-        text: "Даже без SAT при ограниченном бюджете семьи путь открыт: подавайтесь с бесплатными формами помощи (PFAA, IFAW, WISFAA, ISFAA, Common App Fee Waiver) в test-optional колледжи со 100% покрытием (включая Berea College с $0 обучения) И обязательно страхуйте список через Stipendium Hungaricum, Türkiye Bursları, CSC, GKS или MEXT.",
+        title: tr(
+          "Оптимальная стратегия: ISFAA/CSS Waiver США (test-optional) + Береа + 100% Госстипендии",
+          "Optimal strategiya: AQSH ISFAA/CSS Waiver (test-optional) + Berea + 100% Davlat stipendiyalari",
+        ),
+        text: tr(
+          "Даже без SAT при ограниченном бюджете семьи путь открыт: подавайтесь с бесплатными формами помощи (PFAA, IFAW, WISFAA, ISFAA, Common App Fee Waiver) в test-optional колледжи со 100% покрытием (включая Berea College с $0 обучения) И обязательно страхуйте список через Stipendium Hungaricum, Türkiye Bursları, CSC, GKS или MEXT.",
+          "Oila byudjeti cheklanganida ham SAT siz yo'l ochiq: bepul yordam shakllari (PFAA, IFAW, WISFAA, ISFAA, Common App Fee Waiver) bilan 100% qoplaydigan test-optional kollejlarga (jumladan, o'qishi $0 bo'lgan Berea College) topshiring VA ro'yxatni albatta Stipendium Hungaricum, Türkiye Bursları, CSC, GKS yoki MEXT orqali sug'urtalang.",
+        ),
         href: "/dashboard?grant=1&sort=rate",
-        cta: "Подобрать доступные вузы с полным грантом ↓",
+        cta: tr(
+          "Подобрать доступные вузы с полным грантом ↓",
+          "To'liq grantli qulay OTMlarni tanlash ↓",
+        ),
       };
     }
     if (budget === "low") {
       return {
-        title: "Оптимальная стратегия: Дешёвая Европа (€1,000–4,800/год) + Гранты Италии/Канады",
-        text: "Вузы уровня University of Lisbon, University of Porto, KU Leuven и Ghent сопоставимы по цене с местными университетами, а Padua International Excellence даёт бесплатное обучение + €8,000/год. Параллельно подавайтесь на крупные входные стипендии в Канаде и США с умеренным EFC (Denison, Kenyon).",
+        title: tr(
+          "Оптимальная стратегия: Дешёвая Европа (€1,000–4,800/год) + Гранты Италии/Канады",
+          "Optimal strategiya: Arzon Yevropa (€1,000–4,800/yil) + Italiya/Kanada grantlari",
+        ),
+        text: tr(
+          "Вузы уровня University of Lisbon, University of Porto, KU Leuven и Ghent сопоставимы по цене с местными университетами, а Padua International Excellence даёт бесплатное обучение + €8,000/год. Параллельно подавайтесь на крупные входные стипендии в Канаде и США с умеренным EFC (Denison, Kenyon).",
+          "University of Lisbon, University of Porto, KU Leuven va Ghent darajasidagi OTMlar narxi jihatidan mahalliy universitetlar bilan teng, Padua International Excellence esa bepul o'qish + €8,000/yil beradi. Parallel ravishda Kanada va mo'tadil EFC ga ega AQSH OTMlarida (Denison, Kenyon) yirik kirish stipendiyalariga topshiring.",
+        ),
         href: "/dashboard?tuition=8000&sort=tuition",
-        cta: "Смотреть вузы до $8,000/год в каталоге ↓",
+        cta: tr(
+          "Смотреть вузы до $8,000/год в каталоге ↓",
+          "Katalogda $8,000/yilgacha OTMlarni ko'rish ↓",
+        ),
       };
     }
     return {
-      title: "Оптимальная стратегия: Канада (Co-op & College → University) + Частичный Merit",
-      text: "При бюджете $10,000–$25,000/год можно целиться в региональные вузы Канады (Saskatchewan, Manitoba, Regina, MUN, Dalhousie) или 2-летние колледжи с переводом на 3-й курс и легальной подработкой 24 ч/нед + PGWP до 3 лет.",
+      title: tr(
+        "Оптимальная стратегия: Канада (Co-op & College → University) + Частичный Merit",
+        "Optimal strategiya: Kanada (Co-op & College → University) + Qisman Merit",
+      ),
+      text: tr(
+        "При бюджете $10,000–$25,000/год можно целиться в региональные вузы Канады (Saskatchewan, Manitoba, Regina, MUN, Dalhousie) или 2-летние колледжи с переводом на 3-й курс и легальной подработкой 24 ч/нед + PGWP до 3 лет.",
+        "Yiliga $10,000–$25,000 byudjet bilan Kanadaning mintaqaviy OTMlariga (Saskatchewan, Manitoba, Regina, MUN, Dalhousie) yoki 3-kursga o'tish va haftasiga 24 soat qonuniy ishlash + 3 yilgacha PGWP huquqini beruvchi 2 yillik kollejlarga hujjat topshirish mumkin.",
+      ),
       href: "/dashboard?country=Canada&sort=tuition",
-      cta: "Открыть канадские вузы и колледжи ↓",
+      cta: tr(
+        "Открыть канадские вузы и колледжи ↓",
+        "Kanada OTM va kollejlarini ochish ↓",
+      ),
     };
-  }, [budget, satProfile]);
+  }, [budget, satProfile, tr]);
 
   const show = (id: TabId) => tab === "all" || tab === id;
 
   return (
-    <DashboardShell accountName={accountName} onLogout={logout} activeSection="guide">
+    <DashboardShell accountName={accountName} onLogout={logout}>
       <div className={styles.page}>
         <section className={styles.hero}>
           <div className={styles.heroTop}>
             <div>
-              <span className={styles.eyebrow}>Studyaza Knowledge Hub • База поступающего</span>
-              <h1 className={styles.heroTitle}>Универсальный гид: от выбора вузов на $0 до визы и эссе</h1>
+              <span className={styles.eyebrow}>
+                {tr(
+                  "Studyaza Knowledge Hub • База поступающего",
+                  "Studyaza Knowledge Hub • Abituriyent bazasi",
+                )}
+              </span>
+              <h1 className={styles.heroTitle}>
+                {tr(
+                  "Универсальный гид: от выбора вузов на $0 до визы и эссе",
+                  "Universal qo'llanma: $0 dan OTM tanlashdan tortib viza va essegacha",
+                )}
+              </h1>
               <p className={styles.heroLead}>
-                Сводная база для абитуриентов, в том числе из семей с ограниченным бюджетом: как составить список по формуле 3+3+2, не переплатить за CSS Profile, выбрать государственные и университетские full-ride стипендии, собрать документы, написать сильные эссе и оформить студенческую визу.
+                {tr(
+                  "Сводная база для абитуриентов, в том числе из семей с ограниченным бюджетом: как составить список по формуле 3+3+2, не переплатить за CSS Profile, выбрать государственные и университетские full-ride стипендии, собрать документы, написать сильные эссе и оформить студенческую визу.",
+                  "Abituriyentlar, jumladan cheklangan byudjetli oilalar uchun jamlanma baza: 3+3+2 formulasi bo'yicha ro'yxatni qanday tuzish, CSS Profile uchun ortiqcha to'lamaslik, davlat va universitet full-ride stipendiyalarini tanlash, hujjatlarni yig'ish, kuchli esse yozish va talaba vizasini rasmiylashtirish.",
+                )}
               </p>
             </div>
             <Link href="/dashboard" className={styles.backCatalogBtn}>
-              ← В каталог 1,000+ вузов
+              {tr("← В каталог 1,000+ вузов", "← 1,000+ OTM katalogiga")}
             </Link>
           </div>
 
           <div className={styles.statsRow}>
             <div className={styles.statPill}>
               <strong>103</strong>
-              <span>Merit Full-Ride стипендии США</span>
+              <span>{tr("Merit Full-Ride стипендии США", "AQSH Merit Full-Ride stipendiyalari")}</span>
             </div>
             <div className={styles.statPill}>
               <strong>81</strong>
-              <span>Вуз США с 100% aid & CSS Waiver</span>
+              <span>{tr("Вуз США с 100% aid & CSS Waiver", "100% aid & CSS Waiver li AQSH OTMlari")}</span>
             </div>
             <div className={styles.statPill}>
-              <strong>8 госпрограмм</strong>
-              <span>Венгрия, Турция, Корея, Китай, Япония, ЕС…</span>
+              <strong>{tr("8 госпрограмм", "8 davlat dasturi")}</strong>
+              <span>{tr("Венгрия, Турция, Корея, Китай, Япония, ЕС…", "Vengriya, Turkiya, Koreya, Xitoy, Yaponiya, YI…")}</span>
             </div>
             <div className={styles.statPill}>
-              <strong>26 правил</strong>
-              <span>Анти-ошибки эссе + инсайды Yale / Dartmouth</span>
+              <strong>{tr("26 правил", "26 qoida")}</strong>
+              <span>{tr("Анти-ошибки эссе + инсайды Yale / Dartmouth", "Esse anti-xatolari + Yale / Dartmouth insaydlari")}</span>
             </div>
           </div>
         </section>
 
-        <nav className={styles.tabsBar} aria-label="Разделы гида">
-          {TABS.map((t) => (
+        <nav className={styles.tabsBar} aria-label={tr("Разделы гида", "Qo'llanma bo'limlari")}>
+          {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -220,49 +280,61 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>1. Как составить список вузов и поступить при низком доходе</h2>
-                <p className={styles.sectionSub}>{SHORTLIST_FORMULA.explanation}</p>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "1. Как составить список вузов и поступить при низком доходе",
+                    "1. OTMlar ro'yxatini qanday tuzish va kam daromadda o'qishga kirish",
+                  )}
+                </h2>
+                <p className={styles.sectionSub}>{shortlistFormula.explanation}</p>
               </div>
             </div>
 
             <div className={styles.calcBox}>
               <div className={styles.calcControls}>
                 <div className={styles.controlGroup}>
-                  <span className={styles.controlLabel}>Бюджет семьи на учёбу + жизнь в год</span>
+                  <span className={styles.controlLabel}>
+                    {tr(
+                      "Бюджет семьи на учёбу + жизнь в год",
+                      "Oilaning o'qish + yashash uchun yillik byudjeti",
+                    )}
+                  </span>
                   <div className={styles.chipRow}>
                     <button
                       type="button"
                       className={`${styles.optionChip} ${budget === "zero" ? styles.optionChipActive : ""}`}
                       onClick={() => setBudget("zero")}
                     >
-                      $0 – $2,000 (нужен Full-Ride)
+                      {tr("$0 – $2,000 (нужен Full-Ride)", "$0 – $2,000 (Full-Ride kerak)")}
                     </button>
                     <button
                       type="button"
                       className={`${styles.optionChip} ${budget === "low" ? styles.optionChipActive : ""}`}
                       onClick={() => setBudget("low")}
                     >
-                      $2,000 – $10,000 / год
+                      {tr("$2,000 – $10,000 / год", "$2,000 – $10,000 / yil")}
                     </button>
                     <button
                       type="button"
                       className={`${styles.optionChip} ${budget === "mid" ? styles.optionChipActive : ""}`}
                       onClick={() => setBudget("mid")}
                     >
-                      $10,000 – $25,000 / год
+                      {tr("$10,000 – $25,000 / год", "$10,000 – $25,000 / yil")}
                     </button>
                   </div>
                 </div>
 
                 <div className={styles.controlGroup}>
-                  <span className={styles.controlLabel}>Экзамен SAT / ACT</span>
+                  <span className={styles.controlLabel}>
+                    {tr("Экзамен SAT / ACT", "SAT / ACT imtihoni")}
+                  </span>
                   <div className={styles.chipRow}>
                     <button
                       type="button"
                       className={`${styles.optionChip} ${satProfile === "high" ? styles.optionChipActive : ""}`}
                       onClick={() => setSatProfile("high")}
                     >
-                      SAT 1400+ (или ACT 30+)
+                      {tr("SAT 1400+ (или ACT 30+)", "SAT 1400+ (yoki ACT 30+)")}
                     </button>
                     <button
                       type="button"
@@ -276,7 +348,7 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                       className={`${styles.optionChip} ${satProfile === "none" ? styles.optionChipActive : ""}`}
                       onClick={() => setSatProfile("none")}
                     >
-                      Без SAT (Test-Optional / Мир)
+                      {tr("Без SAT (Test-Optional / Мир)", "SAT siz (Test-Optional / Dunyo)")}
                     </button>
                   </div>
                 </div>
@@ -292,32 +364,34 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <div className={styles.cardsGrid}>
-              {SHORTLIST_FORMULA.tiers.map((tier) => (
+              {shortlistFormula.tiers.map((tier) => (
                 <article key={tier.tier} className={styles.card}>
                   <span className={styles.cardBadge}>{tier.badge}</span>
                   <h3 className={styles.cardTitle}>{tier.tier}</h3>
                   <p className={styles.cardText}>{tier.criteria}</p>
                   <p className={styles.cardText}>
-                    <strong>Совет:</strong> {tier.tip}
+                    <strong>{tr("Совет:", "Maslahat:")}</strong> {tier.tip}
                   </p>
                 </article>
               ))}
             </div>
 
             <div className={styles.cardsGrid}>
-              {BUDGET_TRACKS.map((tr) => (
-                <article key={tr.id} className={styles.card}>
-                  <span className={styles.cardBadge}>{tr.badge}</span>
-                  <h3 className={styles.cardTitle}>{tr.title}</h3>
-                  <p className={styles.cardMeta}>Бюджет: {tr.budgetPerYear}</p>
-                  <p className={styles.cardText}>{tr.keyMechanism}</p>
+              {budgetTracks.map((trItem) => (
+                <article key={trItem.id} className={styles.card}>
+                  <span className={styles.cardBadge}>{trItem.badge}</span>
+                  <h3 className={styles.cardTitle}>{trItem.title}</h3>
+                  <p className={styles.cardMeta}>
+                    {tr("Бюджет:", "Byudjet:")} {trItem.budgetPerYear}
+                  </p>
+                  <p className={styles.cardText}>{trItem.keyMechanism}</p>
                   <ul className={styles.bulletList}>
-                    {tr.steps.map((s) => (
+                    {trItem.steps.map((s) => (
                       <li key={s}>{s}</li>
                     ))}
                   </ul>
-                  <Link href={tr.catalogHref} className={styles.inlineLink}>
-                    {tr.catalogLabel} →
+                  <Link href={trItem.catalogHref} className={styles.inlineLink}>
+                    {trItem.catalogLabel} →
                   </Link>
                 </article>
               ))}
@@ -330,21 +404,29 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>2. Гранты государств, топовые стипендии вузов и 103 Full-Ride США</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "2. Гранты государств, топовые стипендии вузов и 103 Full-Ride США",
+                    "2. Davlat grantlari, OTM top stipendiyalari va AQSH 103 Full-Ride",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Государственные стипендии покрывают обучение, жильё и ежемесячные расходы; таблицы ниже объединяют внутренние гранты Европы/Азии/Канады и 103 конкурентные Merit Full-Ride программы в США.
+                  {tr(
+                    "Государственные стипендии покрывают обучение, жильё и ежемесячные расходы; таблицы ниже объединяют внутренние гранты Европы/Азии/Канады и 103 конкурентные Merit Full-Ride программы в США.",
+                    "Davlat stipendiyalari o'qish, turar joy va oylik xarajatlarni qoplaydi; quyidagi jadvallar Yevropa/Osiyo/Kanadaning ichki grantlarini va AQSHdagi 103 ta raqobatbardosh Merit Full-Ride dasturini birlashtiradi.",
+                  )}
                 </p>
               </div>
             </div>
 
             <div className={styles.cardsGrid}>
-              {GOV_SCHOLARSHIPS.map((gs) => (
+              {govScholarships.map((gs) => (
                 <article key={gs.name} className={styles.card}>
                   <span className={styles.cardBadge}>{gs.country} • {gs.levels}</span>
                   <h3 className={styles.cardTitle}>{gs.name}</h3>
                   <p className={styles.cardMeta}>{gs.stipend}</p>
                   <p className={styles.cardText}>
-                    <strong>Охват:</strong> {gs.unisCount}
+                    <strong>{tr("Охват:", "Qamrov:")}</strong> {gs.unisCount}
                   </p>
                   <ul className={styles.bulletList}>
                     {gs.coverage.map((c) => (
@@ -353,52 +435,78 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                   </ul>
                   {gs.importantNote && <p className={styles.cardText}>⚠ {gs.importantNote}</p>}
                   <a href={gs.url} target="_blank" rel="noopener noreferrer" className={styles.inlineLink}>
-                    Официальный сайт программы ↗
+                    {tr("Официальный сайт программы ↗", "Dasturning rasmiy sayti ↗")}
                   </a>
                 </article>
               ))}
             </div>
 
-            <h3 className={styles.cardTitle}>Крупнейшие внутренние стипендии университетов (Канада, Европа, Азия)</h3>
+            <h3 className={styles.cardTitle}>
+              {tr(
+                "Крупнейшие внутренние стипендии университетов (Канада, Европа, Азия)",
+                "Universitetlarning eng yirik ichki stipendiyalari (Kanada, Yevropa, Osiyo)",
+              )}
+            </h3>
             <div className={styles.cardsGrid}>
-              {INTERNAL_UNI_SCHOLARSHIPS.map((u) => (
+              {internalUniScholarships.map((u) => (
                 <article key={u.programName} className={styles.card}>
                   <span className={styles.cardBadge}>{u.country} • {u.levels}</span>
                   <h3 className={styles.cardTitle}>{u.university}</h3>
                   <p className={styles.cardMeta}>{u.programName}</p>
                   <p className={styles.cardText}>{u.coverage}</p>
-                  {u.quota && <p className={styles.cardText}><strong>Квота:</strong> {u.quota}</p>}
-                  <p className={styles.cardText}><strong>Сильные направления:</strong> {u.majors.join(", ")}</p>
+                  {u.quota && (
+                    <p className={styles.cardText}>
+                      <strong>{tr("Квота:", "Kvota:")}</strong> {u.quota}
+                    </p>
+                  )}
+                  <p className={styles.cardText}>
+                    <strong>{tr("Сильные направления:", "Kuchli yo'nalishlar:")}</strong> {u.majors.join(", ")}
+                  </p>
                   <Link href={`/dashboard/u/${u.slug}`} className={styles.inlineLink}>
-                    Открыть карточку вуза в каталоге →
-                  </Link>
-                </article>
-              ))}
-            </div>
-
-            <h3 className={styles.cardTitle}>Доступные вузы Европы (обучение + жизнь сопоставимо с контрактом СНГ)</h3>
-            <div className={styles.cardsGrid}>
-              {AFFORDABLE_EU_UNIS.map((eu) => (
-                <article key={eu.slug} className={styles.card}>
-                  <span className={styles.cardBadge}>{eu.country}</span>
-                  <h3 className={styles.cardTitle}>{eu.university}</h3>
-                  <p className={styles.cardMeta}>Учёба: {eu.tuitionPerYear} • Жизнь: {eu.livingPerMonth}</p>
-                  <p className={styles.cardText}>Сильные мейджоры: {eu.strongMajors.join(", ")}</p>
-                  <Link href={`/dashboard/u/${eu.slug}`} className={styles.inlineLink}>
-                    Перейти к вузу в атласе →
+                    {tr("Открыть карточку вуза в каталоге →", "Katalogda OTM kartasini ochish →")}
                   </Link>
                 </article>
               ))}
             </div>
 
             <h3 className={styles.cardTitle}>
-              База 103 конкурентных Full-Ride Merit стипендий США ({filteredMerit.length} показано)
+              {tr(
+                "Доступные вузы Европы (обучение + жизнь сопоставимо с контрактом СНГ)",
+                "Yevropaning qulay OTMlari (o'qish + yashash MDH kontrakti bilan teng)",
+              )}
+            </h3>
+            <div className={styles.cardsGrid}>
+              {affordableEuUnis.map((eu) => (
+                <article key={eu.slug} className={styles.card}>
+                  <span className={styles.cardBadge}>{eu.country}</span>
+                  <h3 className={styles.cardTitle}>{eu.university}</h3>
+                  <p className={styles.cardMeta}>
+                    {tr("Учёба:", "O'qish:")} {eu.tuitionPerYear} • {tr("Жизнь:", "Yashash:")} {eu.livingPerMonth}
+                  </p>
+                  <p className={styles.cardText}>
+                    {tr("Сильные мейджоры:", "Kuchli yo'nalishlar:")} {eu.strongMajors.join(", ")}
+                  </p>
+                  <Link href={`/dashboard/u/${eu.slug}`} className={styles.inlineLink}>
+                    {tr("Перейти к вузу в атласе →", "Atlasda OTM ga o'tish →")}
+                  </Link>
+                </article>
+              ))}
+            </div>
+
+            <h3 className={styles.cardTitle}>
+              {tr(
+                `База 103 конкурентных Full-Ride Merit стипендий США (${filteredMerit.length} показано)`,
+                `AQSHning 103 ta raqobatbardosh Full-Ride Merit stipendiyasi bazasi (${filteredMerit.length} ta ko'rsatilmoqda)`,
+              )}
             </h3>
             <div className={styles.filterBar}>
               <input
                 type="search"
                 className={styles.searchInput}
-                placeholder="Поиск по вузу, названию стипендии или минимальному SAT/ACT..."
+                placeholder={tr(
+                  "Поиск по вузу, названию стипендии или минимальному SAT/ACT...",
+                  "OTM, stipendiya nomi yoki minimal SAT/ACT bo'yicha qidirish...",
+                )}
                 value={meritQ}
                 onChange={(e) => setMeritQ(e.target.value)}
               />
@@ -406,11 +514,11 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                 className={styles.selectInput}
                 value={meritState}
                 onChange={(e) => setMeritState(e.target.value)}
-                aria-label="Фильтр по штату"
+                aria-label={tr("Фильтр по штату", "Shtat bo'yicha filtr")}
               >
                 {statesList.map((st) => (
                   <option key={st} value={st}>
-                    {st === "ALL" ? "Все штаты США" : st}
+                    {st === "ALL" ? tr("Все штаты США", "AQSHning barcha shtatlari") : st}
                   </option>
                 ))}
               </select>
@@ -419,11 +527,11 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Штат</th>
-                    <th>Университет</th>
-                    <th>Стипендия</th>
-                    <th>Покрытие</th>
-                    <th>Мин. требования</th>
+                    <th>{tr("Штат", "Shtat")}</th>
+                    <th>{tr("Университет", "Universitet")}</th>
+                    <th>{tr("Стипендия", "Stipendiya")}</th>
+                    <th>{tr("Покрытие", "Qoplash")}</th>
+                    <th>{tr("Мин. требования", "Min. talablar")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -451,13 +559,19 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <h3 className={styles.cardTitle}>
-              Полный список вузов с Full-Ride финансированием ({filteredFullRide.length} показано)
+              {tr(
+                `Полный список вузов с Full-Ride финансированием (${filteredFullRide.length} показано)`,
+                `Full-Ride moliyalashtirishga ega OTMlarning to'liq ro'yxati (${filteredFullRide.length} ta ko'rsatilmoqda)`,
+              )}
             </h3>
             <div className={styles.filterBar}>
               <input
                 type="search"
                 className={styles.searchInput}
-                placeholder="Поиск по названию или условиям (EFC, PFAA, need-blind...)"
+                placeholder={tr(
+                  "Поиск по названию или условиям (EFC, PFAA, need-blind...)",
+                  "Nomi yoki shartlari bo'yicha qidirish (EFC, PFAA, need-blind...)",
+                )}
                 value={frQ}
                 onChange={(e) => setFrQ(e.target.value)}
               />
@@ -465,11 +579,11 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                 className={styles.selectInput}
                 value={frTag}
                 onChange={(e) => setFrTag(e.target.value)}
-                aria-label="Тип политики Full-Ride"
+                aria-label={tr("Тип политики Full-Ride", "Full-Ride siyosat turi")}
               >
-                <option value="ALL">Все категории</option>
+                <option value="ALL">{tr("Все категории", "Barcha toifalar")}</option>
                 <option value="need-blind">Need-Blind</option>
-                <option value="free-tuition">Бесплатное обучение (Berea)</option>
+                <option value="free-tuition">{tr("Бесплатное обучение (Berea)", "Bepul o'qish (Berea)")}</option>
                 <option value="merit">Merit / Full Ride</option>
                 <option value="need-aware">Need-Aware (100% need)</option>
               </select>
@@ -478,9 +592,9 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Университет</th>
-                    <th>Политика</th>
-                    <th>Примечание для абитуриента</th>
+                    <th>{tr("Университет", "Universitet")}</th>
+                    <th>{tr("Политика", "Siyosat")}</th>
+                    <th>{tr("Примечание для абитуриента", "Abituriyent uchun eslatma")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -522,9 +636,17 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>3. Как подать на финпомощь США бесплатно: CSS Fee Waiver и ISFAA (81 вуз)</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "3. Как подать на финпомощь США бесплатно: CSS Fee Waiver и ISFAA (81 вуз)",
+                    "3. AQSH moliyaviy yordamiga bepul topshirish: CSS Fee Waiver va ISFAA (81 OTM)",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Отправка CSS Profile стоит $25 за первый вуз и $16 за каждый следующий. Для семей с низким доходом используйте вузы со своей бесплатной формой (PFAA, IFAW, WISFAA, ISFAA) или запрашивайте CSS Fee Waiver.
+                  {tr(
+                    "Отправка CSS Profile стоит $25 за первый вуз и $16 за каждый следующий. Для семей с низким доходом используйте вузы со своей бесплатной формой (PFAA, IFAW, WISFAA, ISFAA) или запрашивайте CSS Fee Waiver.",
+                    "CSS Profile yuborish birinchi OTM uchun $25 va keyingi har biri uchun $16 turadi. Kam daromadli oilalar uchun o'zining bepul shakliga ega OTMlardan (PFAA, IFAW, WISFAA, ISFAA) foydalaning yoki CSS Fee Waiver so'rang.",
+                  )}
                 </p>
               </div>
             </div>
@@ -533,7 +655,10 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
               <input
                 type="search"
                 className={styles.searchInput}
-                placeholder="Найти вуз США или форму (ISFAA, PFAA, email...)"
+                placeholder={tr(
+                  "Найти вуз США или форму (ISFAA, PFAA, email...)",
+                  "AQSH OTMi yoki shaklini topish (ISFAA, PFAA, email...)",
+                )}
                 value={cssQ}
                 onChange={(e) => setCssQ(e.target.value)}
               />
@@ -541,12 +666,19 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                 className={styles.selectInput}
                 value={cssMode}
                 onChange={(e) => setCssMode(e.target.value as typeof cssMode)}
-                aria-label="Фильтр способов бесплатной подачи"
+                aria-label={tr("Фильтр способов бесплатной подачи", "Bepul topshirish usullari filtri")}
               >
-                <option value="ALL">Все 81 вуз</option>
-                <option value="FREE_FORM">Есть бесплатная альтернатива (ISFAA / PFAA / IFAW...)</option>
-                <option value="WAIVER">Даёт CSS Fee Waiver (или альтернативу)</option>
-                <option value="NEED_BLIND">Только Need-Blind</option>
+                <option value="ALL">{tr("Все 81 вуз", "Barcha 81 OTM")}</option>
+                <option value="FREE_FORM">
+                  {tr(
+                    "Есть бесплатная альтернатива (ISFAA / PFAA / IFAW...)",
+                    "Bepul muqobili bor (ISFAA / PFAA / IFAW...)",
+                  )}
+                </option>
+                <option value="WAIVER">
+                  {tr("Даёт CSS Fee Waiver (или альтернативу)", "CSS Fee Waiver beradi (yoki muqobil)")}
+                </option>
+                <option value="NEED_BLIND">{tr("Только Need-Blind", "Faqat Need-Blind")}</option>
               </select>
             </div>
 
@@ -554,11 +686,11 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Университет</th>
-                    <th>Штат / Город</th>
-                    <th>Политика</th>
-                    <th>Макс. помощь</th>
-                    <th>Как подать на помощь</th>
+                    <th>{tr("Университет", "Universitet")}</th>
+                    <th>{tr("Штат / Город", "Shtat / Shahar")}</th>
+                    <th>{tr("Политика", "Siyosat")}</th>
+                    <th>{tr("Макс. помощь", "Maks. yordam")}</th>
+                    <th>{tr("Как подать на помощь", "Yordamga qanday topshirish")}</th>
                     <th>CSS Fee Waiver</th>
                   </tr>
                 </thead>
@@ -581,7 +713,7 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                         </span>
                       </td>
                       <td>{r.maxAid || "100%"}</td>
-                      <td>{r.howApply || "См. портал вуза"}</td>
+                      <td>{r.howApply || tr("См. портал вуза", "OTM portaliga qarang")}</td>
                       <td>
                         <span
                           className={
@@ -606,15 +738,23 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>4. Чек-лист документов, экзамены и порталы подачи по странам</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "4. Чек-лист документов, экзамены и порталы подачи по странам",
+                    "4. Hujjatlar chek-listi, imtihonlar va davlatlar bo'yicha topshirish portallari",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Отмечайте готовые документы — чек-лист поможет ничего не упустить до ранних и основных дедлайнов.
+                  {tr(
+                    "Отмечайте готовые документы — чек-лист поможет ничего не упустить до ранних и основных дедлайнов.",
+                    "Tayyor hujjatlarni belgilab boring — chek-list erta va asosiy dedlaynlargacha hech narsani o'tkazib yubormaslikka yordam beradi.",
+                  )}
                 </p>
               </div>
             </div>
 
             <div className={styles.cardsGrid}>
-              {DOC_CHECKLIST.map((grp) => (
+              {docChecklist.map((grp) => (
                 <article key={grp.id} className={styles.card}>
                   <span className={styles.cardBadge}>{grp.badge}</span>
                   <h3 className={styles.cardTitle}>{grp.title}</h3>
@@ -640,7 +780,9 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
                           {item.lowIncomeTip ? (
                             <>
                               <br />
-                              <em>Экономия бюджета: {item.lowIncomeTip}</em>
+                              <em>
+                                {tr("Экономия бюджета:", "Byudjetni tejash:")} {item.lowIncomeTip}
+                              </em>
                             </>
                           ) : null}
                         </span>
@@ -651,19 +793,21 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
               ))}
             </div>
 
-            <h3 className={styles.cardTitle}>Через какие порталы подавать документы</h3>
+            <h3 className={styles.cardTitle}>
+              {tr("Через какие порталы подавать документы", "Hujjatlarni qaysi portallar orqali topshirish kerak")}
+            </h3>
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Страна / Регион</th>
-                    <th>Портал подачи</th>
-                    <th>Какие вузы</th>
-                    <th>Важные нюансы</th>
+                    <th>{tr("Страна / Регион", "Davlat / Hudud")}</th>
+                    <th>{tr("Портал подачи", "Topshirish portali")}</th>
+                    <th>{tr("Какие вузы", "Qaysi OTMlar")}</th>
+                    <th>{tr("Важные нюансы", "Muhim jihatlar")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {COUNTRY_PORTALS.map((p) => (
+                  {countryPortals.map((p) => (
                     <tr key={p.portal}>
                       <td><strong>{p.country}</strong></td>
                       <td>{p.portal}</td>
@@ -682,17 +826,27 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>5. Эссе, инсайды приёмной комиссии и 26 ошибок отказа</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "5. Эссе, инсайды приёмной комиссии и 26 ошибок отказа",
+                    "5. Esse, qabul komissiyasi insaydlari va rad etishga olib keluvchi 26 xato",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Рекомендации бывших замдиректоров приёмных комиссий Dartmouth (Dr. Michele Hernandez) и Yale (Eva Ostrum), структуры 4 главных эссе и разбор проходных заявок в Yale.
+                  {tr(
+                    "Рекомендации бывших замдиректоров приёмных комиссий Dartmouth (Dr. Michele Hernandez) и Yale (Eva Ostrum), структуры 4 главных эссе и разбор проходных заявок в Yale.",
+                    "Dartmouth (Dr. Michele Hernandez) va Yale (Eva Ostrum) qabul komissiyalari direktorlarining sobiq o'rinbosarlari tavsiyalari, 4 ta asosiy esse tuzilmasi va Yale ga o'tgan arizalar tahlili.",
+                  )}
                 </p>
               </div>
             </div>
 
             <div className={styles.cardsGrid}>
-              {OFFICER_INSIGHTS.map((o) => (
+              {officerInsights.map((o) => (
                 <article key={o.officer} className={styles.card}>
-                  <span className={styles.cardBadge}>Взгляд приёмной комиссии</span>
+                  <span className={styles.cardBadge}>
+                    {tr("Взгляд приёмной комиссии", "Qabul komissiyasi nigohi")}
+                  </span>
                   <h3 className={styles.cardTitle}>{o.officer}</h3>
                   <p className={styles.cardMeta}>{o.role}</p>
                   <ul className={styles.bulletList}>
@@ -705,7 +859,7 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <div className={styles.cardsGrid}>
-              {ESSAY_PLAYBOOK.map((ep) => (
+              {essayPlaybook.map((ep) => (
                 <article key={ep.id} className={styles.card}>
                   <span className={styles.cardBadge}>{ep.wordCount}</span>
                   <h3 className={styles.cardTitle}>{ep.title}</h3>
@@ -725,9 +879,11 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <div className={styles.cardsGrid}>
-              {YALE_ESSAY_CASES.map((yc) => (
+              {yaleEssayCases.map((yc) => (
                 <article key={yc.title} className={styles.card}>
-                  <span className={styles.cardBadge}>Разбор кейса Yale University</span>
+                  <span className={styles.cardBadge}>
+                    {tr("Разбор кейса Yale University", "Yale University keysi tahlili")}
+                  </span>
                   <h3 className={styles.cardTitle}>{yc.title}</h3>
                   <p className={styles.cardMeta}>{yc.category}</p>
                   <p className={styles.cardText}>{yc.summary}</p>
@@ -741,10 +897,13 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <h3 className={styles.cardTitle}>
-              Чек-лист самопроверки: 26 ошибок в эссе (отмечено: {Object.values(checkedMistakes).filter(Boolean).length}/26)
+              {tr(
+                `Чек-лист самопроверки: 26 ошибок в эссе (отмечено: ${Object.values(checkedMistakes).filter(Boolean).length}/26)`,
+                `O'z-o'zini tekshirish chek-listi: essedagi 26 xato (belgilandi: ${Object.values(checkedMistakes).filter(Boolean).length}/26)`,
+              )}
             </h3>
             <div className={styles.checkGrid}>
-              {ESSAY_26_MISTAKES.map((m, idx) => {
+              {essayMistakes.map((m, idx) => {
                 const ok = Boolean(checkedMistakes[idx]);
                 return (
                   <label key={m} className={`${styles.checkItem} ${ok ? styles.checkDone : ""}`}>
@@ -768,18 +927,26 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>6. Канада: университеты vs колледжи, Study Permit и «скрытые жемчужины»</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "6. Канада: университеты vs колледжи, Study Permit и «скрытые жемчужины»",
+                    "6. Kanada: universitetlar vs kollejlar, Study Permit va «yashirin durdonalar»",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Практическая карта поступления в Канаду: как выбрать между вузом и колледжем с переводом, рассчитать стоимость в CAD и пройти все 8 шагов визы.
+                  {tr(
+                    "Практическая карта поступления в Канаду: как выбрать между вузом и колледжем с переводом, рассчитать стоимость в CAD и пройти все 8 шагов визы.",
+                    "Kanadaga kirishning amaliy xaritasi: OTM va transfer kolleji o'rtasida qanday tanlash, CAD da xarajatlarni hisoblash va vizaning barcha 8 bosqichidan o'tish.",
+                  )}
                 </p>
               </div>
               <Link href="/dashboard?country=Canada" className={styles.ctaLink}>
-                Смотреть все вузы Канады →
+                {tr("Смотреть все вузы Канады →", "Kanadaning barcha OTMlarini ko'rish →")}
               </Link>
             </div>
 
             <div className={styles.cardsGrid}>
-              {CANADA_PLAYBOOK.institutions.map((ins) => (
+              {canadaPlaybook.institutions.map((ins) => (
                 <article key={ins.title} className={styles.card}>
                   <h3 className={styles.cardTitle}>{ins.title}</h3>
                   <p className={styles.cardText}>{ins.desc}</p>
@@ -789,30 +956,30 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
 
             <div className={styles.cardsGrid}>
               <article className={styles.card}>
-                <span className={styles.cardBadge}>Бюджет и расходы (CAD)</span>
-                <h3 className={styles.cardTitle}>Сколько стоит учёба и жизнь</h3>
+                <span className={styles.cardBadge}>{tr("Бюджет и расходы (CAD)", "Byudjet va xarajatlar (CAD)")}</span>
+                <h3 className={styles.cardTitle}>{tr("Сколько стоит учёба и жизнь", "O'qish va yashash qancha turadi")}</h3>
                 <ul className={styles.bulletList}>
-                  {CANADA_PLAYBOOK.livingCosts.map((x) => (
+                  {canadaPlaybook.livingCosts.map((x) => (
                     <li key={x}>{x}</li>
                   ))}
                 </ul>
               </article>
 
               <article className={styles.card}>
-                <span className={styles.cardBadge}>Работа и ПМЖ</span>
-                <h3 className={styles.cardTitle}>Co-op, 24 ч/нед и PGWP</h3>
+                <span className={styles.cardBadge}>{tr("Работа и ПМЖ", "Ish va doimiy yashash")}</span>
+                <h3 className={styles.cardTitle}>{tr("Co-op, 24 ч/нед и PGWP", "Co-op, haftasiga 24 soat va PGWP")}</h3>
                 <ul className={styles.bulletList}>
-                  {CANADA_PLAYBOOK.workAndMigration.map((x) => (
+                  {canadaPlaybook.workAndMigration.map((x) => (
                     <li key={x}>{x}</li>
                   ))}
                 </ul>
               </article>
 
               <article className={styles.card}>
-                <span className={styles.cardBadge}>Частые ошибки</span>
-                <h3 className={styles.cardTitle}>Чего избегать</h3>
+                <span className={styles.cardBadge}>{tr("Частые ошибки", "Ko'p uchraydigan xatolar")}</span>
+                <h3 className={styles.cardTitle}>{tr("Чего избегать", "Nimadan qochish kerak")}</h3>
                 <ul className={styles.bulletList}>
-                  {CANADA_PLAYBOOK.commonMistakes.map((x) => (
+                  {canadaPlaybook.commonMistakes.map((x) => (
                     <li key={x}>{x}</li>
                   ))}
                 </ul>
@@ -820,23 +987,30 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
             </div>
 
             <div className={styles.noteBanner}>
-              <strong>8 шагов к студенческой визе (Study Permit):</strong>
+              <strong>
+                {tr("8 шагов к студенческой визе (Study Permit):", "Talaba vizasiga (Study Permit) 8 qadam:")}
+              </strong>
               <ul className={styles.bulletList} style={{ marginTop: 8 }}>
-                {CANADA_PLAYBOOK.studyPermitSteps.map((s) => (
+                {canadaPlaybook.studyPermitSteps.map((s) => (
                   <li key={s}>{s}</li>
                 ))}
               </ul>
             </div>
 
-            <h3 className={styles.cardTitle}>7 недооценённых университетов Канады (Hidden Gems)</h3>
+            <h3 className={styles.cardTitle}>
+              {tr(
+                "7 недооценённых университетов Канады (Hidden Gems)",
+                "Kanadaning yetarlicha baholanmagan 7 universiteti (Hidden Gems)",
+              )}
+            </h3>
             <div className={styles.cardsGrid}>
-              {CANADA_PLAYBOOK.hiddenGems.map((hg) => (
+              {canadaPlaybook.hiddenGems.map((hg) => (
                 <article key={hg.name} className={styles.card}>
                   <h3 className={styles.cardTitle}>{hg.name}</h3>
                   <p className={styles.cardText}>{hg.note}</p>
                   {hg.slug && (
                     <Link href={`/dashboard/u/${hg.slug}`} className={styles.inlineLink}>
-                      Открыть карточку в Studyaza →
+                      {tr("Открыть карточку в Studyaza →", "Studyaza da kartani ochish →")}
                     </Link>
                   )}
                 </article>
@@ -850,15 +1024,23 @@ export function AdmissionsGuideClient({ accountName }: { accountName: string }) 
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>7. Пошаговый календарь подготовки за 1,5–2 года</h2>
+                <h2 className={styles.sectionTitle}>
+                  {tr(
+                    "7. Пошаговый календарь подготовки за 1,5–2 года",
+                    "7. 1,5–2 yillik bosqichma-bosqich tayyorgarlik taqvimi",
+                  )}
+                </h2>
                 <p className={styles.sectionSub}>
-                  Привязка по месяцам от 9–10 класса СНГ до вылета в августе на осенний семестр.
+                  {tr(
+                    "Привязка по месяцам от 9–10 класса СНГ до вылета в августе на осенний семестр.",
+                    "MDH 9–10 sinfidan avgustda kuzgi semestrga uchib ketishgacha oylar bo'yicha reja.",
+                  )}
                 </p>
               </div>
             </div>
 
             <div className={styles.timelineList}>
-              {TIMELINE_2_YEARS.map((phase) => (
+              {timeline2Years.map((phase) => (
                 <article key={phase.when} className={styles.timelineCard}>
                   <span className={styles.timelineWhen}>{phase.when}</span>
                   <h3 className={styles.cardTitle}>{phase.title}</h3>

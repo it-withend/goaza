@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { filterCatalog, parseAidMillions, parseCurrencyAmount, toCatalogUni, type CatalogUni } from "@/lib/catalog";
-import { daysLeftLabel, describeDeadline } from "@/lib/deadline";
+import { daysLeftLabel, describeDeadline, describeDeadlineWindow } from "@/lib/deadline";
 import type { University } from "@/lib/types";
 
 function uni(p: Partial<University> & { slug: string; name: string }): CatalogUni {
@@ -128,13 +128,34 @@ describe("filterCatalog", () => {
 
 describe("describeDeadline", () => {
   const now = new Date(Date.UTC(2026, 10, 12));
-  it("formats ISO dates and counts days", () => {
-    expect(describeDeadline("2026-11-15", now)).toEqual({ label: "15 ноября 2026", daysLeft: 3 });
+  it("formats ISO dates and counts days with target academic year", () => {
+    expect(describeDeadline("2026-11-15", now)).toEqual({
+      label: "15 ноября 2026",
+      daysLeft: 3,
+      academicYear: "2027/28",
+    });
     expect(describeDeadline("2026-11-01", now)?.daysLeft).toBe(-11);
   });
-  it("keeps free text", () => {
-    expect(describeDeadline("Rolling", now)).toEqual({ label: "Rolling", daysLeft: null });
+  it("localizes free text and Rolling", () => {
+    expect(describeDeadline("Rolling", now)).toEqual({
+      label: "Круглогодичный приём (Rolling)",
+      daysLeft: null,
+      academicYear: "2027/28",
+    });
+    expect(describeDeadline("Rolling", now, "uz")).toEqual({
+      label: "Yil davomida qabul (Rolling)",
+      daysLeft: null,
+      academicYear: "2027/28",
+    });
     expect(describeDeadline("", now)).toBeNull();
+  });
+  it("explains deadline window and academic year in Russian and Uzbek", () => {
+    expect(describeDeadlineWindow("2026-11-15", "2027-01-15", now, "ru")).toBe(
+      "Подача на 2027/28 уч. год: с 15 ноября 2026 (ранний) до 15 января 2027 (основной).",
+    );
+    expect(describeDeadlineWindow("2026-11-15", "2027-01-15", now, "uz")).toBe(
+      "2027/28 o'quv yili uchun hujjat topshirish: 2026-yil 15-noyabrdan (erta) 2027-yil 15-yanvargacha (asosiy).",
+    );
   });
   it("pluralizes in Russian", () => {
     expect(daysLeftLabel(1)).toBe("через 1 день");

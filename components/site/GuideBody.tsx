@@ -1,8 +1,9 @@
 import Link from "@/components/i18n/Link";
 import type { Block, GuideSection } from "@/content/guide-types";
+import type { Lang } from "@/lib/i18n";
 import styles from "./site.module.css";
 
-function BlockView({ b }: { b: Block }) {
+function BlockView({ b, lang = "ru" }: { b: Block; lang?: Lang }) {
   if ("p" in b) return <p className={styles.prose}>{b.p}</p>;
   if ("list" in b) {
     const items = b.list.map((t) => <li key={t}>{t}</li>);
@@ -46,7 +47,18 @@ function BlockView({ b }: { b: Block }) {
   }
   if ("note" in b) {
     const tone = b.tone ?? "info";
-    const label = tone === "warn" ? "Важно" : tone === "tip" ? "Совет" : "К сведению";
+    const label =
+      lang === "uz"
+        ? tone === "warn"
+          ? "Muhim"
+          : tone === "tip"
+            ? "Maslahat"
+            : "Ma'lumot uchun"
+        : tone === "warn"
+          ? "Важно"
+          : tone === "tip"
+            ? "Совет"
+            : "К сведению";
     return (
       <aside className={`${styles.note} ${styles[`note_${tone}`]}`}>
         <b>{label}.</b> {b.note}
@@ -67,14 +79,14 @@ function BlockView({ b }: { b: Block }) {
   return null;
 }
 
-export function GuideBody({ sections }: { sections: GuideSection[] }) {
+export function GuideBody({ sections, lang = "ru" }: { sections: GuideSection[]; lang?: Lang }) {
   return (
     <>
       {sections.map((s) => (
         <section key={s.id} id={s.id} className={styles.guideSection}>
           <h2>{s.title}</h2>
           {s.blocks.map((b, i) => (
-            <BlockView key={i} b={b} />
+            <BlockView key={i} b={b} lang={lang} />
           ))}
         </section>
       ))}

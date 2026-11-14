@@ -38,9 +38,8 @@ function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
   }
   if (query.grantOnly) q = q.eq("full_grant", true);
   if (query.needBlind) q = q.eq("need_blind", true);
-  if (query.tuitionMax != null && Number.isFinite(query.tuitionMax)) {
-    q = q.not("tuition_num", "is", null).lte("tuition_num", query.tuitionMax);
-  }
+  // Note: `tuitionMax` and `aidTypes` are applied after cleanAndDeduplicateUniversities()
+  // so legacy US thousands (e.g. tuition_num=57 -> 57000) and mixed aid tags filter accurately.
   if (query.aidMin != null && query.aidMin > 0) {
     q = q.or(`full_grant.eq.true,aid_num.gte.${query.aidMin}`);
   }
@@ -49,9 +48,6 @@ function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
   }
   if (query.inst && query.inst.length) {
     q = q.contains("inst_tags", query.inst);
-  }
-  if (query.aidTypes && query.aidTypes.length) {
-    q = q.contains("aid_types", query.aidTypes);
   }
   if (query.q) {
     const terms = query.q.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -66,9 +62,6 @@ function applyFilters(sb: ReturnType<typeof getSupabaseAnon>, query: UniQuery) {
       break;
     case "rate":
       q = q.order("rate_num", { ascending: true, nullsFirst: false }).order("name");
-      break;
-    case "tuition":
-      q = q.order("tuition_num", { ascending: true, nullsFirst: false }).order("name");
       break;
     case "aid":
     case "intl_aid":
@@ -98,8 +91,26 @@ export async function fetchUniversities(query: UniQuery = {}): Promise<Universit
     from += PAGE;
   }
 
-  const cleaned = cleanAndDeduplicateUniversities(all);
-  if (query.sort === "intl_aid" || query.sort === "intl_avg") {
+  let cleaned = cleanAndDeduplicateUniversities(all);
+  if (query.tuitionMax != null && Number.isFinite(query.tuitionMax)) {
+    const max = query.tuitionMax;
+    cleaned = cleaned.filter((u) => u.tuition_num != null && u.tuition_num <= max);
+  }
+  if (query.aidTypes && query.aidTypes.length) {
+    const wanted = query.aidTypes.map((x) => x.trim().toLowerCase());
+    cleaned = cleaned.filter((u) => {
+      const has = new Set((u.aid_types || []).map((t) => t.trim().toLowerCase()));
+      return wanted.every((w) => has.has(w));
+    });
+  }
+  if (query.sort === "tuition") {
+    cleaned.sort((a, b) => {
+      if (a.tuition_num == null && b.tuition_num == null) return a.name.localeCompare(b.name);
+      if (a.tuition_num == null) return 1;
+      if (b.tuition_num == null) return -1;
+      return a.tuition_num - b.tuition_num || a.name.localeCompare(b.name);
+    });
+  } else if (query.sort === "intl_aid" || query.sort === "intl_avg") {
     const numDesc = (a: number | null, b: number | null) =>
       a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : b - a;
     cleaned.sort((a, b) => {

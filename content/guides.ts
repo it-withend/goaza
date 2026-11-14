@@ -578,6 +578,17 @@ export const STAGES: { n: 1 | 2 | 3 | 4 | 5; title: string; text: string; guide:
   { n: 5, title: "Подать заявки", text: "Common App, раунды ED/EA/RD и финансовые анкеты в срок.", guide: "raundy-podachi" },
 ];
 
-export function guideBySlug(slug: string) {
-  return GUIDES.find((g) => g.slug === slug) ?? null;
+import type { Lang } from "@/lib/i18n";
+import { GUIDES_UZ, STAGES_UZ } from "./guides.uz";
+
+export function getGuides(lang: Lang): Guide[] {
+  return lang === "uz" ? GUIDES_UZ : GUIDES;
+}
+
+export function getStages(lang: Lang) {
+  return lang === "uz" ? STAGES_UZ : STAGES;
+}
+
+export function guideBySlug(slug: string, lang: Lang = "ru") {
+  return getGuides(lang).find((g) => g.slug === slug) ?? null;
 }

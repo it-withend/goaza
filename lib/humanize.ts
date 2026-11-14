@@ -118,6 +118,13 @@ export function satRu(raw: string | null | undefined, lang: Lang = "ru"): string
   if (math) return t(`Математика от ${math} из 800`, `Matematika 800 dan kamida ${math}`);
 
   const intl = /int'?l|intl/.test(l);
+  if (/act req/.test(l)) return t("Обязателен SAT или ACT", "SAT yoki ACT majburiy");
+  if (/reading\s*\/?\s*verbal[^\d]{0,12}(\d{3})/.test(l) && math) {
+    const rw = l.match(/reading\s*\/?\s*verbal[^\d]{0,12}(\d{3})/)?.[1];
+    if (rw) {
+      return t(`Чтение/письмо от ${rw}, математика от ${math} (из 800)`, `O'qish/yozuv ${rw}+, matematika ${math}+ (800 dan)`);
+    }
+  }
   if (/not acceptable/.test(l)) return t("Не принимают", "Qabul qilinmaydi");
   if (/not used|no need|не требуется|not req|not needed/.test(l))
     return intl ? t("Не нужен иностранцам", "Chet elliklarga kerak emas") : t("Не нужен", "Kerak emas");
@@ -332,60 +339,255 @@ const MAJOR: Record<string, [string, string]> = {
   "life sciences": ["Науки о жизни", "Hayot haqidagi fanlar"],
   "physical sciences": ["Физические науки", "Fizika fanlari"],
   "social sciences": ["Социальные науки", "Ijtimoiy fanlar"],
+  "social sceinces": ["Социальные науки", "Ijtimoiy fanlar"],
   "social sciences and management": ["Социальные науки и менеджмент", "Ijtimoiy fanlar va menejment"],
   "engineering and technology": ["Инженерия и технологии", "Muhandislik va texnologiyalar"],
+  "engineering and technologies": ["Инженерия и технологии", "Muhandislik va texnologiyalar"],
+  "engineering technology": ["Инженерные технологии", "Muhandislik texnologiyalari"],
   technology: ["Технологии", "Texnologiyalar"],
   "arts & humanities": ["Искусство и гуманитарные науки", "San'at va gumanitar fanlar"],
+  "arts and humanities": ["Искусство и гуманитарные науки", "San'at va gumanitar fanlar"],
+  "arts and sciences": ["Искусство и науки", "San'at va fanlar"],
+  humanities: ["Гуманитарные науки", "Gumanitar fanlar"],
+  arts: ["Искусство", "San'at"],
   "economics and business": ["Экономика и бизнес", "Iqtisodiyot va biznes"],
   "business and economics": ["Бизнес и экономика", "Biznes va iqtisodiyot"],
   "busincess and economics": ["Бизнес и экономика", "Biznes va iqtisodiyot"],
+  "business administration": ["Бизнес-администрирование", "Biznes boshqaruvi"],
+  "business and management": ["Бизнес и менеджмент", "Biznes va menejment"],
+  "business management": ["Бизнес-менеджмент", "Biznes menejmenti"],
   business: ["Бизнес", "Biznes"],
   economics: ["Экономика", "Iqtisodiyot"],
+  finance: ["Финансы", "Moliya"],
+  accounting: ["Бухгалтерский учёт", "Buxgalteriya hisobi"],
+  marketing: ["Marketing", "Marketing"],
+  management: ["Менеджмент", "Menejment"],
   "computer science": ["Информатика", "Informatika"],
+  cs: ["Информатика", "Informatika"],
+  it: ["Информационные технологии (IT)", "Axborot texnologiyalari (IT)"],
+  "data science": ["Наука о данных (Data Science)", "Ma'lumotlar fani (Data Science)"],
   law: ["Право", "Huquq"],
+  psychology: ["Психология", "Psixologiya"],
+  biology: ["Биология", "Biologiya"],
+  "biological sciences": ["Биологические науки", "Biologiya fanlari"],
+  biochemistry: ["Биохимия", "Biokimyo"],
+  "biomedical engineering": ["Биомедицинская инженерия", "Biomedikal muhandislik"],
+  neuroscience: ["Нейронауки", "Neyrofanlar"],
+  chemistry: ["Химия", "Kimyo"],
+  physics: ["Физика", "Fizika"],
+  mathematics: ["Математика", "Matematika"],
+  statistics: ["Статистика", "Statistika"],
+  "political science": ["Политология", "Siyosatshunoslik"],
+  politics: ["Политика", "Siyosat"],
+  government: ["Государственное управление", "Davlat boshqaruvi"],
+  "international relations": ["Международные отношения", "Xalqaro munosabatlar"],
+  "international studies": ["Международные исследования", "Xalqaro tadqiqotlar"],
+  education: ["Образование и педагогика", "Ta'lim va pedagogika"],
+  "environmental studies": ["Экология и окружающая среда", "Ekologiya va atrof-muhit"],
+  "environmental science": ["Наука об окружающей среде", "Atrof-muhit fani"],
+  nursing: ["Сестринское дело", "Hamshiralik ishi"],
+  "health sciences": ["Науки о здоровье", "Sog'liqni saqlash fanlari"],
+  health: ["Здравоохранение", "Sog'liqni saqlash"],
+  "public health": ["Общественное здравоохранение", "Jamoat salomatligi"],
+  pharmacy: ["Фармация", "Farmatsiya"],
+  "veterinary medicine": ["Ветеринария", "Veterinariya"],
+  "veterinary sciences": ["Ветеринарные науки", "Veterinariya fanlari"],
+  "mechanical engineering": ["Машиностроение", "Mashinasozlik"],
+  "chemical engineering": ["Химическая инженерия", "Kimyo muhandisligi"],
+  "electrical engineering": ["Электротехника", "Elektrotexnika"],
+  "civil engineering": ["Гражданское строительство", "Qurilish muhandisligi"],
+  "aerospace engineering": ["Аэрокосмическая инженерия", "Aerokosmik muhandislik"],
+  "materials science": ["Материаловедение", "Materialshunoslik"],
   "hospitality business": ["Гостиничный бизнес", "Mehmonxona biznesi"],
+  "hospitality & tourism": ["Гостиничный бизнес и туризм", "Mehmonxona va turizm"],
+  "hospitality and leisure management": ["Гостиничный бизнес и туризм", "Mehmonxona va turizm"],
   architecture: ["Архитектура", "Arxitektura"],
   design: ["Дизайн", "Dizayn"],
-  mathematics: ["Математика", "Matematika"],
+  "fashion design": ["Дизайн одежды", "Liboslar dizayni"],
+  journalism: ["Журналистика", "Jurnalistika"],
+  communications: ["Коммуникации и медиа", "Kommunikatsiyalar va media"],
+  english: ["Английский язык и литература", "Ingliz tili va adabiyoti"],
+  sociology: ["Социология", "Sotsiologiya"],
+  history: ["История", "Tarix"],
+  philosophy: ["Философия", "Falsafa"],
+  agriculture: ["Сельское хозяйство", "Qishloq xo'jaligi"],
+  music: ["Музыка", "Musiqa"],
+  biotechnology: ["Биотехнологии", "Biotexnologiya"],
+  linguistics: ["Лингвистика", "Lingvistika"],
+  anthropology: ["Антропология", "Antropologiya"],
+  geology: ["Геология", "Geologiya"],
 };
 
-/** Majors list: translated where we know the term, junk ("12 areas of interest") dropped. */
+/** Majors list: translated where we know the term, junk ("12 areas of interest", URLs) dropped. */
 export function majorsRu(items: string[], lang: Lang = "ru"): string[] {
-  return items
-    .filter((m) => !/areas of interest|academic structure|^\d+$/i.test(m))
-    .filter((m) => lang === "ru" || !CYR.test(m))
-    .map((m) => MAJOR[m.trim().toLowerCase()]?.[lang === "uz" ? 1 : 0] ?? m);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const rawItem of items) {
+    const m = rawItem
+      .replace(/https?:\/\/\S+/gi, "")
+      .replace(/^\[+|\]+$/g, "")
+      .trim();
+    if (!m || m.length <= 1) continue;
+    if (/areas of interest|academic structure|^\d+$|^(public|private)\s+(research|comprehensive|college)/i.test(m)) continue;
+    if (lang === "uz" && CYR.test(m)) continue;
+    const translated = MAJOR[m.toLowerCase()]?.[lang === "uz" ? 1 : 0] ?? m;
+    if (!seen.has(translated.toLowerCase())) {
+      seen.add(translated.toLowerCase());
+      out.push(translated);
+    }
+  }
+  return out;
 }
 
-/** Notes: translate the known English patterns, keep Russian on the Russian site, drop the rest. */
-export function noteRu(raw: string | null | undefined, lang: Lang = "ru"): string | null {
+const SAFE_LATIN_WORDS = /\b(IELTS|TOEFL|Duolingo|SAT|ACT|GPA|PhD|STEM|NCAA|NAIA|CSS|Profile|ISFAA|SISFAA|PIFAA|LUCF|FAFSA|Common|App|UCAS|DAAD|GKS|DSU|NAWA|MAECI|IB|AP|B2|C1|C2|HUF|USD|EUR|GBP|CAD|CHF|AED|Early|Bird|Need|blind|aware|Merit|merit|based|Türkiye|Bursları|Burslari|Stipendium|Hungaricum|Global|Korea|Scholarship|Davis|UWC|Fulbright|Erasmus|Mundus|Chevening|Rolling|MIT|KAIST|HKUST|CUHK|CityU)\b/g;
+
+function hasUntranslatedEnglishProse(seg: string): boolean {
+  const stripped = seg.replace(SAFE_LATIN_WORDS, " ");
+  const words = stripped.match(/[a-zA-Z]{4,}/g) ?? [];
+  return words.length >= 2;
+}
+
+function translateNoteSegment(seg: string, lang: Lang): string | null {
   const t = pick(lang);
-  const s = clean(raw);
+  const s = seg.replace(/https?:\/\/\S+/gi, "").replace(/\s+/g, " ").trim();
   if (!s) return null;
   const l = s.toLowerCase();
-  if (/^german (language|b2)/.test(l))
-    return t("Обучение на немецком языке — нужен уровень не ниже B2.", "Ta'lim nemis tilida — kamida B2 darajasi kerak.");
-  if (/discounts for masters/.test(l)) return t("Скидки на обучение — только для магистратуры.", "O'qish uchun chegirmalar — faqat magistratura uchun.");
-  if (/^tier \d/.test(l)) {
-    const full = /full need met/.test(l);
+
+  // Drop boilerplate / PDF artifacts / internal tags
+  if (
+    /^(бакалавриат & магистратура & phd|chapter \d+|named competitive award|athletic scholarship|arts \/ talent-based|debate \/ forensics|\(2024-25\)|2029\)|listed universities \/ scholarships|mentioned in canada admissions guide|low-cost europe listing)$/i.test(s) ||
+    /^(chapter \d+|listed universities|mentioned in canada|low-cost europe listing)/i.test(l)
+  ) {
+    return null;
+  }
+
+  // Known gov scholarships (handles both complete and truncated DB rows cleanly)
+  if (/türkiye burslari|türkiye bursları|turkiyeburslari|распространяется на 103 университета турции/i.test(l)) {
+    return t(
+      "Türkiye Bursları: полный госгрант (обучение, общежитие, перелёт и ежемесячная стипендия)",
+      "Türkiye Bursları: to'liq davlat granti (o'qish, yotoqxona, aviachipta va oylik stipendiya)",
+    );
+  }
+  if (/stipendium hungaricum|stipendiumhungaricum|распространяется на 57 университетов венгрии/i.test(l)) {
+    return t(
+      "Stipendium Hungaricum: полный госгрант (бесплатное обучение, общежитие и стипендия 43 700 HUF/мес)",
+      "Stipendium Hungaricum: to'liq davlat granti (bepul o'qish, yotoqxona va oyiga 43 700 HUF stipendiya)",
+    );
+  }
+  if (/global korea scholarship|gksscholarship|распространяется на 64 университетов кореи|получают 150 человек в год/i.test(l)) {
+    return t(
+      "Global Korea Scholarship (GKS): 100% покрытие обучения (до $3 365/сем), перелёт, год корейского и стипендия ~$740–1 110/мес",
+      "Global Korea Scholarship (GKS): 100% o'qish (semestriga $3 365 gacha), aviachipta, 1 yil koreys tili va oyiga ~$740–1 110 stipendiya",
+    );
+  }
+
+  // Known English phrases from audit
+  if (/^german (language|b2)$/.test(l)) {
+    return t("Обучение на немецком языке — нужен уровень не ниже B2", "Ta'lim nemis tilida — kamida B2 darajasi kerak");
+  }
+  if (/german b2, entrance exam/.test(l)) {
+    return t("Нужен немецкий B2 и вступительный экзамен", "Nemis tili B2 va kirish imtihoni kerak");
+  }
+  if (/require french language certificate/.test(l)) {
+    return t("Требуется сертификат французского языка", "Fransuz tili sertifikati talab qilinadi");
+  }
+  if (/health science is taught in turkish/.test(l)) {
+    return t("Медицинские и смежные программы преподаются на турецком языке", "Tibbiyot va sog'liqni saqlash yo'nalishlari turk tilida o'qitiladi");
+  }
+  if (/discounts for masters/.test(l)) {
+    return t("Скидки на обучение — только для магистратуры", "O'qish uchun chegirmalar — faqat magistratura uchun");
+  }
+  if (/^tier \d/.test(l) || /meets full need for admitted international|aims to fund all admitted intl/.test(l)) {
+    const full = /full need met|meets full need|aims to fund all/.test(l);
     return full
       ? t(
-          "Покрывает всю финансовую потребность принятых иностранцев, но доход семьи влияет на приём. Анкета: CSS Profile.",
-          "Qabul qilingan chet elliklarning moliyaviy ehtiyojini to'liq qoplaydi, lekin oila daromadi qabulga ta'sir qiladi. Anketa: CSS Profile.",
+          "Покрывает 100% финансовой потребности принятых иностранцев (приём need-aware)",
+          "Qabul qilingan chet elliklarning moliyaviy ehtiyojini 100% qoplaydi (qabul need-aware)",
         )
       : t(
-          "Помощь иностранцам ограничена: частичные гранты по доходу семьи и за успехи. Анкета: CSS Profile.",
-          "Chet elliklarga yordam cheklangan: oila daromadi va yutuqlar uchun qisman grantlar. Anketa: CSS Profile.",
+          "Финансовая помощь иностранцам ограничена (частичные гранты)",
+          "Chet elliklarga moliyaviy yordam cheklangan (qisman grantlar)",
         );
   }
+  if (/partial need-based \+ merit aid/.test(l)) {
+    return t("Частичная помощь по доходу семьи и за успехи (merit)", "Oila daromadi va yutuqlar (merit) bo'yicha qisman yordam");
+  }
+  if (/partial need-based aid|offers need-based aid to internationals/.test(l)) {
+    return t("Есть частичная финансовая помощь иностранцам по доходу семьи", "Chet elliklar uchun oila daromadiga ko'ra qisman yordam bor");
+  }
+  if (/need-aware; does not meet full need/.test(l)) {
+    return t("Need-aware: доход семьи влияет на приём, 100% потребности не гарантируют", "Need-aware: oila daromadi qabulga ta'sir qiladi, ehtiyoj 100% qoplanmaydi");
+  }
+  if (/merit aid also widely available/.test(l)) {
+    return t("Иностранцам широко доступны стипендии за успехи (merit)", "Chet elliklar uchun yutuqlar bo'yicha stipendiyalar (merit) keng mavjud");
+  }
+  if (/no-loan policy/.test(l)) {
+    return t("Помощь выдаётся только грантами, без студенческих кредитов", "Yordam faqat grant ko'rinishida beriladi, talaba kreditlarisiz");
+  }
+  if (/^aid form:\s*/.test(l)) {
+    const form = s.replace(/^aid form:\s*/i, "").trim();
+    return t(`Анкета для финпомощи: ${form}`, `Moliyaviy yordam anketasi: ${form}`);
+  }
+  if (/^intl:\s*yes/.test(l)) {
+    if (/debate/.test(l)) {
+      return t("Доступно иностранцам с опытом в дебатах", "Debat tajribasiga ega chet elliklar uchun ochiq");
+    }
+    return t("Иностранные абитуриенты могут участвовать на общих основаниях", "Chet ellik abituriyentlar umumiy asosda qatnashishi mumkin");
+  }
+  if (/^selection:/.test(l)) {
+    if (/automatic/.test(l)) return t("Назначается автоматически при зачислении", "Qabul qilinganda avtomatik beriladi");
+    if (/nomination/.test(l)) return t("Отбор по номинации и конкурсному интервью", "Nomzodlik va tanlov suhbati orqali");
+    if (/invitation/.test(l)) return t("По приглашению комиссии для сильнейших кандидатов", "Eng kuchli nomzodlarga komissiya taklifi bilan");
+    if (/audition/.test(l)) return t("Отбор по творческому прослушиванию / портфолио", "Ijodiy sinov / tinglov orqali");
+    if (/coach recruitment/.test(l)) return t("Спортивная стипендия через рекрутинг тренера", "Murabbiy tanlovi (sport stipendiyasi) orqali");
+    return t("Отбор по отдельной конкурсной заявке", "Alohida tanlov arizasi orqali");
+  }
+  if (/^full tuition for all$/.test(l)) return t("Бесплатное обучение для всех студентов", "Barcha talabalar uchun o'qish bepul");
+  if (/^early bird discount$/.test(l)) return t("Есть скидка за раннюю подачу (Early Bird)", "Erta topshirish uchun chegirma (Early Bird) bor");
+  if (/^private uni$/.test(l)) return t("Частный университет", "Xususiy universitet");
+  if (/website is in korean/.test(l)) return t("Основной сайт вуза на корейском языке", "Universitetning asosiy sayti koreys tilida");
+  if (/required 18\+ years of age/.test(l)) return t("Подача с 18 лет", "Ariza topshirish 18 yoshdan");
+  if (/accept 11-year certificates, but only with honours/.test(l)) {
+    return t("Принимают аттестат за 11 классов с отличием (GPA от 4.5)", "11-sinf shahodatnomasi faqat a'lo baholar bilan qabul qilinadi (GPA 4.5+)");
+  }
+  if (/strong .*engineering.*programs|strong industry placement/.test(l)) {
+    return t("Сильные программы инженерии и трудоустройство выпускников", "Muhandislik dasturlari kuchli va bitiruvchilar ishga joylashuvi yuqori");
+  }
+  if (/known for independent study/.test(l)) {
+    return t("Сильный акцент на самостоятельных исследовательских проектах", "Mustaqil tadqiqot loyihalariga kuchli urg'u beriladi");
+  }
+  if (/part of the claremont consortium/.test(l)) {
+    return t("Входит в консорциум Claremont (доступны курсы соседних колледжей)", "Claremont konsorsiumi tarkibida (qo'shni kollej fanlari ham ochiq)");
+  }
+
+  // Never dump raw mixed/untranslated English prose onto RU/UZ cards
+  if (hasUntranslatedEnglishProse(s)) return null;
   if (CYR.test(s)) return ruOnly(s, lang);
-  return null;
+  return s.length <= 60 ? s : null;
+}
+
+/** Notes: clean/translate segment-by-segment; never leak raw English prose or truncated text. */
+export function noteRu(raw: string | null | undefined, lang: Lang = "ru"): string | null {
+  const s = clean(raw);
+  if (!s) return null;
+  const parts: string[] = [];
+  const seen = new Set<string>();
+  for (const seg of s.split("|")) {
+    const trSeg = translateNoteSegment(seg, lang);
+    if (!trSeg) continue;
+    const key = trSeg.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      parts.push(trSeg);
+    }
+  }
+  return parts.length ? parts.join(" | ") : null;
 }
 
 export function livingRu(raw: string | null | undefined, lang: Lang = "ru"): string | null {
   const s = clean(raw);
   if (!s) return null;
-  if (/^accommodation:/i.test(s)) return null;
+  if (/^accommodation/i.test(s)) return null;
   if (!CYR.test(s)) return null;
   if (lang === "ru") return s;
   // "Жильё ~ €150" / "Жизнь: €900/месяц" — keep the amount, translate the label.

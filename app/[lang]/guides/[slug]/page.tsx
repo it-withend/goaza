@@ -5,35 +5,45 @@ import { GuideBody } from "@/components/site/GuideBody";
 import { SitePage } from "@/components/site/SitePage";
 import styles from "@/components/site/site.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { GUIDES, STAGES, guideBySlug } from "@/content/guides";
+import { GUIDES, getStages, guideBySlug } from "@/content/guides";
+import { LANGS, langOf, localizePath, trFor } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ lang: string; slug: string }> };
 
 export function generateStaticParams() {
-  return GUIDES.map((g) => ({ slug: g.slug }));
+  return LANGS.flatMap((lang) => GUIDES.map((g) => ({ lang, slug: g.slug })));
 }
 
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const g = guideBySlug((await params).slug);
+  const { lang: rawLang, slug } = await params;
+  const lang = langOf(rawLang);
+  const g = guideBySlug(slug, lang);
   if (!g) return {};
+  const path = localizePath(lang, `/guides/${g.slug}`);
   return {
     title: g.title,
     description: g.summary,
-    alternates: { canonical: `/guides/${g.slug}` },
-    openGraph: { title: g.title, description: g.summary, type: "article", url: `${SITE_URL}/guides/${g.slug}` },
+    alternates: { canonical: path, languages: { ru: `/guides/${g.slug}`, uz: `/uz/guides/${g.slug}` } },
+    openGraph: { title: g.title, description: g.summary, type: "article", url: `${SITE_URL}${path}` },
   };
 }
 
 export default async function GuidePage({ params }: Props) {
-  const g = guideBySlug((await params).slug);
+  const { lang: rawLang, slug } = await params;
+  const lang = langOf(rawLang);
+  const tr = trFor(lang);
+  const g = guideBySlug(slug, lang);
   if (!g) notFound();
 
-  const stage = STAGES.find((s) => s.n === g.stage);
-  const nextStage = STAGES.find((s) => s.n === g.stage + 1);
-  const related = (g.related || []).map(guideBySlug).filter((x): x is NonNullable<typeof x> => Boolean(x));
+  const stages = getStages(lang);
+  const stage = stages.find((s) => s.n === g.stage);
+  const nextStage = stages.find((s) => s.n === g.stage + 1);
+  const related = (g.related || [])
+    .map((s) => guideBySlug(s, lang))
+    .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
   return (
     <SitePage>
@@ -43,18 +53,18 @@ export default async function GuidePage({ params }: Props) {
           "@type": "Article",
           headline: g.title,
           description: g.summary,
-          inLanguage: "ru-RU",
-          url: `${SITE_URL}/guides/${g.slug}`,
+          inLanguage: lang === "uz" ? "uz-UZ" : "ru-RU",
+          url: `${SITE_URL}${localizePath(lang, `/guides/${g.slug}`)}`,
           publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
         }}
       />
-      <nav className={styles.crumbs} aria-label="Хлебные крошки">
-        <Link href="/guides">Гайды</Link>
+      <nav className={styles.crumbs} aria-label={tr("Хлебные крошки", "Yo'l ko'rsatkichi")}>
+        <Link href="/guides">{tr("Гайды", "Qo'llanmalar")}</Link>
         {stage ? (
           <>
             <span aria-hidden>/</span>
             <span>
-              Шаг {stage.n}. {stage.title}
+              {tr(`Шаг ${stage.n}.`, `${stage.n}-qadam.`)} {stage.title}
             </span>
           </>
         ) : null}
@@ -64,14 +74,14 @@ export default async function GuidePage({ params }: Props) {
         <h1>{g.title}</h1>
         <p>{g.summary}</p>
         <div className={styles.guideMeta}>
-          <span>{g.minutes} минут чтения</span>
-          <span>Обновлено в 2026 году</span>
+          <span>{g.minutes} {tr("минут чтения", "daqiqa o'qish")}</span>
+          <span>{tr("Обновлено в 2026 году", "2026-yilda yangilangan")}</span>
         </div>
       </header>
 
       {g.sections.length > 2 ? (
-        <nav className={styles.toc} aria-label="Содержание">
-          <b>В этом гайде</b>
+        <nav className={styles.toc} aria-label={tr("Содержание", "Mundarija")}>
+          <b>{tr("В этом гайде", "Ushbu qo'llanmada")}</b>
           <ol>
             {g.sections.map((s) => (
               <li key={s.id}>
@@ -82,23 +92,26 @@ export default async function GuidePage({ params }: Props) {
         </nav>
       ) : null}
 
-      <GuideBody sections={g.sections} />
+      <GuideBody sections={g.sections} lang={lang} />
 
       <aside className={styles.nextBox}>
-        <h2>{nextStage ? `Дальше: ${nextStage.title.toLowerCase()}` : "Что дальше"}</h2>
+        <h2>{nextStage ? tr(`Дальше: ${nextStage.title.toLowerCase()}`, `Keyingi: ${nextStage.title.toLowerCase()}`) : tr("Что дальше", "Keyingi qadam")}</h2>
         <p>
           {nextStage
             ? nextStage.text
-            : "Соберите список вузов в атласе: фильтры по стране, гранту, стоимости и шансам."}
+            : tr(
+                "Соберите список вузов в атласе: фильтры по стране, гранту, стоимости и шансам.",
+                "Atlasda universitetlar ro'yxatini tuzing: davlat, grant, narx va imkoniyatlar bo'yicha filtrlar.",
+              )}
         </p>
         <div className={styles.nextLinks}>
-          {nextStage ? <Link href={`/guides/${nextStage.guide}`}>Читать гайд</Link> : null}
+          {nextStage ? <Link href={`/guides/${nextStage.guide}`}>{tr("Читать гайд", "Qo'llanmani o'qish")}</Link> : null}
           {related.map((r) => (
             <Link key={r.slug} href={`/guides/${r.slug}`}>
               {r.title}
             </Link>
           ))}
-          <Link href="/podbor">Подобрать вузы</Link>
+          <Link href="/podbor">{tr("Подобрать вузы", "OTM tanlash")}</Link>
         </div>
       </aside>
     </SitePage>

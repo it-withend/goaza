@@ -268,11 +268,15 @@ const MONTH_MAP: Record<string, number> = {
   december: 12,
 };
 
+const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
 function toCycle2027Iso(month: number, day: number): string {
-  // Admissions cycle 2026/2027: Oct 1 – Dec 31 is Fall 2026 (Early Action / Early Decision / Sem 1);
-  // Jan 1 – Sep 30 is 2027 (Regular Decision / Spring & Autumn 2027 intakes).
+  // Admissions cycle 2026/2027 (for 2027/28 academic year): Oct 1 – Dec 31 is Fall 2026;
+  // Jan 1 – Sep 30 is 2027. Clamp invalid month days like "31 sep" -> Sep 30.
+  const maxDay = DAYS_IN_MONTH[month] ?? 31;
+  const clamped = Math.max(1, Math.min(maxDay, day));
   const year = month >= 10 ? 2026 : 2027;
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return `${year}-${String(month).padStart(2, "0")}-${String(clamped).padStart(2, "0")}`;
 }
 
 /** Explicit cleanup for messy multi-phrase/ambiguous text deadlines across countries. */
@@ -484,7 +488,7 @@ export function normalizeUniversityRow(raw: University): University {
     u.tuition_num != null &&
     u.tuition_num >= 20 &&
     u.tuition_num <= 99 &&
-    /^\$\d{2}\s*\/\s*год$/.test(u.tuition_display || "")
+    (!u.tuition_display || /^\$\d{2}(?:,\d{3})?\s*\/\s*год$/.test(u.tuition_display))
   ) {
     u.tuition_display = `$${u.tuition_num},000 / год`;
     u.tuition_num = u.tuition_num * 1000;
@@ -536,10 +540,30 @@ export function normalizeUniversityRow(raw: University): University {
     }
   }
 
-  // 6. Normalize array fields, language scores, and mismatched notes
+  // 6. Normalize array fields, language scores, shifted exam/essay fields, and mismatched notes
   u.inst_tags = normalizeList(u.inst_tags);
   u.aid_types = normalizeAidTypes(u.aid_types);
   u.lang = normalizeLang(u.lang);
+  if (u.sat && /personal statement|motivation letter/i.test(u.sat)) {
+    if (!hasText(u.essay)) u.essay = cleanText(u.sat);
+    u.sat = null;
+  }
+  if (u.essay && /^act req\.?$/i.test(u.essay.trim())) {
+    if (!hasText(u.sat)) u.sat = "ACT required";
+    u.essay = null;
+  }
+  if (u.living_note && /^accommodation(\s+fee)?\s*(is\s+n\/a|:\s*https?:\/\/)/i.test(u.living_note.trim())) {
+    u.living_note = null;
+  }
+  if (u.majors) {
+    const cleanedMajors = u.majors
+      .replace(/https?:\/\/\S+/gi, "")
+      .split(/[,;\n]/)
+      .map((x) => x.replace(/^\[+|\]+$/g, "").trim())
+      .filter((x) => x.length > 1)
+      .filter((x) => !/areas of interest|academic structure|^\d+$|^(Public|Private)\s+(Research|Comprehensive|College)/i.test(x));
+    u.majors = cleanedMajors.length ? cleanedMajors.join(", ") : null;
+  }
   if (u.slug === "city-university-of-hong-kong-hong-kong" && /\bPolyU\b/i.test(u.notes || "")) {
     u.notes = null;
   }

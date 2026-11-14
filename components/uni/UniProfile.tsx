@@ -6,7 +6,7 @@ import { INCOME_BANDS, INCOME_BANDS_UZ, SCORECARD_META, scorecardFor } from "@/l
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { campusPhotoUrl } from "@/lib/campus-photo";
 import { getCountryGuide } from "@/lib/country-guides";
-import { daysLeftLabel, describeDeadline, pickNearestDeadline } from "@/lib/deadline";
+import { daysLeftLabel, describeDeadline, describeDeadlineWindow, pickNearestDeadline } from "@/lib/deadline";
 import { hasLogo } from "@/lib/logos";
 import { trFor, type Lang } from "@/lib/i18n";
 import { countryName, instLabel, type University } from "@/lib/types";
@@ -102,13 +102,14 @@ export function UniProfile({
   const early = describeDeadline(u.early_deadline, undefined, lang);
   const regular = describeDeadline(u.regular_deadline, undefined, lang);
   const nearest = pickNearestDeadline(u.early_deadline, u.regular_deadline, undefined, lang)?.info ?? null;
-  const mainRound = tr("Основной", "Asosiy");
+  const deadlineWindow = describeDeadlineWindow(u.early_deadline, u.regular_deadline, undefined, lang);
+  const mainRound = tr("Основной раунд (конец приёма)", "Asosiy bosqich (oxirgi muddat)");
   // Same date in both fields means there is only one round.
   const deadlines =
     early && regular && u.early_deadline?.trim() === u.regular_deadline?.trim()
       ? [{ label: mainRound, d: regular }]
       : [
-          { label: tr("Ранний", "Erta"), d: early },
+          { label: tr("Ранний раунд (ранняя подача)", "Erta bosqich (erta topshirish)"), d: early },
           { label: mainRound, d: regular },
         ].filter((x) => x.d);
   const majors = majorsRu(splitList(u.majors), lang);
@@ -226,6 +227,12 @@ export function UniProfile({
           <div>
             <small>{tr("Ближайший дедлайн", "Eng yaqin muddat")}</small>
             <strong>{nearest?.label || "—"}</strong>
+            {nearest?.academicYear ? (
+              <span className={styles.metricSub}>
+                {tr(`на ${nearest.academicYear} уч. год`, `${nearest.academicYear} o'quv yili uchun`)}
+                {nearest.daysLeft != null && nearest.daysLeft >= 0 ? ` · ${daysLeftLabel(nearest.daysLeft, lang)}` : ""}
+              </span>
+            ) : null}
           </div>
         </section>
 
@@ -462,6 +469,7 @@ export function UniProfile({
             <MyChance slug={u.slug} name={u.name} />
             <section className={styles.panel} id="deadlines">
               <h2>{tr("Сроки", "Muddatlar")}</h2>
+              {deadlineWindow ? <p className={styles.deadlineWindow}>{deadlineWindow}</p> : null}
               {deadlines.length ? (
                 <ul className={styles.deadlines}>
                   {deadlines.map(({ label, d }) =>
@@ -472,7 +480,10 @@ export function UniProfile({
                         {d.daysLeft != null ? (
                           <em className={d.daysLeft < 0 ? styles.past : d.daysLeft <= 30 ? styles.soon : undefined}>
                             {d.daysLeft < 0
-                              ? tr("прошёл — следующий цикл через год", "o'tib ketdi — keyingi davr bir yildan keyin")
+                              ? tr(
+                                  `набор ${d.academicYear ?? ""} закрыт — следующий через год`,
+                                  `${d.academicYear ?? ""} qabuli yopilgan — keyingi yil kuting`,
+                                )
                               : daysLeftLabel(d.daysLeft, lang)}
                           </em>
                         ) : null}

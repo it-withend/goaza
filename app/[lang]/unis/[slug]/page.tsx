@@ -8,7 +8,6 @@ import { UniProfile } from "@/components/uni/UniProfile";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { langOf, localizePath, trFor } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
-import { countryName } from "@/lib/types";
 import { readSessionToken, SESSION_COOKIE } from "@/lib/telegram-auth";
 import { teaserSummary, toTeaser } from "@/lib/uni-teaser";
 import { fetchRelatedUniversities, fetchUniversityBySlug } from "@/lib/universities";
@@ -28,15 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const u = await loadUniversity(slug);
   if (!u) return { title: tr("Университет не найден", "Universitet topilmadi"), robots: { index: false } };
 
-  const t = toTeaser(u);
+  const t = toTeaser(u, lang);
   const title = tr(`${u.name} — поступление, стоимость и гранты`, `${u.name} — qabul, narx va grantlar`);
-  const place = [countryName(u.country, "uz"), u.city].filter(Boolean).join(", ");
-  const description = tr(
-    `${teaserSummary(t)} Дедлайны и требования — в атласе ${SITE_NAME}.`,
-    `${u.name} — universitet (${place}).${u.acceptance_rate ? ` Qabul foizi — ${u.acceptance_rate}.` : ""} ${
-      u.full_grant ? "Chet ellik talabalar uchun to'liq grant bor." : "Chet elliklar uchun to'liq grant yo'q — qisman yordamni atlasdan qarang."
-    } Muddatlar va talablar — ${SITE_NAME} atlasida.`,
-  ).slice(0, 300);
+  const description = `${teaserSummary(t, lang)} ${tr("Дедлайны и требования — в атласе", "Muddatlar va talablar —")} ${SITE_NAME}.`.slice(0, 300);
   const path = `/unis/${u.slug}`;
 
   return {
@@ -68,7 +61,7 @@ export default async function PublicUniversityPage({ params }: Props) {
     redirect(localizePath(lang, `/unis/${u.slug}`));
   }
 
-  const teaser = toTeaser(u);
+  const teaser = toTeaser(u, lang);
   const related = await fetchRelatedUniversities(u.country, u.slug, 6).catch(() => []);
   const site = websiteUrl(u.website_domain);
 
@@ -78,7 +71,7 @@ export default async function PublicUniversityPage({ params }: Props) {
       "@type": "CollegeOrUniversity",
       name: u.name,
       url: `${SITE_URL}${localizePath(lang, `/unis/${u.slug}`)}`,
-      description: teaserSummary(teaser),
+      description: teaserSummary(teaser, lang),
       ...(site ? { sameAs: [site] } : {}),
       address: {
         "@type": "PostalAddress",

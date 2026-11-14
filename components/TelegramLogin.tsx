@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTr } from "@/components/i18n/LangProvider";
 
 declare global {
   interface Window {
@@ -16,6 +17,7 @@ type Props = {
 
 /** Telegram Login Widget host; verified success is reported via onSubscribed. */
 export function TelegramLogin({ botUsername, onSubscribed }: Props) {
+  const tr = useTr();
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -35,12 +37,12 @@ export function TelegramLogin({ botUsername, onSubscribed }: Props) {
         });
         const json = await res.json();
         if (!res.ok) {
-          setError(json.message || json.error || "Не удалось войти");
+          setError(json.message || json.error || tr("Не удалось войти", "Kirish amalga oshmadi"));
           return;
         }
         onSubscribed(json.username || null);
       } catch {
-        setError("Ошибка сети");
+        setError(tr("Ошибка сети", "Tarmoq xatoligi"));
       } finally {
         setBusy(false);
       }
@@ -62,12 +64,12 @@ export function TelegramLogin({ botUsername, onSubscribed }: Props) {
     return () => {
       delete window.onTelegramAuth;
     };
-  }, [botUsername, onSubscribed]);
+  }, [botUsername, onSubscribed, tr]);
 
   if (!botUsername) {
     return (
       <span className="auth-err">
-        Бот не настроен (NEXT_PUBLIC_TELEGRAM_BOT_USERNAME)
+        {tr("Бот не настроен (NEXT_PUBLIC_TELEGRAM_BOT_USERNAME)", "Bot sozlanmagan (NEXT_PUBLIC_TELEGRAM_BOT_USERNAME)")}
       </span>
     );
   }

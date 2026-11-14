@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { countryRu } from "@/lib/types";
+import { useLang, useTr } from "@/components/i18n/LangProvider";
+import { countryName } from "@/lib/types";
 import { COUNTRY_COORDS } from "@/lib/country-coords";
 import styles from "./LandingPage.module.css";
 
@@ -19,6 +20,8 @@ type GlobePoint = {
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
 
 export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
+  const lang = useLang();
+  const tr = useTr();
   const globeRef = useRef<{
     controls?: { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
     pointOfView: (p: object, ms?: number) => void;
@@ -68,7 +71,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
   }, [size.w]);
 
   return (
-    <div className={styles.globeWrap} id="studyaza-globe" aria-label="Глобус университетов">
+    <div className={styles.globeWrap} id="studyaza-globe" aria-label={tr("Глобус университетов", "Universitetlar globusi")}>
       <div className={styles.globeGlow} aria-hidden="true" />
       <Globe
         // @ts-expect-error globe ref typing from react-globe.gl
@@ -84,7 +87,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
         pointColor={() => "#d4a017"}
         pointLabel={(d: object) => {
           const p = d as GlobePoint;
-          return `${countryRu(p.country)} · ${p.count}`;
+          return `${countryName(p.country, lang)} · ${p.count}`;
         }}
         onPointHover={(d: object | null) => setHover((d as GlobePoint | null) ?? null)}
         atmosphereColor="#c9a227"
@@ -93,13 +96,13 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
       <div className={styles.globeHint} aria-live="polite">
         {hover ? (
           <>
-            <strong>{countryRu(hover.country)}</strong>
-            <span>{hover.count} университетов в базе</span>
+            <strong>{countryName(hover.country, lang)}</strong>
+            <span>{tr(`${hover.count} университетов в базе`, `Bazadagi ${hover.count} universitet`)}</span>
           </>
         ) : (
           <>
-            <span className={styles.hintPointer}>Покрути · наведи на золотую точку</span>
-            <span className={styles.hintTouch}>Покрути глобус · нажми на золотую точку</span>
+            <span className={styles.hintPointer}>{tr("Покрути · наведи на золотую точку", "Aylantiring · oltin nuqtaga olib boring")}</span>
+            <span className={styles.hintTouch}>{tr("Покрути глобус · нажми на золотую точку", "Globusni aylantiring · oltin nuqtaga bosing")}</span>
           </>
         )}
       </div>

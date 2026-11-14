@@ -74,6 +74,17 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
   const handle = username ? (username.startsWith("@") ? username : `@${username}`) : null;
   const other = lang === "uz" ? "ru" : "uz";
 
+  async function handleLogout() {
+    if (account?.onLogout) {
+      account.onLogout();
+      return;
+    }
+    await fetch("/api/auth/telegram", { method: "DELETE" });
+    setSubscribed(false);
+    setUsername(null);
+    window.location.reload();
+  }
+
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
@@ -117,8 +128,8 @@ export function SiteHeader({ account }: { account?: HeaderAccount }) {
               open={tr("Открыть план", "Rejani ochish")}
             />
           )}
-          {account ? (
-            <button type="button" className={styles.headerGhost} onClick={account.onLogout}>
+          {subscribed ? (
+            <button type="button" className={styles.headerGhost} onClick={handleLogout}>
               {tr("Выйти", "Chiqish")}
             </button>
           ) : null}

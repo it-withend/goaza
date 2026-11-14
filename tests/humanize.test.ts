@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { aidSummary, essayRu, instTypeRu, langRu, money, satRu } from "@/lib/humanize";
+import { aidSummary, essayRu, instTypeRu, langRu, majorsRu, money, noteRu, satRu } from "@/lib/humanize";
 
 describe("langRu", () => {
   it("names the exam and the level for a bare IELTS band", () => {
@@ -114,5 +114,29 @@ describe("Uzbek output", () => {
     expect(instTypeRu("Public / Research", "uz")).toBe("Davlat tadqiqot universiteti");
     expect(aidSummary("Full Ride", "uz")).toEqual({ short: "To'liq grant (o'qish va yashash)", names: [] });
     expect(money("$17,380 / год", "uz")).toBe("$17 380 / yil");
+  });
+});
+
+describe("noteRu and majorsRu cleanup", () => {
+  it("cleans mixed English/truncated Hungarian grant notes in RU and UZ", () => {
+    const raw =
+      "8 research centers; University maintains relations with 231 foreign higher education institutions | STIPENDIUM HUNGARICUM · https://stipendiumhungaricum.hu · Бакалавриат & Магистратура & PhD · Распространяется на 57 университетов Венгрии Бесплатное обучение — 43 7";
+    expect(noteRu(raw, "ru")).toBe(
+      "Stipendium Hungaricum: полный госгрант (бесплатное обучение, общежитие и стипендия 43 700 HUF/мес)",
+    );
+    expect(noteRu(raw, "uz")).toBe(
+      "Stipendium Hungaricum: to'liq davlat granti (bepul o'qish, yotoqxona va oyiga 43 700 HUF stipendiya)",
+    );
+  });
+
+  it("strips URLs/brackets and translates expanded majors in RU and UZ", () => {
+    expect(majorsRu(["[Computer Science", "https://example.com/cs", "Data Science]", "12 areas of interest"], "ru")).toEqual([
+      "Информатика",
+      "Наука о данных (Data Science)",
+    ]);
+    expect(majorsRu(["[Computer Science", "Public research university", "Economics]"], "uz")).toEqual([
+      "Informatika",
+      "Iqtisodiyot",
+    ]);
   });
 });

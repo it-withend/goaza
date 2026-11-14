@@ -370,6 +370,21 @@ export const GRANTS: Grant[] = [
   },
 ];
 
-export function grantBySlug(slug: string) {
-  return GRANTS.find((g) => g.slug === slug) ?? null;
+import type { Lang } from "@/lib/i18n";
+import { GRANTS_UZ, KIND_UZ, LEVEL_UZ } from "./grants.uz";
+
+export function grantBySlug(slug: string, lang: Lang = "ru") {
+  return getGrants(lang).find((g) => g.slug === slug) ?? null;
+}
+
+export function getGrants(lang: Lang): Grant[] {
+  return lang === "uz" ? GRANTS_UZ : GRANTS;
+}
+
+export function levelLabel(level: Level, lang: Lang): string {
+  return lang === "uz" ? LEVEL_UZ[level] : LEVEL_RU[level];
+}
+
+export function kindLabel(kind: GrantKind, lang: Lang): string {
+  return lang === "uz" ? KIND_UZ[kind] : KIND_RU[kind];
 }

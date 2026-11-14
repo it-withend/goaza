@@ -77,3 +77,25 @@ it("offers to open the saved plan instead of redoing the survey", async () => {
   render(<Onboarding countries={[]} />);
   expect(await screen.findByRole("link", { name: /открыть мой план/i })).toHaveAttribute("href", "/plan");
 });
+
+it("stays on the onboarding page and shows an error when /api/podbor fails", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(JSON.stringify({ error: "server error" }), { status: 500 })),
+  );
+  const user = userEvent.setup();
+  render(<Onboarding countries={[]} />);
+
+  await user.click(screen.getByRole("radio", { name: "11 класс" }));
+  await user.click(screen.getByRole("button", { name: "Дальше" }));
+  await user.click(screen.getByRole("radio", { name: /до \$5 000/i }));
+  await user.click(screen.getByRole("button", { name: "Дальше" }));
+  await user.click(screen.getByRole("button", { name: "Дальше" }));
+  await user.click(screen.getByRole("button", { name: "Дальше" }));
+  await user.click(screen.getByRole("button", { name: "Дальше" }));
+  await user.click(screen.getByRole("button", { name: "Собрать мой план" }));
+
+  expect(push).not.toHaveBeenCalled();
+  expect(await screen.findByRole("alert")).toHaveTextContent(/подобрать вузы сейчас не удалось/i);
+  expect(screen.getByRole("link", { name: /открыть план/i })).toHaveAttribute("href", "/plan");
+});
