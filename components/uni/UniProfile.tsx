@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { GateCta } from "@/components/gate/GateCta";
 import { MyChance } from "@/components/uni/MyChance";
+import { INCOME_BANDS, SCORECARD_META, scorecardFor } from "@/lib/scorecard";
 import { UniversityLogo } from "@/components/UniversityLogo";
 import { campusPhotoUrl } from "@/lib/campus-photo";
 import { getCountryGuide } from "@/lib/country-guides";
@@ -68,6 +69,8 @@ export function UniProfile({
   botUsername: string;
 }) {
   const photo = campusPhotoUrl(u.slug);
+  const sc = scorecardFor(u.slug);
+  const usd = (n: number) => `$${new Intl.NumberFormat("en-US").format(Math.round(n))}`;
   const site = websiteUrl(u.website_domain);
   const tags = [
     ...(u.need_blind ? ["Need-blind"] : []),
@@ -234,6 +237,28 @@ export function UniProfile({
                     <GateCta botUsername={botUsername} label="Открыть финансовые детали" />
                   </div>
                 )}
+              </section>
+            ) : null}
+
+            {sc && sc.netPrice.some((x) => x != null) ? (
+              <section className={styles.panel} id="net-price">
+                <h2>Сколько платят семьи после помощи</h2>
+                <p className={styles.muted}>
+                  Средняя цена года (учёба, жильё, питание) после грантов — по доходу семьи в год.
+                  {sc.coa ? ` Полная цена без помощи — ${usd(sc.coa)}.` : ""}
+                </p>
+                <dl className={styles.dl}>
+                  {sc.netPrice.map((v, i) =>
+                    v != null ? <Row key={INCOME_BANDS[i]} label={`Доход ${INCOME_BANDS[i]}`} value={usd(v)} /> : null,
+                  )}
+                  <Row label="Средний SAT студентов" value={sc.sat ?? undefined} />
+                  <Row label="Заканчивают учёбу" value={sc.grad != null ? `${Math.round(sc.grad * 100)}%` : undefined} />
+                  <Row label="Зарплата через 10 лет" value={sc.earnings != null ? `${usd(sc.earnings)} в год` : undefined} />
+                </dl>
+                <p className={styles.source}>
+                  {SCORECARD_META.source}. Цены посчитаны для граждан США; иностранцам это ориентир щедрости вуза —
+                  ваша цена считается по анкете CSS Profile.
+                </p>
               </section>
             ) : null}
 
