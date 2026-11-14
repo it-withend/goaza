@@ -6,7 +6,7 @@ import type { CatalogUni } from "@/lib/catalog";
 import { LIST_KEY } from "@/lib/profile";
 import { computeMeta } from "@/lib/universities";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/dashboard" }));
 vi.mock("next/link", () => ({
   default: ({ children, href, ...props }: { children: React.ReactNode; href: string }) => (
     <a href={href} {...props}>

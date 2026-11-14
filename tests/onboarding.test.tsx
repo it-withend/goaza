@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Onboarding } from "@/components/plan/Onboarding";
@@ -26,7 +26,10 @@ beforeEach(() => {
   );
 });
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 it("walks through six steps, saves the profile and the suggested list", async () => {
   const user = userEvent.setup();
@@ -64,4 +67,13 @@ it("walks through six steps, saves the profile and the suggested list", async ()
 it("cannot continue from step 1 without a grade", async () => {
   render(<Onboarding countries={[]} />);
   expect(screen.getByRole("button", { name: "Дальше" })).toBeDisabled();
+});
+
+it("offers to open the saved plan instead of redoing the survey", async () => {
+  window.localStorage.setItem(
+    PROFILE_KEY,
+    JSON.stringify({ grade: "11", budget: 0, countries: [], english: { test: "ielts", score: 7 }, sat: null, grades: "good", major: "", updatedAt: "2026-11-14T00:00:00Z" }),
+  );
+  render(<Onboarding countries={[]} />);
+  expect(await screen.findByRole("link", { name: /открыть мой план/i })).toHaveAttribute("href", "/plan");
 });

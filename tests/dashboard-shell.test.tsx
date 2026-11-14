@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ usePathname: () => "/dashboard" }));
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 
 vi.mock("next/link", () => ({
@@ -24,6 +26,7 @@ it("shows the verified Telegram account and calls logout", async () => {
     "href",
     "/dashboard/guide",
   );
+  expect(screen.getByRole("link", { name: "Мой план" })).toHaveAttribute("href", "/plan");
   expect(screen.queryByText(/explorer/i)).not.toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: /выйти/i }));
   expect(onLogout).toHaveBeenCalledOnce();

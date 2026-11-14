@@ -108,6 +108,38 @@
   background: #e5b41f;
 }
 
+.accountChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--sz-accent-bg, #fdf3d1);
+  color: var(--sz-ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.headerGhost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: #fff;
+  color: var(--sz-ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.headerGhost:hover {
+  background: rgba(26, 26, 26, 0.05);
+}
+
 .menuBtn {
   display: none;
   width: 44px;

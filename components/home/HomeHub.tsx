@@ -3,6 +3,7 @@ import { GRANTS } from "@/content/grants";
 import { GUIDES } from "@/content/guides";
 import type { LandingStats } from "@/lib/landing-stats";
 import { countryRu } from "@/lib/types";
+import { PlanCta } from "@/components/site/PlanCta";
 import { CabinetPreview } from "./CabinetPreview";
 import h from "./home.module.css";
 
@@ -30,9 +31,7 @@ export function HomeHub({ stats }: { stats: LandingStats }) {
             сдать, что написать и когда подать.
           </p>
           <div className={h.heroActions}>
-            <Link href="/plan/start" className={h.ctaMain}>
-              Составить мой план
-            </Link>
+            <PlanCta className={h.ctaMain} />
             <Link href="/unis" className={h.ctaSecond}>
               Смотреть вузы
             </Link>
@@ -66,9 +65,7 @@ export function HomeHub({ stats }: { stats: LandingStats }) {
             </li>
           ))}
         </ol>
-        <Link href="/plan/start" className={h.ctaMain}>
-          Составить мой план
-        </Link>
+        <PlanCta className={h.ctaMain} />
       </section>
 
       <section className={h.block} aria-labelledby="inside">

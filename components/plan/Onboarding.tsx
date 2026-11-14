@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { EnglishTest, Grades } from "@/lib/matcher";
@@ -110,6 +111,12 @@ export function Onboarding({ countries }: { countries: Country[] }) {
 
   return (
     <div className={s.wrap}>
+      {ready && profile ? (
+        <p className={s.saved}>
+          Ваш план уже сохранён в этом браузере — можно поправить ответы ниже или{" "}
+          <Link href="/plan">открыть мой план</Link>.
+        </p>
+      ) : null}
       <div className={s.top}>
         <span>
           Шаг {step} из {TOTAL}

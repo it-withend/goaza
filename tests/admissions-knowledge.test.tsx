@@ -14,6 +14,7 @@ import {
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn(), push: vi.fn() }),
+  usePathname: () => "/dashboard/guide",
 }));
 
 vi.mock("next/link", () => ({
