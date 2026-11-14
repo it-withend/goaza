@@ -40,3 +40,34 @@ describe("matchScorecard", () => {
     expect(out["harvard-university-usa"].sat).toBe(1550);
   });
 });
+
+describe("matchScorecard with shared domains", () => {
+  it("does not give one campus's numbers to sibling campuses on the same domain", () => {
+    const rows = [
+      row({ id: 190512, name: "CUNY Bernard M Baruch College", url: "www.baruch.cuny.edu", sat: 1300 }),
+      row({ id: 190549, name: "CUNY Brooklyn College", url: "www.brooklyn.cuny.edu", sat: 1150 }),
+    ];
+    const unis = [
+      { slug: "cuny-brooklyn-college-usa", name: "CUNY Brooklyn College", website_domain: "brooklyn.cuny.edu" },
+      { slug: "cuny-lehman-college-usa", name: "CUNY Lehman College", website_domain: "lehman.cuny.edu" },
+    ];
+    const out = matchScorecard(rows, unis);
+    expect(out["cuny-brooklyn-college-usa"].id).toBe(190549);
+    expect(out["cuny-lehman-college-usa"]).toBeUndefined();
+  });
+
+  it("uses the registrable domain only when a single Scorecard row has it", () => {
+    const rows = [
+      row({ id: 1, name: "Embry-Riddle Aeronautical University-Daytona Beach", url: "daytonabeach.erau.edu" }),
+      row({ id: 2, name: "Embry-Riddle Aeronautical University-Prescott", url: "prescott.erau.edu" }),
+      row({ id: 3, name: "Lonely College", url: "admissions.lonely.edu" }),
+    ];
+    const unis = [
+      { slug: "embry-riddle-aeronautical-u-prescott-usa", name: "Embry-Riddle Aeronautical U-Prescott", website_domain: "erau.edu" },
+      { slug: "lonely-college-usa", name: "Lonely", website_domain: "lonely.edu" },
+    ];
+    const out = matchScorecard(rows, unis);
+    expect(out["embry-riddle-aeronautical-u-prescott-usa"]).toBeUndefined();
+    expect(out["lonely-college-usa"].id).toBe(3);
+  });
+});
