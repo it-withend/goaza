@@ -30,8 +30,9 @@
   width: 41px;
   height: 41px;
   border-radius: 50%;
-  background: var(--paper);
-  border: 3px solid var(--gold);
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  border: 3px solid var(--sc-gold);
   display: grid;
   place-items: center;
   font-family: var(--font-serif), Georgia, serif;

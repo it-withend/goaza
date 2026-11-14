@@ -31,16 +31,15 @@ export function ThemeToggle() {
       type="button"
       className={styles.iconBtn}
       onClick={toggle}
-      aria-pressed={theme === "light"}
       aria-label={
         theme === "dark"
-          ? tr("Включить светлую тему", "Yorug' mavzuni yoqish")
-          : tr("Включить тёмную тему", "Qorong'u mavzuni yoqish")
+          ? tr("Переключить на светлую тему", "Yorug' mavzuga o'tish")
+          : tr("Переключить на тёмную тему", "Qorong'i mavzuga o'tish")
       }
       title={
         theme === "dark"
           ? tr("Светлая тема", "Yorug' mavzu")
-          : tr("Тёмная тема", "Qorong'u mavzu")
+          : tr("Тёмная тема", "Qorong'i mavzu")
       }
     >
       {theme === "dark" ? (

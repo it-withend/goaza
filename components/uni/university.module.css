@@ -188,7 +188,7 @@
   height: 6px;
   margin-top: 10px;
   border-radius: 999px;
-  background: rgba(26, 26, 26, 0.08);
+  background: var(--sc-line);
   overflow: hidden;
 }
 
@@ -399,7 +399,7 @@
 }
 
 .related a:hover span {
-  color: #8a6a12;
+  color: var(--sc-gold-text);
 }
 
 .grantDot {

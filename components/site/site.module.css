@@ -4,8 +4,8 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  background: var(--sz-base);
-  color: var(--sz-ink);
+  background: var(--sc-bg);
+  color: var(--sc-text);
   overflow-x: clip;
 }
 
@@ -253,13 +253,18 @@
 
 @media (max-width: 980px) {
   .headerInner {
-    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 10px;
     padding: 8px 12px;
   }
 
   .headerActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 5px;
     min-width: 0;
+    max-width: 100%;
   }
 
   .menuBtn {
@@ -290,10 +295,22 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
+  .headerInner {
+    gap: 6px 8px;
+    padding: 8px 10px;
+  }
+
+  .headerActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px;
+    max-width: 100%;
+  }
+
   .brand {
     gap: 7px;
-    font-size: 0.96rem;
+    font-size: 0.94rem;
     min-width: 0;
   }
 
@@ -315,36 +332,37 @@
   .tgBtn,
   .iconBtn,
   .menuBtn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     padding: 0;
   }
 
   .langSwitch {
-    height: 36px;
-    padding: 0 9px;
+    height: 34px;
+    padding: 0 8px;
     font-size: 0.76rem;
   }
 
   .headerCta {
-    min-height: 36px;
-    padding: 0 11px;
-    font-size: 0.78rem;
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.76rem;
+    white-space: nowrap;
   }
 
   .accountChip {
-    max-width: 96px;
+    max-width: 92px;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 36px;
-    padding: 0 9px;
-    font-size: 0.78rem;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 0.76rem;
   }
 
   .headerGhost {
-    min-height: 36px;
+    min-height: 34px;
     padding: 0 9px;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
   }
 }
 
@@ -384,7 +402,7 @@
   background: transparent;
   color: var(--sc-text);
   font: inherit;
-  font-size: 0.98rem;
+  font-size: 16px;
   outline: none;
 }
 
@@ -421,7 +439,8 @@
   color: var(--sc-text);
 }
 
-.cmdItem:hover {
+.cmdItem:hover,
+.cmdItemActive {
   background: var(--sc-elev);
 }
 
@@ -656,8 +675,9 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--gold);
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  border: 2px solid var(--sc-gold);
   display: grid;
   place-items: center;
   font-size: 0.8rem;
@@ -723,15 +743,18 @@
 }
 
 .note_info {
-  background: rgba(44, 75, 124, 0.07);
+  background: var(--sc-blue-bg);
+  color: var(--sc-text);
 }
 
 .note_tip {
-  background: rgba(61, 122, 74, 0.1);
+  background: var(--sc-emerald-bg);
+  color: var(--sc-text);
 }
 
 .note_warn {
-  background: rgba(181, 101, 13, 0.1);
+  background: var(--sc-amber-bg);
+  color: var(--sc-text);
 }
 
 .inlineLinks {
@@ -824,7 +847,7 @@
   padding: 0 22px;
   border-radius: 14px;
   background: var(--gold);
-  color: var(--ink);
+  color: var(--sz-ink);
   font-weight: 800;
   text-decoration: none;
   border: 0;

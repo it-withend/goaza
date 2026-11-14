@@ -68,7 +68,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
     return () => ro.disconnect();
   }, []);
 
-  const configureGlobe = useCallback(() => {
+  const configureGlobe = useCallback((resetPov = false) => {
     const g = globeRef.current;
     if (!g) return;
     const ctrl = typeof g.controls === "function" ? g.controls() : g.controls;
@@ -83,11 +83,13 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
         child.intensity = Math.max(child.intensity, 1.85);
       }
     }
-    g.pointOfView?.({ lat: 25, lng: 15, altitude: 1.95 }, 0);
+    if (resetPov) {
+      g.pointOfView?.({ lat: 25, lng: 15, altitude: 1.95 }, 0);
+    }
   }, []);
 
   useEffect(() => {
-    configureGlobe();
+    configureGlobe(false);
   }, [configureGlobe, size.w]);
 
   return (
@@ -101,7 +103,7 @@ export function WorldGlobe({ byCountry }: { byCountry: CountryCount[] }) {
       <Globe
         // @ts-expect-error globe ref typing from react-globe.gl
         ref={globeRef}
-        onGlobeReady={configureGlobe}
+        onGlobeReady={() => configureGlobe(true)}
         width={size.w}
         height={size.h}
         backgroundColor="rgba(0,0,0,0)"

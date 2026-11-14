@@ -102,9 +102,9 @@
 
 .filtersDone {
   display: none;
-  background: var(--obsidian);
-  color: #fff;
-  border-color: var(--obsidian);
+  background: var(--sc-pill-active-bg);
+  color: var(--sc-pill-active-text);
+  border-color: var(--sc-pill-active-bg);
 }
 
 .searchWrap {
@@ -583,7 +583,7 @@
 }
 
 .cardHead {
-  padding-right: 40px;
+  padding-right: 100px;
 }
 
 .cardTitleBlock {
@@ -688,7 +688,7 @@
 }
 
 .deadlineUrgent {
-  color: #9b361f !important;
+  color: var(--no) !important;
 }
 
 .deadlinePill {
@@ -697,7 +697,7 @@
   font-style: normal;
   font-size: 0.7rem;
   font-weight: 800;
-  color: #9b361f;
+  color: var(--no);
 }
 
 .intlFundStrip {
@@ -771,17 +771,17 @@
   min-height: 44px;
   padding: 0 22px;
   border-radius: 999px;
-  border: 1px solid var(--hairline);
-  background: var(--obsidian);
-  color: #f4f2ec;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-elev-2);
+  color: var(--sc-text);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
 }
 
 .loadMore button:hover {
-  border-color: var(--gold);
-  color: #f4c85b;
+  border-color: var(--sc-gold);
+  color: var(--sc-gold-text);
 }
 
 /* ---------- Responsive ---------- */

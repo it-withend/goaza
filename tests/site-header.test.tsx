@@ -121,11 +121,11 @@ it("toggles between dark and light theme and persists sz_theme", async () => {
   status({ subscribed: false, username: null });
   document.documentElement.dataset.theme = "dark";
   render(<SiteHeader />);
-  const toggle = screen.getByRole("button", { name: /включить светлую тему/i });
+  const toggle = screen.getByRole("button", { name: /переключить на светлую тему/i });
   await userEvent.click(toggle);
   expect(document.documentElement.dataset.theme).toBe("light");
   expect(window.localStorage.getItem("sz_theme")).toBe("light");
-  await userEvent.click(screen.getByRole("button", { name: /включить тёмную тему/i }));
+  await userEvent.click(screen.getByRole("button", { name: /переключить на тёмную тему/i }));
   expect(document.documentElement.dataset.theme).toBe("dark");
   expect(window.localStorage.getItem("sz_theme")).toBe("dark");
 });

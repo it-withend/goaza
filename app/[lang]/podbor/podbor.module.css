@@ -121,7 +121,7 @@
   border: 0;
   border-radius: 14px;
   background: var(--gold);
-  color: var(--ink);
+  color: var(--sz-ink);
   font: inherit;
   font-weight: 800;
   font-size: 1.05rem;

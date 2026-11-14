@@ -21,7 +21,11 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
   const tr = useTr();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
+  const [activeIdx, setActiveIdx] = useState(0);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const linkRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const wasOpen = useRef(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -38,9 +42,15 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
 
   useEffect(() => {
     if (open) {
+      wasOpen.current = true;
+      setActiveIdx(0);
       setTimeout(() => inputRef.current?.focus(), 10);
     } else {
       setQ("");
+      if (wasOpen.current) {
+        wasOpen.current = false;
+        triggerRef.current?.focus();
+      }
     }
   }, [open]);
 
@@ -57,7 +67,7 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
       { id: "n-grants", group: navGroup, title: tr("Все государственные гранты", "Barcha davlat grantlari"), sub: tr("Полное покрытие обучения и жилья", "O'qish va yashashni to'liq qoplash"), href: "/grants" },
     ];
 
-    const grants = getGrants(lang).slice(0, 6).map((g) => ({
+    const grants = getGrants(lang).map((g) => ({
       id: `gr-${g.slug}`,
       group: grantGroup,
       title: g.name,
@@ -65,7 +75,7 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
       href: `/grants#${g.slug}`,
     }));
 
-    const guides = getGuides(lang).slice(0, 8).map((g) => ({
+    const guides = getGuides(lang).map((g) => ({
       id: `gd-${g.slug}`,
       group: guideGroup,
       title: g.title,
@@ -79,13 +89,36 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
   const trimmed = q.trim().toLowerCase();
   const filtered = useMemo(() => {
     if (!trimmed) return items.slice(0, 9);
-    return items.filter(
-      (it) => it.title.toLowerCase().includes(trimmed) || it.sub.toLowerCase().includes(trimmed) || it.group.toLowerCase().includes(trimmed),
-    );
+    return items
+      .filter((it) => it.title.toLowerCase().includes(trimmed) || it.sub.toLowerCase().includes(trimmed) || it.group.toLowerCase().includes(trimmed))
+      .slice(0, 14);
   }, [items, trimmed]);
+
+  useEffect(() => {
+    setActiveIdx(0);
+  }, [trimmed]);
+
+  function onDialogKeyDown(e: React.KeyboardEvent) {
+    const total = filtered.length + (trimmed && subscribed ? 1 : 0);
+    if (!total) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIdx((i) => (i + 1) % total);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIdx((i) => (i - 1 + total) % total);
+    }
+  }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const activeLink = linkRefs.current[activeIdx];
+    if (activeLink) {
+      setOpen(false);
+      activeLink.click();
+      return;
+    }
+    setOpen(false);
     if (trimmed && subscribed) {
       window.location.assign(localizePath(lang, `/dashboard?q=${encodeURIComponent(q.trim())}`));
       return;
@@ -102,6 +135,7 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         className={styles.cmdBtn}
         onClick={() => setOpen(true)}
@@ -123,6 +157,7 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
             aria-modal="true"
             aria-label={tr("Быстрый поиск", "Tezkor qidiruv")}
             onMouseDown={(e) => e.stopPropagation()}
+            onKeyDown={onDialogKeyDown}
           >
             <form onSubmit={onSubmit} className={styles.cmdForm}>
               <input
@@ -131,6 +166,7 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder={tr("Найти раздел, грант, гайд или вуз…", "Bo'lim, grant, qo'llanma yoki OTM topish…")}
+                aria-activedescendant={filtered[activeIdx] ? `cmd-opt-${activeIdx}` : undefined}
               />
               <button type="button" className={styles.cmdEsc} onClick={() => setOpen(false)}>
                 ESC
@@ -140,8 +176,12 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
               {trimmed && subscribed ? (
                 <li>
                   <Link
+                    id="cmd-opt-0"
+                    ref={(el) => {
+                      linkRefs.current[0] = el;
+                    }}
                     href={`/dashboard?q=${encodeURIComponent(q.trim())}`}
-                    className={styles.cmdItem}
+                    className={`${styles.cmdItem}${activeIdx === 0 ? ` ${styles.cmdItemActive}` : ""}`}
                     onClick={() => setOpen(false)}
                   >
                     <span>
@@ -152,18 +192,29 @@ export function CommandSearch({ subscribed }: { subscribed: boolean }) {
                   </Link>
                 </li>
               ) : null}
-              {filtered.map((it) => (
-                <li key={it.id}>
-                  <Link href={it.href} className={styles.cmdItem} onClick={() => setOpen(false)}>
-                    <span>
-                      <b>{it.group}</b>
-                      <strong>{it.title}</strong>
-                      <small>{it.sub}</small>
-                    </span>
-                    <em>→</em>
-                  </Link>
-                </li>
-              ))}
+              {filtered.map((it, idx) => {
+                const slot = idx + (trimmed && subscribed ? 1 : 0);
+                return (
+                  <li key={it.id}>
+                    <Link
+                      id={`cmd-opt-${slot}`}
+                      ref={(el) => {
+                        linkRefs.current[slot] = el;
+                      }}
+                      href={it.href}
+                      className={`${styles.cmdItem}${activeIdx === slot ? ` ${styles.cmdItemActive}` : ""}`}
+                      onClick={() => setOpen(false)}
+                    >
+                      <span>
+                        <b>{it.group}</b>
+                        <strong>{it.title}</strong>
+                        <small>{it.sub}</small>
+                      </span>
+                      <em>→</em>
+                    </Link>
+                  </li>
+                );
+              })}
               {!filtered.length && !subscribed ? (
                 <li className={styles.cmdEmpty}>
                   {tr("Ничего не найдено. Откройте ", "Hech narsa topilmadi. Ochish: ")}

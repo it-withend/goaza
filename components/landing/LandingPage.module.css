@@ -963,10 +963,10 @@
   width: min(100%, 420px);
   padding: 28px 24px 24px;
   border-radius: 22px;
-  background: #f8f7f3;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-line-strong);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
-  color: #1a1a1a;
+  color: var(--sc-text);
 }
 
 .modal h2 {
@@ -978,7 +978,7 @@
 
 .modal p {
   margin: 0 0 14px;
-  color: rgba(16, 21, 40, 0.72);
+  color: var(--sc-muted);
   line-height: 1.5;
 }
 
@@ -987,7 +987,7 @@
   padding: 0 0 0 20px;
   display: grid;
   gap: 6px;
-  color: rgba(16, 21, 40, 0.8);
+  color: var(--sc-text);
   font-size: 0.95rem;
   line-height: 1.45;
 }
@@ -1001,14 +1001,14 @@
   margin: 0 0 18px;
   padding: 10px 16px;
   border-radius: 12px;
-  background: rgba(34, 158, 217, 0.12);
-  color: #0b6e99;
+  background: var(--sc-blue-bg);
+  color: var(--sc-link);
   font-weight: 600;
   text-decoration: none;
 }
 
 .channelLink:hover {
-  background: rgba(34, 158, 217, 0.2);
+  filter: brightness(1.06);
 }
 
 .close {
@@ -1020,10 +1020,14 @@
   border: 0;
   border-radius: 12px;
   background: transparent;
-  color: #1a1a1a;
+  color: var(--sc-muted);
   font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.close:hover {
+  color: var(--sc-text);
 }
 
 .close:focus-visible {

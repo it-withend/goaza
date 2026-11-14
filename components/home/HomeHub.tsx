@@ -47,27 +47,33 @@ function getSteps(lang: Lang) {
 function getNextCycleMilestone(lang: Lang) {
   const tr = trFor(lang);
   const now = new Date();
-  const candidates = [
-    {
-      date: new Date("2027-01-15T23:59:00Z"),
-      title: tr("Stipendium Hungaricum и Regular USA", "Stipendium Hungaricum va Regular AQSh"),
-      badge: tr("Набор 2027/28", "2027/28 qabul"),
-      dateText: tr("до 15 янв, 23:59", "15 yanvargacha, 23:59"),
-    },
-    {
-      date: new Date("2027-02-20T23:59:00Z"),
-      title: tr("Türkiye Bursları", "Türkiye Bursları"),
-      badge: tr("Госгрант Турции", "Turkiya davlat granti"),
-      dateText: tr("до 20 фев, 23:59", "20 fevralgacha, 23:59"),
-    },
-    {
-      date: new Date("2027-11-01T23:59:00Z"),
-      title: tr("Early Action / Early Decision", "Early Action / Early Decision"),
-      badge: tr("Ранняя волна 2028/29", "Erta to'lqin 2028/29"),
-      dateText: tr("до 1 ноя, 23:59", "1 noyabrgacha, 23:59"),
-    },
-  ];
-  const next = candidates.find((c) => c.date.getTime() > now.getTime()) ?? candidates[candidates.length - 1];
+  const baseYear = now.getUTCFullYear();
+  const rolling: Array<{ date: Date; title: string; badge: string; dateText: string }> = [];
+  for (const yr of [baseYear, baseYear + 1]) {
+    const cycleLabel = `${String(yr).slice(-2)}/${String(yr + 1).slice(-2)}`;
+    const earlyCycle = `${String(yr + 1).slice(-2)}/${String(yr + 2).slice(-2)}`;
+    rolling.push(
+      {
+        date: new Date(Date.UTC(yr, 0, 15, 23, 59, 0)),
+        title: tr("Stipendium Hungaricum и Regular USA", "Stipendium Hungaricum va Regular AQSh"),
+        badge: tr(`Набор ${cycleLabel}`, `${cycleLabel} qabul`),
+        dateText: tr(`до 15 янв ${yr}`, `${yr}-yil 15 yanvargacha`),
+      },
+      {
+        date: new Date(Date.UTC(yr, 1, 20, 23, 59, 0)),
+        title: tr("Türkiye Bursları", "Türkiye Bursları"),
+        badge: tr(`Госгрант Турции ${cycleLabel}`, `Turkiya granti ${cycleLabel}`),
+        dateText: tr(`до 20 фев ${yr}`, `${yr}-yil 20 fevralgacha`),
+      },
+      {
+        date: new Date(Date.UTC(yr, 10, 1, 23, 59, 0)),
+        title: tr("Early Action / Early Decision", "Early Action / Early Decision"),
+        badge: tr(`Ранняя волна ${earlyCycle}`, `Erta to'lqin ${earlyCycle}`),
+        dateText: tr(`до 1 ноя ${yr}`, `${yr}-yil 1 noyabrgacha`),
+      },
+    );
+  }
+  const next = rolling.find((c) => c.date.getTime() > now.getTime()) ?? rolling[rolling.length - 1];
   const diffMs = Math.max(0, next.date.getTime() - now.getTime());
   const days = Math.max(1, Math.ceil(diffMs / 86_400_000));
   const pct = Math.max(12, Math.min(92, Math.round(100 - (Math.min(days, 180) / 180) * 100)));

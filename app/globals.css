@@ -85,7 +85,7 @@ html[data-theme="light"] {
   --sc-line: rgba(15, 23, 42, 0.09);
   --sc-line-strong: rgba(15, 23, 42, 0.18);
   --sc-gold: #d4a017;
-  --sc-gold-text: #9c7208;
+  --sc-gold-text: #805b00;
   --sc-header-bg: rgba(255, 255, 255, 0.88);
   --sc-pill-active-bg: #111827;
   --sc-pill-active-text: #ffffff;
@@ -102,7 +102,7 @@ html[data-theme="light"] {
 
   --sz-ink: #111827;
   --gold: #d4a017;
-  --gold-deep: #9c7208;
+  --gold-deep: #805b00;
   --brand-soft: rgba(15, 23, 42, 0.06);
   --no: #8b3a2a;
   --no-bg: #f5e6e2;
@@ -117,6 +117,7 @@ html[data-theme="light"] {
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -125,6 +126,7 @@ body {
   color: var(--sc-text);
   line-height: 1.5;
   background: var(--sc-bg);
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -172,4 +174,36 @@ a:not([class]):hover {
   font-size: 0.82rem;
   color: var(--no);
   max-width: 28ch;
+}
+
+.to-top {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 35;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--sc-line-strong);
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
+}
+
+.to-top.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.to-top:hover {
+  border-color: var(--sc-gold);
+  color: var(--sc-gold-text);
 }
