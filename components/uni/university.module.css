@@ -365,6 +365,7 @@
 
 .siteLink:hover {
   background: #e0ae24;
+  color: var(--sz-ink);
 }
 
 .related {

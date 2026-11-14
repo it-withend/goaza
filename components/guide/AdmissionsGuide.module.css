@@ -67,6 +67,7 @@
 
 .backCatalogBtn:hover {
   background: #f0c554;
+  color: var(--sz-ink);
 }
 
 .statsRow {

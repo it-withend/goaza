@@ -84,7 +84,8 @@
 .field input:focus-visible,
 .row select:focus-visible {
   outline: none;
-  border-color: var(--sz-accent);
+  border-color: var(--sz-ink);
+  box-shadow: 0 0 0 3px rgba(242, 194, 48, 0.45);
 }
 
 .row {
@@ -175,7 +176,8 @@
 }
 
 .next:disabled {
-  opacity: 0.5;
+  background: #efe6d3;
+  color: #5a6275;
   cursor: not-allowed;
 }
 

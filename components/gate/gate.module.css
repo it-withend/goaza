@@ -324,7 +324,10 @@
 }
 
 .countryNav a {
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
   border-radius: 999px;
   border: 1px solid rgba(26, 26, 26, 0.12);
   background: rgba(255, 255, 255, 0.7);

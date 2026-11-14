@@ -75,8 +75,9 @@ a {
   text-underline-offset: 3px;
 }
 
-a:hover {
-  color: var(--accent);
+/* Only plain prose links change colour; styled buttons own their hover state. */
+a:not([class]):hover {
+  color: #6b4f0a;
 }
 
 .auth-slot {

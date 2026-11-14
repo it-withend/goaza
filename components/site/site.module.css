@@ -106,6 +106,7 @@
 
 .headerCta:hover {
   background: #e5b41f;
+  color: var(--sz-ink);
 }
 
 .accountChip {
@@ -163,8 +164,8 @@
 }
 
 .page :where(a, button):focus-visible {
-  outline: 3px solid rgba(212, 160, 23, 0.7);
-  outline-offset: 2px;
+  outline: 3px solid var(--sz-ink);
+  outline-offset: 3px;
 }
 
 @media (max-width: 880px) {
@@ -550,6 +551,7 @@
 
 .cta:hover {
   background: #e0ae24;
+  color: var(--sz-ink);
 }
 
 .ctaQuiet {
