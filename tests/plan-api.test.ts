@@ -5,7 +5,18 @@ import type { MatchUni } from "@/lib/matcher";
 const rows: MatchUni[] = [];
 vi.mock("@/lib/universities", () => ({ fetchMatchRows: async () => rows }));
 
+const cookieValue = { current: undefined as string | undefined };
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => (cookieValue.current ? { value: cookieValue.current } : undefined) }),
+}));
+
 import { POST } from "@/app/api/plan/route";
+import { createSessionToken } from "@/lib/telegram-auth";
+
+async function subscribe() {
+  process.env.AUTH_SECRET = "test-secret-for-vitest-only";
+  cookieValue.current = await createSessionToken({ tgId: 7, subscribed: true });
+}
 
 const profile = { budget: 0, countries: [], english: { test: "ielts", score: 7 }, sat: null, grades: "good", major: "" };
 const req = (body: unknown) =>
@@ -32,13 +43,15 @@ function uni(slug: string, p: Partial<MatchUni> = {}): MatchUni {
 describe("POST /api/plan", () => {
   beforeEach(() => {
     rows.length = 0;
+    cookieValue.current = undefined;
   });
 
   it("rejects a body without profile or slugs", async () => {
     expect((await POST(req({}))).status).toBe(400);
   });
 
-  it("returns matches only for requested slugs and caps them at 30", async () => {
+  it("returns matches only for requested slugs and caps them at 30 for subscribers", async () => {
+    await subscribe();
     for (let i = 0; i < 40; i++) rows.push(uni(`u-${i}`));
     const slugs = Array.from({ length: 31 }, (_, i) => `u-${i}`);
     const json = await (await POST(req({ profile, slugs }))).json();
@@ -55,5 +68,21 @@ describe("POST /api/plan", () => {
     rows.push(uni("pricey", { full_grant: false, tuition_num: 50000 }));
     const json = await (await POST(req({ profile, slugs: ["pricey"] }))).json();
     expect(json.matches[0]).toEqual({ slug: "pricey", name: "pricey", excluded: "Не проходит по бюджету" });
+  });
+
+  it("caps guests at 12 universities per request", async () => {
+    for (let i = 0; i < 20; i++) rows.push(uni(`g-${i}`));
+    const slugs = Array.from({ length: 20 }, (_, i) => `g-${i}`);
+    const json = await (await POST(req({ profile, slugs }))).json();
+    expect(json.matches).toHaveLength(12);
+  });
+
+  it("never uses the gated aid amount for guests", async () => {
+    rows.push(uni("aided", { full_grant: false, tuition_num: 30000, aid_num: 28000 }));
+    const guest = await (await POST(req({ profile: { ...profile, budget: 5000 }, slugs: ["aided"] }))).json();
+    expect(guest.matches[0]).toEqual({ slug: "aided", name: "aided", excluded: "Не проходит по бюджету" });
+    await subscribe();
+    const sub = await (await POST(req({ profile: { ...profile, budget: 5000 }, slugs: ["aided"] }))).json();
+    expect(sub.matches[0].money).toBe("partial");
   });
 });
