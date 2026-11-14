@@ -408,7 +408,13 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 540px) {
+  .headerCta {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
   .tgBtn {
     display: none;
   }

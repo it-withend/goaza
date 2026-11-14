@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import type { EnglishTest, Grades } from "@/lib/matcher";
 import type { Grade } from "@/lib/profile";
 import { useApplicant } from "@/lib/use-applicant";
+import { CountryFlag } from "@/components/ui/Icon";
 import s from "./onboarding.module.css";
 
 type Country = { value: string; label: string; count: number };
@@ -192,12 +193,15 @@ export function Onboarding({ countries }: { countries: Country[] }) {
           <fieldset>
             <legend>{tr("Английский", "Ingliz tili")}</legend>
             <div className={s.row}>
-              <select value={test} onChange={(e) => setTest(e.target.value as EnglishTest)} aria-label={tr("Тест по английскому", "Ingliz tili testi")}>
-                <option value="ielts">IELTS</option>
-                <option value="toefl">TOEFL iBT</option>
-                <option value="duolingo">Duolingo</option>
-                <option value="none">{tr("Ещё не сдавал(а)", "Hali topshirmaganman")}</option>
-              </select>
+              <label className={s.field}>
+                <span>{tr("Экзамен", "Imtihon")}</span>
+                <select value={test} onChange={(e) => setTest(e.target.value as EnglishTest)} aria-label={tr("Тест по английскому", "Ingliz tili testi")}>
+                  <option value="ielts">IELTS</option>
+                  <option value="toefl">TOEFL iBT</option>
+                  <option value="duolingo">Duolingo</option>
+                  <option value="none">{tr("Ещё не сдавал(а)", "Hali topshirmaganman")}</option>
+                </select>
+              </label>
               {test !== "none" ? (
                 <label className={s.field}>
                   <span>{tr("Балл", "Ball")}</span>
@@ -252,7 +256,9 @@ export function Onboarding({ countries }: { countries: Country[] }) {
                   aria-pressed={picked.includes(c.value)}
                   onClick={() => setPicked((p) => (p.includes(c.value) ? p.filter((x) => x !== c.value) : [...p, c.value]))}
                 >
-                  {c.label} <span>{c.count}</span>
+                  <CountryFlag country={c.value} size={15} />
+                  <span>{c.label}</span>
+                  <span className={s.chipsCount}>{c.count}</span>
                 </button>
               ))}
             </div>
