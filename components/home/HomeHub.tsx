@@ -84,8 +84,8 @@ export function HomeHub({ stats }: { stats: LandingStats }) {
             <span>гайдов: список вузов, документы, экзамены, финпомощь, эссе</span>
           </Link>
           <Link href="/deadlines" className={h.insideCardPink}>
-            <b>ED · EA · RD</b>
-            <span>все сроки подачи в одном месте</span>
+            <b>Все сроки подачи</b>
+            <span>ранняя и обычная подача по каждому вузу с обратным отсчётом</span>
           </Link>
         </div>
       </section>

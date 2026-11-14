@@ -51,7 +51,7 @@ export default async function UnisIndexPage() {
             <h1>{all.length} университетов в {groups.length} странах</h1>
             <p className={styles.copy}>
               {grants} из них дают полный грант иностранным студентам. Ниже — все вузы по странам.
-              Стоимость, гранты, дедлайны и фильтры открываются в атласе после подписки на @studyaza.
+              Цены, шансы и сроки каждого вуза открыты всем. Фильтры по бюджету и полный список грантов — в атласе после бесплатной подписки на @studyaza.
             </p>
             <div className={styles.heroCta}>
               <GateCta
